@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "target": "es2017",
+    "module": "es6",
+    "sourceMap": true,
+    "outDir": "./build/js",
+    "rootDir": "./src/ts/",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": false,
+    "strictFunctionTypes": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+  },
+  "include": ["./src/ts/**/*.ts"],
+  "exclude": ["./node_modules/**/*"]
+}

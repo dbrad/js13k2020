@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "firefox-devtools.vscode-firefox-debug",
+        "equinusocio.vsc-community-material-theme",
+        "pkief.material-icon-theme",
+        "eamodio.gitlens",
+        "visualstudioexptteam.vscodeintellicode",
+        "aaron-bond.better-comments",
+    ]
+}

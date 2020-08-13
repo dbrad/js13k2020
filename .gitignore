@@ -1,0 +1,13 @@
+**/node_modules/
+**/node_modules/**/*
+
+**/build
+**/build/**/*
+
+**/dist
+**/dist/**/*
+
+**/.cache
+**/.cache/**/*
+
+**/package-lock.json
