@@ -13,7 +13,7 @@
     "build": "yarn run delete-dist && yarn run create-dist && yarn run compile && yarn run inline",
     "zip": "yarn run build -s && yarn node ./scripts/zip-file.js -s && yarn size -s",
     "size": "yarn node ./scripts/check-file-size.js",
-    "submit": "yarn run zip && yarn run size"
+    "submit": "yarn run zip"
   },
   "dependencies": {
     "advzip-bin": "^2.0.0",

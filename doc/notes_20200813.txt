@@ -1,0 +1,76 @@
+Desktop + Mobile freindly controls
+  Focus on taps and smooth drags, swiping is annoying on desktop.
+
+Game where AI can be simple, or non-existant
+
+Something is a puzzle or strategy genre
+  I want players to think
+
+
+
+Not Found
+Something is missing?
+Something was never there?
+Something is hidden?
+Something was destroyed?
+
+"Hacking" themed game?
+Trying to recover something?
+Trying to uncover something?
+
+Zachtronics style game?
+Give the player alot of choice and agency to solve problems?
+Some sort of threat/lose condition that needs to be stopped or redirection or delayed
+Some end goal / result you are are working towards at the same time
+
+A Zachtrontic style puzzle/logic game with a turn based aspect?
+
+
+Various tools to use, but once a square is filled its filled?
+
+Firewall to stop threat for x turn(s)
+
+If an 'enemy' sees a tile it will begin seeking
+If the player connects with the goal, all enemies will begin searching for the player's pressence
+
+Without a Trace
+
+Hardline - Advances Connection over grid - move up to 2 per turn
+Wireless Point - Connection can jump gap 
+Proxy - Delays enemy seek
+Firewall - stalls incoming enemy connection
+Red Herring - Redirect attention?
+Splitter
+Merger
+Honey Pot
+
+Encryption?
+
+If player's connection comes within range of enemy, they will begin to seek.
+
+player must connect, then get a delete command through?
+player must connect and survive x turns?
+secondary part when player must queue up commands?
+if connection detected player is being sought out
+if command is detect enemy may pull plug?
+yellow vs red? (suspicous vs alerted)
+encrypted lines are slower?
+
+Each tool tile has a cost, and some will incur a delay
+Many answers to a problem, players can try to reduce time to hack and cost
+
+
+Enemy AI, if it can see the player's line(s), it will move 1 space until on the line, then begin seek mode
+Enemy AI ignores dead lines (not connected to player)
+Seek mode will crawl the a line in both directions, send 1 probe each way
+If seek hits a splitter it will trace down the input line
+If a seek hits a merger it will send a probe down each line
+If seek hits a proxy, that probe will pause for 1 step, then jump to the resolving proxy input?
+If seek hits a honeypot, all probes will pause for 2 steps
+If seek reaches player before level is complete the solution fails
+
+
+Maybe no enemies???
+
+Obsticles for solutions?
+Firewalls?

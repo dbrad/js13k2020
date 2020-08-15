@@ -5,10 +5,12 @@ import { TEXTURE_CACHE, Texture } from "./texture.js";
 export function pushSprite(textureName: string, x: number, y: number, colour: number = 0xFFFFFFFF, sx: number = 1, sy: number = 1): void
 {
   const t: Texture = TEXTURE_CACHE.get(textureName);
+  // @ifdef DEBUG
   if (!t)
   {
     throw new Error(`No such texture as ${ textureName }`);
   }
+  // @endif
   gl.save();
   gl.translate(x, y);
   gl.scale(sx, sy);
@@ -20,10 +22,12 @@ export function pushSprite(textureName: string, x: number, y: number, colour: nu
 export function pushQuad(x: number, y: number, w: number, h: number, colour: number = 0xFFFFFFFF): void
 {
   const t: Texture = TEXTURE_CACHE.get("flat");
+  // @ifdef DEBUG
   if (!t)
   {
     throw new Error(`No such texture as flat`);
   }
+  // @endif
   gl.save();
   gl.translate(x, y);
   gl.scale(w, h);
@@ -136,7 +140,12 @@ export function pushText(text: string, x: number, y: number, params: TextParams 
       {
         const t: Texture = TEXTURE_CACHE.get(letter);
         x = orgx + offx + alignmentOffset;
-
+        // @ifdef DEBUG
+        if (!t)
+        {
+          throw new Error(`No such texture as ${ letter }`);
+        }
+        // @endif
         gl.save();
         gl.translate(x, y); // translate by the real x,y
         gl.scale(params.scale, params.scale); // scale up the matrix

@@ -33,7 +33,7 @@ export function tickStats(delta: number, beginTime: number, endTime: number): vo
     }
     frameCount++;
 
-    pushQuad(0, 0, 65, 29, 0x88333333);
+    pushQuad(0, 0, 65, 29, 0xDD333333);
     pushText(displayFps, 64, 0, { textAlign: Align.Right });
     pushText(displayMs, 64, 10, { textAlign: Align.Right });
     pushText(displayFrameTime, 64, 20, { textAlign: Align.Right });

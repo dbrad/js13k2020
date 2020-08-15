@@ -1,0 +1,41 @@
+Puzzle/logic type game mechanics
+- Zachtronic style solve a problem with tools and logic
+  - Many solutions, player judged on quality of solutions
+  - Tools need some cost metric to measure
+  - time to complete usually a metric
+  - some other 3rd relevant metric (size, operation performed, etc)
+
+- sokoban style puzzles
+  - move blocks and interact with mechanisms to achieve an end state goal
+
+- factory builing games
+  - similar to zachtronic style games...
+  - may have a more open ended goals/changing goals
+
+- "programming" games
+  - human resource machine / 7 billion humans
+  - teach people programming / logic concept by abstract the ideas away from computing / code
+
+- Pipe dream / connector games
+  - player uses tiles or rules to make a start and end node connector
+  - usually fighting a timer
+
+- match 3 games
+  - more about pattern regonition and move planning
+  - usually fighting a timer
+
+Trying to avoid key and door mechanics, they just add steps to a game most times without adding anything important (make a linear game look less linear at first glance)
+
+I like the idea of letting the player come up with their own solution rather than having a single solution
+
+this means I am probably looking for more of a "give player rules and components to solve a problem" game
+
+I need to be able to create unique challeges for the players to solve so they arent just solving the same problem again and again
+  - TIS did this by limiting nodes available, by number, type, and arrangement; as well as requiring specific outputs
+  - Magnus did this by having different molecule shape goals and starting components for each problem
+  - Basically they were able to control inputs and outputs, but gave the player all tools and lots of space to come up with various solutions.
+
+If I want to replicate this I need a game with multiple inputs I control, and varying outputs that I require and a sandbox gamepley experience so the player can experiment with the tools...
+
+Objective is to remain 'not found'?
+really want to avoid single solution puzzles / paths
