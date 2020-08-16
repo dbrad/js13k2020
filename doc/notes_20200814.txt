@@ -10,7 +10,7 @@ Puzzle/logic type game mechanics
 
 - factory builing games
   - similar to zachtronic style games...
-  - may have a more open ended goals/changing goals
+  - may have more open ended goals/changing goals
 
 - "programming" games
   - human resource machine / 7 billion humans

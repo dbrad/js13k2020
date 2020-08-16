@@ -1,4 +1,4 @@
-export enum Easing
+export const enum Easing
 {
   Linear,
   EaseInBack,

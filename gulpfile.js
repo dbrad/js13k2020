@@ -111,7 +111,6 @@ function rollupJs()
         toplevel: true,
         mangle: {
           properties: {
-            keep_quoted: true,
             regex: /^_.*/
           }
         }

@@ -13,8 +13,12 @@
     "noImplicitThis": true,
     "noImplicitReturns": true,
     "moduleResolution": "node",
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["./src/ts/**/*.ts"],
-  "exclude": ["./node_modules/**/*"]
+  "include": [
+    "./src/ts/**/*.ts"
+  ],
+  "exclude": [
+    "./node_modules/**/*"
+  ]
 }

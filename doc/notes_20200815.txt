@@ -1,0 +1,56 @@
+I want to support desktop and mobile
+Therefore all controls must be pointer/touch based
+I want some sort of puzzle or logic based game
+I would like the solutions to be open ended or the puzzles be generated
+
+need a win condition and a lose condition...
+
+
+building a node costs 1 resource
+leveling a node costs resource(s)
+nodes can receive 1 input and 1 output per level
+power points on map
+outputs that need exactly a certain power level
+
+IO nodes, LVL # of Channels
+Signal Splitter: 1 input, 2 outputs
+Signal Dampener: 1 input, 1 output
+Signal Merger
+
+
+Types of games I would like to make:
+RPGish game (ie roguelite, rpg-lite. stats, combat, exploration.)
+Hunting Game (ie MonHun, God Eater, etc. Hunt a thing, get stuff, upgrade equipment/character, repeat)
+Factory game
+Puzzle game
+resource managemenet game
+idle / incremental game
+Space sim game
+
+Factory Games...
+Collect raw resource, convert into other resources, repeat
+... what to use those resources for end game?
+Factorio => Launch a rocket into Space, while defending yourself from aliens
+Satisfactory => Non yet, EA Game, get to max tier of tech and implement into
+Mindustry => Automatic stuff to reach a quota per level and defend yourself from waves of enemies
+
+
+Space Survivial Game?
+Oxygen
+Engines
+Scanners
+
+Threat?
+
+Code Breaker style puzzle in the game?
+What should it gate?
+
+Lost in space game
+101 days max (morning, afternoon, evening, night) - 404 total segments
+limited power each day to do stuff
+can do 1 thing per quarter of the day
+need food, water, oxygen each day
+need to distibute power + time to get stuff done
+
+
+Tower Defense?
