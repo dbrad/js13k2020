@@ -1,17 +1,9 @@
-import { pushQuad, pushText, textWidth, textHeight } from "./draw";
-
-export const uiState = {
-  mouseX: 0,
-  mouseY: 0,
-  mouseDown: false,
-
-  hot: 0,
-  active: 0,
-};
+import { Input } from "./state";
+import { node_position, node_size } from "./node";
 
 export function mouseInside(x: number, y: number, w: number, h: number)
 {
-  if (uiState.mouseX < x || uiState.mouseY < y || uiState.mouseX >= x + w || uiState.mouseY >= y + h)
+  if (Input.Pointer[0] < x || Input.Pointer[1] < y || Input.Pointer[0] >= x + w || Input.Pointer[1] >= y + h)
   {
     return false;
   }
@@ -20,68 +12,70 @@ export function mouseInside(x: number, y: number, w: number, h: number)
 
 export function imguiStart()
 {
-  uiState.hot = 0;
+  Input.Hot = 0;
 }
 
 export function imguiEnd()
 {
 
-  if (!uiState.mouseDown)
+  if (!Input.MouseDown)
   {
-    uiState.active = 0;
+    Input.Active = 0;
   }
   else
   {
-    if (uiState.active === 0)
+    if (Input.Active === 0)
     {
-      uiState.active = -1;
+      Input.Active = -1;
     }
   }
 }
 
-export function button(id: number, text: string, x: number, y: number)
+export function active(id: number, pos: v2, size: v2)
 {
-  let textW = textWidth(text.length, 1);
-  let textH = textHeight(1, 1);
-
-  let buttonW = textW + 10;
-  let buttonH = textH + 10;
-
-  if (mouseInside(x, y, buttonW, buttonH))
+  if (Input.Hot > 0)
   {
-    uiState.hot = id;
-    if (uiState.active === 0 && uiState.mouseDown)
+    return false;
+  }
+
+  let x = node_position[id][0];
+  let y = node_position[id][1];
+  let w = node_size[id][0];
+  let h = node_size[id][0];
+
+  if (mouseInside(x, y, w, h))
+  {
+    Input.Hot = id;
+    if (Input.Active === 0 && Input.MouseDown)
     {
-      uiState.active = id;
+      Input.Active = id;
     }
   }
 
   // backdrop
-  pushQuad(x + 2, y + 2, buttonW, buttonH, 0xFF000000);
-  if (uiState.hot == id)
+  // pushQuad(x + 2, y + 2, w, h, 0xFF000000);
+  if (Input.Hot === id)
   {
-    if (uiState.active == id)
+    if (Input.Active === id)
     {
-      // active and hot
-      x += 2;
-      y += 2;
-      pushQuad(x, y, buttonW, buttonH, 0xFFEEEEEE);
+      // Active and Hot (Clicked)
+      // pushQuad(x, y, w, h, 0xFFEEEEEE);
     }
     else
     {
-      // hot
-      pushQuad(x, y, buttonW, buttonH, 0xFFEEEEEE);
+      // Hot (Hover)
+      // pushQuad(x, y, w, h, 0xFFEEEEEE);
     }
   }
   else
   {
-    // default
-    pushQuad(x, y, buttonW, buttonH, 0xFFAAAAAA);
+    // Default
+    // pushQuad(x, y, w, h, 0xFFAAAAAA);
   }
 
-  pushText(text, x + 5, y + 5, { colour: 0xFF000000 });
+  // pushText(text, x + 5, y + 5, { colour: 0xFF000000 });
 
-  if (uiState.mouseDown && uiState.hot === id && uiState.active === id)
+  if (Input.MouseDown && Input.Hot === id && Input.Active === id)
   {
     return true;
   }

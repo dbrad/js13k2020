@@ -84,7 +84,7 @@ function preprocessJs()
 {
   if (devBuild)
   {
-    return gulp.src(`./build/js/*.js`)
+    return gulp.src(`./build/js/**/*.js`, { base: './build/js/' })
       .pipe(sourcemaps.init({ loadMaps: true }))
       .pipe(preprocess({ context: preprocessContext }))
       .pipe(sourcemaps.write())
@@ -92,21 +92,23 @@ function preprocessJs()
   }
   else
   {
-    return gulp.src(`./build/js/*.js`)
+    return gulp.src(`./build/js/**/*.js`, { base: './build/js/' })
       .pipe(preprocess({ context: {} }))
       .pipe(gulp.dest(`./build/${env}/pre`));
   }
 }
 
+let cache;
 function rollupJs()
 {
   return rollup.rollup({
+    cache,
     input: `./build/${env}/pre/game.js`,
     plugins: [
       rollupSourcemaps(),
       rollupTerser({
         compress: {
-          passes: 10
+          passes: 1
         },
         toplevel: true,
         mangle: {
@@ -118,6 +120,7 @@ function rollupJs()
     ]
   }).then(bundle =>
   {
+    cache = bundle.cache;
     return bundle.write({
       file: `./build/${env}/www/game.js`,
       format: `iife`,
@@ -136,6 +139,7 @@ function cleanPng()
     })
     .pipe(clean());
 }
+
 function buildPng()
 {
   return gulp
@@ -166,7 +170,6 @@ function buildJson()
       next(null, file);
     }))
     .pipe(gulp.dest(`./build/${env}/pre`));
-  // .pipe( gulp.dest( `./build/${ env }/www/` ) );
 }
 
 function serve()
@@ -187,8 +190,8 @@ function watch()
   gulp.watch([`./src/res/*.json`], gulp.series(cleanJson, buildJson, buildHtml));
   gulp.watch([`./src/html/index.html`], gulp.series(cleanJson, buildJson, buildHtml));
   gulp.watch([`./src/css/*.css`], buildCss);
-  gulp.watch([`./build/js/*.js`], preprocessJs);
-  gulp.watch([`./build/${env}/pre/*.js`], rollupJs);
+  gulp.watch([`./build/js/**/*.js`], { delay: 1000 }, gulp.series(preprocessJs, rollupJs));
+  // gulp.watch([`./build/${env}/pre/**/*.js`], { delay: 1000 }, rollupJs);
 }
 
 const build = exports.build =

@@ -11,15 +11,12 @@ export function pushSprite(textureName: string, x: number, y: number, colour: nu
     throw new Error(`No such texture as ${ textureName }`);
   }
   // @endif
-  gl.save();
   gl.translate(x, y);
-  gl.scale(sx, sy);
-  gl.push(t.atlas, 0, 0, t.w, t.h, t.u0, t.v0, t.u1, t.v1, colour);
-  gl.restore();
+  gl.push(t.atlas, 0, 0, t.w * sx, t.h * sy, t.u0, t.v0, t.u1, t.v1, colour);
 }
 
 
-export function pushQuad(x: number, y: number, w: number, h: number, colour: number = 0xFFFFFFFF): void
+export function pushQuad(x: number, y: number, w: number, h: number, colour: number = 0xFFFFFFFF, save: boolean = true): void
 {
   const t: Texture = TEXTURE_CACHE.get("flat");
   // @ifdef DEBUG
@@ -30,12 +27,11 @@ export function pushQuad(x: number, y: number, w: number, h: number, colour: num
   // @endif
   gl.save();
   gl.translate(x, y);
-  gl.scale(w, h);
-  gl.push(t.atlas, 0, 0, t.w, t.h, t.u0, t.v0, t.u1, t.v1, colour);
+  gl.push(t.atlas, 0, 0, w, h, t.u0, t.v0, t.u1, t.v1, colour);
   gl.restore();
 }
 
-export enum Align
+export const enum Align
 {
   Left,
   Center,

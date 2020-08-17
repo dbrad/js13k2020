@@ -1,0 +1,26 @@
+Space or ocean survivial game
+Board game-esk
+Dice + Cards
+Events Deck
+Player Actions Deck
+Dice to Allocate
+
+
+Things on screen in game
+Event Deck
+Active Event Card(s)
+
+"dice" - interactive
+player Deck
+player Cards - interactive
+
+toooooooltippppps
+
+
+Events
+- Get _ Resource
+- Perils
+
+createNode(x, y, enabled)
+moveNode(id, x, y)
+addNode(parent, child)

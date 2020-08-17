@@ -36,7 +36,9 @@
 			"windows": {
 				"command": "C:\\Program Files\\Mozilla Firefox\\firefox.exe"
 			},
-			"args": ["http://localhost:1234/"]
+			"args": [
+				"http://localhost:1234/"
+			]
 		},
 		{
 			"label": "Firefox (RELEASE)",
@@ -44,16 +46,18 @@
 			"windows": {
 				"command": "C:\\Program Files\\Mozilla Firefox\\firefox.exe"
 			},
-			"args": ["http://localhost:2345/"]
+			"args": [
+				"http://localhost:2345/"
+			]
 		},
 		{
 			"label": "Build",
 			"dependsOn": [
 				"typescript",
 				"gulp debug",
-				"gulp release",
+				//"gulp release",
 				"Firefox (DEBUG)",
-				"Firefox (RELEASE)"
+				//"Firefox (RELEASE)"
 			],
 			"group": {
 				"kind": "build",
