@@ -6,7 +6,8 @@ import { Input } from "../gamestate";
 import { pushScene, Scenes } from "../scene";
 
 export let mainMenuRootId = -1;
-let playGameButtonId = 0;
+let playGameButtonId = -1;
+let playGameFSButtonId = -1;
 export function setupMainMenu(): void
 {
   mainMenuRootId = createNode();
@@ -14,14 +15,29 @@ export function setupMainMenu(): void
   node_size[mainMenuRootId][0] = screenWidth;
   node_size[mainMenuRootId][1] = screenHeight;
 
-  playGameButtonId = createButton("Start Game", [120, 40], [screenCenterX - 60, screenCenterY - 20]);
+  playGameButtonId = createButton("New Game", [120, 40], [screenCenterX - 60, screenCenterY - 20]);
   addChildNode(mainMenuRootId, playGameButtonId);
+
+  playGameFSButtonId = createButton("New Game (Fullscreen)", [120, 40], [screenCenterX - 60, screenCenterY + 30]);
+  addChildNode(mainMenuRootId, playGameFSButtonId);
 }
 
 export function mainMenu(now: number, delta: number): void
 {
   if (Input._active === playGameButtonId)
   {
+    pushScene(Scenes.Game);
+  }
+
+  if (Input._active === playGameFSButtonId)
+  {
+    if (document.fullscreenEnabled)
+    {
+      if (!document.fullscreenElement)
+      {
+        document.documentElement.requestFullscreen();
+      }
+    }
     pushScene(Scenes.Game);
   }
 

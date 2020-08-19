@@ -222,7 +222,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/node.ts": {
-        "version": "1cf30e61b4876d329e35d8afcd967aecdd80c3fc705119af1a29883c0b3012bc",
+        "version": "2e6075510b30e148bf128da3281dfe452363817d68cde280cf300d4cb3d94234",
         "signature": "94a5352c4e9f3153526a45519dbd11343094d804f52d0de4c2a9d7c96babf2f8",
         "affectsGlobalScope": false
       },
@@ -232,7 +232,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/scenes/mainmenu.ts": {
-        "version": "56fc9443ce7a2d29b3d28ea87ab5080def3b9e23c638943ca720721198f2ebcf",
+        "version": "46dbf9e53d0810c92db55da4fc658813a338f551e5d291aa52f4b20ba1df1f49",
         "signature": "efc7cc36a9d3f57f41235a11f61776d752ae7ac29a56056efd8f6aab955ebe09",
         "affectsGlobalScope": false
       },

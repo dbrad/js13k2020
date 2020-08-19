@@ -5,7 +5,7 @@ import { DEBUG } from "./gamestate";
 import * as gl from "./gl.js";
 import { v2, subV2 } from "./types";
 import { Input } from "./gamestate";
-import { pushQuad, pushSprite, pushText, Align } from "./draw";
+import { pushQuad, pushSprite, pushText, Align, textHeight, parseText } from "./draw";
 import { mouseInside } from "./util.js";
 import { Easing, InterpolationData, createInterpolationData } from "./interpolate";
 import { buttonHover, buttonClick } from "./zzfx";
@@ -337,7 +337,10 @@ export function renderNode(nodeId: number): void
           }
           pushQuad(pos[0] + 1, pos[1] + 1, size[0] - 2, size[1] - 2, 0xFF2d2d2d);
           gl.translate(pos[0], pos[1]);
-          pushText(node_button_text.get(nodeId), size[0] / 2, size[1] / 2 - 3, { _textAlign: Align.Center });
+          const lineCount = parseText(node_button_text.get(nodeId), { _textAlign: Align.Center, _wrap: size[0] - 2 });
+          pushText(node_button_text.get(nodeId),
+            size[0] / 2, size[1] / 2 - (lineCount * 8 / 2),
+            { _textAlign: Align.Center, _wrap: size[0] - 2 });
           break;
         default:
           gl.translate(pos[0], pos[1]);
