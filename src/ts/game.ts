@@ -11,7 +11,7 @@ import { screenWidth, screenHeight } from "./screen";
 import { Input } from "./gamestate";
 import { nodeInput as nodeInput, node_movement, moveNode } from "./node";
 import { interp } from "./interpolate";
-import { v2 } from "./types";
+import { v2 } from "./v2";
 import { gameScreen, setupGameScreen } from "./scenes/gamescreen";
 
 window.addEventListener("load", async () =>

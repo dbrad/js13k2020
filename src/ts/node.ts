@@ -3,7 +3,7 @@ import { DEBUG } from "./gamestate";
 // @endif
 
 import * as gl from "./gl.js";
-import { v2, subV2 } from "./types";
+import { v2, subV2 } from "./v2";
 import { Input } from "./gamestate";
 import { pushQuad, pushSprite, pushText, Align, textHeight, parseText } from "./draw";
 import { mouseInside } from "./util.js";

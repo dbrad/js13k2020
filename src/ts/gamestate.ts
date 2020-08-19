@@ -1,4 +1,4 @@
-import { v2 } from "./types";
+import { v2 } from "./v2";
 
 // @ifdef DEBUG
 export let DEBUG: boolean = false;

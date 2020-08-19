@@ -35,7 +35,22 @@ export function mainMenu(now: number, delta: number): void
     {
       if (!document.fullscreenElement)
       {
-        document.documentElement.requestFullscreen();
+        if (document.documentElement.requestFullscreen)
+        {
+          document.documentElement.requestFullscreen();
+        }
+        else if (document.documentElement.mozRequestFullScreen)
+        {
+          document.documentElement.mozRequestFullScreen();
+        }
+        else if (document.documentElement.webkitRequestFullscreen)
+        {
+          document.documentElement.webkitRequestFullscreen();
+        }
+        else if (document.documentElement.msRequestFullscreen)
+        {
+          document.documentElement.msRequestFullscreen();
+        }
       }
     }
     pushScene(Scenes.Game);
