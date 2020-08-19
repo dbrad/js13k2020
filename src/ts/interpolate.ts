@@ -1,5 +1,6 @@
 export const enum Easing
 {
+  None,
   Linear,
   EaseInBack,
   EaseInOutBack,
@@ -62,39 +63,68 @@ function ease(t: number, fn: Easing = Easing.Linear): number
     case Easing.Bounce:
       return bounce(t);
     case Easing.Linear:
-    default:
       return linear(t);
+    case Easing.None:
+    default:
+      return 1;
   }
 }
 
-type InterpolationData =
+export type InterpolationData =
   {
     _startTime: number,
     _duration: number,
-    _origin: number,
-    _target: number,
-    _easing: Easing
+    _origin: number[],
+    _target: number[],
+    _easing: Easing,
+    _callback: (...args: any[]) => void | null
   }
 
 type InterpolationResult =
   {
-    _value: number,
+    _values: number[],
     _done: boolean
   }
 
-export function createInterpolationData(startTime: number, duration: number, origin: number, destination: number, easing: Easing = Easing.Linear): InterpolationData
+export function createInterpolationData(
+  duration: number,
+  origin: number[],
+  destination: number[],
+  easing: Easing = Easing.Linear,
+  callback: (...args: any[]) => void | null = null): InterpolationData
 {
-  return { _startTime: startTime, _duration: duration, _origin: origin, _target: destination, _easing: easing };
+  return {
+    _startTime: -1,
+    _duration: duration,
+    _origin: [...origin],
+    _target: [...destination],
+    _easing: easing,
+    _callback: callback
+  };
 }
 
-export function interp(now: number, i: InterpolationData): InterpolationResult
+export function interp(now: number, iData: InterpolationData): InterpolationResult
 {
-  let elapsed = now - i._startTime;
-  if (elapsed >= i._duration)
+  if (iData._startTime === -1)
   {
-    return { _value: i._target, _done: true };
+    iData._startTime = now;
   }
-  let p = ease(elapsed / i._duration, i._easing);
-  let val = i._origin + Math.round(i._target - i._origin) * p;
-  return { _value: val, _done: (val === i._target) };
+  let elapsed = now - iData._startTime;
+  if (elapsed >= iData._duration)
+  {
+    if (iData._callback)
+    {
+      iData._callback();
+    }
+    return { _values: iData._target, _done: true };
+  }
+
+  let p = ease(elapsed / iData._duration, iData._easing);
+
+  let values: number[] = [];
+  for (let i = 0, len = iData._origin.length; i < len; i++)
+  {
+    values[i] = iData._origin[i] + Math.round(iData._target[i] - iData._origin[i]) * p;
+  }
+  return { _values: values, _done: false };
 }

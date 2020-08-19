@@ -1,0 +1,12 @@
+renderPlayerCards
+renderPlayerDeck
+renderEventDeck
+renderEventCards
+renderDice
+
+state machine for handling game phases / turns
+tagging for droppables
+
+Dice
+PlayerCard
+EventCard

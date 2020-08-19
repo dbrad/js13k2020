@@ -190,7 +190,7 @@ function watch()
   gulp.watch([`./src/res/*.json`], gulp.series(cleanJson, buildJson, buildHtml));
   gulp.watch([`./src/html/index.html`], gulp.series(cleanJson, buildJson, buildHtml));
   gulp.watch([`./src/css/*.css`], buildCss);
-  gulp.watch([`./build/js/**/*.js`], { delay: 1000 }, gulp.series(preprocessJs, rollupJs));
+  gulp.watch([`./build/js/**/*.js`], gulp.series(preprocessJs, rollupJs));
   // gulp.watch([`./build/${env}/pre/**/*.js`], { delay: 1000 }, rollupJs);
 }
 

@@ -1,15 +1,18 @@
 // @ifdef DEBUG
 import { tickStats } from "./stats";
+import { toggleDEBUG } from "./gamestate";
 // @endif
 
 import { clear, flush, initGL, setClearColour } from "./gl";
 import { loadAsset } from "./asset";
-import { uiState, imguiStart, imguiEnd } from "./imgui";
-import { scene_render, CurrentScene, scene_update, scene_root } from "./scene";
-import { setupMainMenu } from "./scenes/mainmenu";
+import { CurrentScene, getSceneRoot, Scenes } from "./scene";
+import { setupMainMenu, mainMenu } from "./scenes/mainmenu";
 import { screenWidth, screenHeight } from "./screen";
-import { toggleDEBUG, Input } from "./state";
-import { renderNode, updateNode } from "./node";
+import { Input } from "./gamestate";
+import { nodeInput as nodeInput, node_movement, moveNode } from "./node";
+import { interp } from "./interpolate";
+import { v2 } from "./types";
+import { gameScreen, setupGameScreen } from "./scenes/gamescreen";
 
 window.addEventListener("load", async () =>
 {
@@ -30,22 +33,23 @@ window.addEventListener("load", async () =>
 
   initGL(canvas);
   setupMainMenu();
+  setupGameScreen();
 
   document.addEventListener("pointermove", (e) =>
   {
     const canvasBounds = canvas.getBoundingClientRect();
-    Input.Pointer[0] = Math.floor((e.clientX - canvasBounds.left) / (canvasBounds.width / screenWidth));
-    Input.Pointer[1] = Math.floor((e.clientY - canvasBounds.top) / (canvasBounds.height / screenHeight));
+    Input._pointer[0] = Math.floor((e.clientX - canvasBounds.left) / (canvasBounds.width / screenWidth));
+    Input._pointer[1] = Math.floor((e.clientY - canvasBounds.top) / (canvasBounds.height / screenHeight));
   });
 
   document.addEventListener("pointerdown", (e) =>
   {
-    Input.MouseDown = true;
+    Input._mouseDown = true;
   });
 
   document.addEventListener("pointerup", (e) =>
   {
-    Input.MouseDown = false;
+    Input._mouseDown = false;
   });
 
   let then = 0;
@@ -60,28 +64,63 @@ window.addEventListener("load", async () =>
 
     clear();
 
-    let rootNodeId = scene_root[CurrentScene];
+    let rootNodeId = getSceneRoot(CurrentScene);
 
-    imguiStart();
+    // if we were hovering something last frame, lets make note of that.
+    if (Input._hot !== 0)
+    {
+      Input._lastHot = Input._hot;
+    }
+    Input._hot = 0;
+
     // Update
-    updateNode(rootNodeId);
-    scene_update[CurrentScene](now, delta);
+    // Input for Nodes
+    nodeInput(rootNodeId);
 
-    // Render
-    renderNode(rootNodeId);
-    scene_render[CurrentScene](now, delta);
-    imguiEnd();
+    // Node Systems Here
+    for (let [childId, iData] of node_movement)
+    {
+      let i = interp(now, iData);
+      moveNode(childId, i._values as v2);
+      if (i._done)
+      {
+        moveNode(childId, i._values as v2);
+        node_movement.delete(childId);
+      }
+    }
+
+    switch (CurrentScene)
+    {
+      case Scenes.Game:
+        gameScreen(now, delta);
+        break;
+      case Scenes.MainMenu:
+      default:
+        mainMenu(now, delta);
+    }
+
+    // Check for Mouse Up to Reset Input States
+    if (Input._hot === 0) { Input._lastHot = 0; }
+    if (!Input._mouseDown)
+    {
+      Input._active = 0;
+      Input._dragOffset[0] = 0;
+      Input._dragOffset[1] = 0;
+      Input._dragParent = 0;
+    }
 
     flush();
+
     // @ifdef DEBUG
     tickStats(delta, now, performance.now());
     flush();
     // @endif
+
     requestAnimationFrame(loop);
   }
 
   await loadAsset("sheet");
-  setClearColour(25, 25, 25);
+  setClearColour(45, 45, 45);
   then = performance.now();
   requestAnimationFrame(loop);
 });

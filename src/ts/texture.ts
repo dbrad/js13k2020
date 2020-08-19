@@ -1,7 +1,7 @@
 import * as gl from "./gl";
 
 export type Texture = {
-  atlas: WebGLTexture;
+  _atlas: WebGLTexture;
   w: number;
   h: number;
   u0: number;
@@ -56,7 +56,7 @@ export function loadSpriteSheet(sheet: TextureAssetJson): Promise<any>
             console.log("LOADING SPRITE => " + texture.name);
             // @endif
             TEXTURE_CACHE.set(texture.name as string, {
-              atlas: glTexture,
+              _atlas: glTexture,
               w: texture.w,
               h: texture.h,
               u0: texture.x / image.width,
@@ -73,7 +73,7 @@ export function loadSpriteSheet(sheet: TextureAssetJson): Promise<any>
               console.log("LOADING SPRITE ROW");
               // @endif
               TEXTURE_CACHE.set(texture.name[i], {
-                atlas: glTexture,
+                _atlas: glTexture,
                 w: texture.w,
                 h: texture.h,
                 u0: ox / image.width,

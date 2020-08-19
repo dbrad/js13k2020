@@ -1,0 +1,30 @@
+do input
+do movement interp
+
+run scene specific logic (input is done, and nodes are where they should be accoridng to interp)
+render out from root node
+
+
+should un movable nodes be stored? ....
+for my style of gui maybe....
+how do I get the Ids?
+how do i communcate from "id # is active" to was THIS button pressed?
+do I store the ids as variables? maybe... its what i do for root nodes....
+this is only important for one-to-one logic...
+i could waste a tag (start game button) and check for it...
+i only get 31 TAGs with a since variable mask tho...
+
+PLAYERCARD
+DIE
+EVENTCARD
+PLAYERCARDSLOT
+DIESLOT
+....
+
+do i need an event / message system?
+keep it in mind
+
+consider a touch to start screen....
+
+
+I should be able to animate screen transitions.... since the root controls all children

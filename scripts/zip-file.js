@@ -10,8 +10,10 @@ const archive = archiver("zip", { zlib: { level: 9, memLevel: 9 } });
 archive.pipe(output);
 archive.directory("dist\\src", false);
 archive.finalize();
-output.on("close", () => {
-  execFile(advzip, ["-z", "-4", "-i 2000", `.\\dist\\game.zip`], err => {
+output.on("close", () =>
+{
+  execFile(advzip, ["-z", "-4", "-i 20000", `.\\dist\\game.zip`], err =>
+  {
     if (err) console.log(err);
     else console.log("ZIP file minified!");
   });

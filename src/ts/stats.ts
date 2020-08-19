@@ -1,6 +1,6 @@
 // @ifdef DEBUG
 import { Align, pushQuad, pushText } from "./draw";
-import { DEBUG } from "./state";
+import { DEBUG } from "./gamestate";
 
 let frameCount: number = 0;
 let fps: number = 60;
@@ -37,9 +37,9 @@ export function tickStats(delta: number, beginTime: number, endTime: number): vo
     if (DEBUG)
     {
         pushQuad(0, 0, 65, 29, 0xDD333333);
-        pushText(displayFps, 64, 0, { textAlign: Align.Right });
-        pushText(displayMs, 64, 10, { textAlign: Align.Right });
-        pushText(displayFrameTime, 64, 20, { textAlign: Align.Right });
+        pushText(displayFps, 64, 0, { _textAlign: Align.Right });
+        pushText(displayMs, 64, 10, { _textAlign: Align.Right });
+        pushText(displayFrameTime, 64, 20, { _textAlign: Align.Right });
     }
 }
 // @endif

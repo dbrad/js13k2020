@@ -1,0 +1,79 @@
+each turn energy of each cell goes up by 1
+Cards are brought into play area
+Cards having ongoing effects
+Cards can be powered for imediate effects
+Event cards are sometimes boons, sometimes penalties, sometimes perils
+Boons must be powered to collect
+penalties auto resolve
+perils must be power with some other requirement on top of that
+perils have ongoing effects
+if a peril shifts to the end spot, it actives its catastrophe
+- ie hull breach leaks 1 oxygen each turn until fixed with power and materials
+- if hull breach gets to the skull spot, it will set player's oxygen to zero
+
+player needs food, water, oxygen?, materials?
+matter is used to make new cards
+
+at end of each turn 1 food, 1 water, and 1 oxygen are consumed or the player loses
+win conditions?
+
+discard down to 5 cards in hand at end of turn
+draw 1 card each turn
+max hand size of 8?
+
+
+How do I want to handle hover/click/drop events
+Where should I write / store the logic for individual nodes?
+
+imgui style would be to do
+if(button) {
+  do the thing
+}
+... ive kind of started storing some state tho.... is that ok....
+
+
+mainmenuupdate()
+  if(activeid == (startbuttonid)) {
+    do the start button
+  }
+
+  what about drops?
+
+loop through droppables
+  if a droppable is fulfilled, do action based on its tag?
+  can backtrack or store what card / die is linked to the node dropped in it right now....
+
+treat the nodes as pools for possible in game things to be interacted with...
+If thats the case I do need a way to relate a nodeid back to game state data...
+nodes will be tagged with their general job....
+Player Cards
+Player Deck
+Die
+rendering data out is easy as iterate the game state data arrays during render....
+but to relate it back....
+
+a drop needs to update game state right away....
+could do somethign gross like lookup ids (player_card_0, etc) and parse it back to the actual data...
+could use the tags + a stored index when applicable PLAYER_CARD + 0 (node_state_index) will be 0 or -1 for objects there are 1 of... or not set...
+
+the droppables KNOW what is in them (ie card slot knows a player card was dropped) so the logic for it just needs to know what card in the players hand is being transfered to the field...
+
+for(droppable)
+  if fulfilled
+    if playercardslot
+      i = node_state_index[me]
+      playerhand[i] goto playercardslot #me
+
+
+droppable gets dropped in
+the dropped item is made invisible
+a new applicable node takes its place on the same frame
+
+playercardhand vs 
+
+does player card slot render the card, or does another node live on it on?
+player card slot wants a player card to be dropped
+the played card wants a die instead
+can re-tag it
+or can disable drop on that one, and add a die drop spot as a child of it...
+      
