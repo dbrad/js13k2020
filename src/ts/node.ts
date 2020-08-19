@@ -293,7 +293,7 @@ export function renderNode(nodeId: number): void
           break;
 
         case TAG.EVENT_SLOT:
-          pushSprite("ds", pos[0], pos[1], 0xFFFFFFFF, 3, 3);
+          pushSprite("ds", pos[0], pos[1], 0xFF303030, 3, 3);
           break;
 
         case TAG.PLAYER_CARD:
@@ -307,11 +307,11 @@ export function renderNode(nodeId: number): void
           break;
 
         case TAG.PLAYER_DISCARD:
-          pushSprite("ds", pos[0], pos[1], 0x99050505, 2, 2);
+          pushSprite("ds", pos[0], pos[1], 0xFF303030, 2, 2);
           break;
 
         case TAG.PLAY_SLOT:
-          pushSprite("ds", pos[0], pos[1], 0x99050505, 3, 3);
+          pushSprite("ds", pos[0], pos[1], 0xFF303030, 3, 3);
 
           break;
 

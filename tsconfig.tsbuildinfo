@@ -222,7 +222,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/node.ts": {
-        "version": "2d8b25a71fb8c12c48ea51b2f591051bbd51e5005a7d140808db71d847631b7d",
+        "version": "1cf30e61b4876d329e35d8afcd967aecdd80c3fc705119af1a29883c0b3012bc",
         "signature": "94a5352c4e9f3153526a45519dbd11343094d804f52d0de4c2a9d7c96babf2f8",
         "affectsGlobalScope": false
       },
@@ -237,7 +237,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/scenes/gamescreen.ts": {
-        "version": "bfc8ae52e4f1974b8c2d0c127d00bd4ff3c46c9567046cd702614912249813de",
+        "version": "66475d5e27f6ce9675be43f48f44d69413163fe0d5f005e36bf819d058e8df1d",
         "signature": "40e6fc0edee6193c0a87d763bd893451a412101f954aa0e002b8b2a7658ad50c",
         "affectsGlobalScope": false
       },
@@ -247,7 +247,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/game.ts": {
-        "version": "9a68ec9f60186f05c75ce0085063c90d5c29f16e24976d472c4dc718d0abe527",
+        "version": "5a6c6d2b15372b0a61d8c035bf71744cf212ad387a6c1b6acc8167fa685c8a93",
         "signature": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
         "affectsGlobalScope": false
       },
@@ -1277,6 +1277,7 @@
         "./src/ts/gamestate.ts",
         "./src/ts/interpolate.ts",
         "./src/ts/node.ts",
+        "./src/ts/nodes/button.ts",
         "./src/ts/screen.ts"
       ],
       "./src/ts/scenes/mainmenu.ts": [

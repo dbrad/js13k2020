@@ -3,6 +3,7 @@ import { screenWidth, screenHeight, screenCenterX, screenCenterY } from "../scre
 import { pushText, Align, pushQuad } from "../draw";
 import { playerHand, Input } from "../gamestate";
 import { Easing } from "../interpolate";
+import { createButton } from "../nodes/button";
 
 export let gameScreenRootId = -1;
 let playerCardIds: number[] = [];
@@ -137,7 +138,9 @@ export function setupGameScreen(): void
     moveNode(playAreaSlotId, [64 + 64 * i, 128])
   }
   //#endregion PLAY AREA
-  // 7 Player Card Slots
+
+  let endTurnButton = createButton("End Turn", [96, 32], [400, 192]);
+  addChildNode(gameScreenRootId, endTurnButton);
 }
 
 export function gameScreen(now: number, delta: number): void
@@ -177,7 +180,7 @@ export function gameScreen(now: number, delta: number): void
     }
   }
 
-  // pushQuad(15, 15, 34, 194, 0xFFFFFFFF);
+  pushText("Turn 0", 448, 88, { _textAlign: Align.Center, _scale: 2 });
 
   renderNode(gameScreenRootId);
 }

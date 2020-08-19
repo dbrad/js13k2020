@@ -35,22 +35,59 @@ window.addEventListener("load", async () =>
   setupMainMenu();
   setupGameScreen();
 
-  document.addEventListener("pointermove", (e) =>
+  function isTouch(e: Event | PointerEvent | TouchEvent): e is TouchEvent
+  {
+    return (e.type[0] === "t");
+  }
+
+  function isPointer(e: Event | PointerEvent | TouchEvent): e is PointerEvent
+  {
+    return (e.type[0] === "p");
+  }
+
+  function pointerMove(e: PointerEvent | TouchEvent)
   {
     const canvasBounds = canvas.getBoundingClientRect();
+    if (isTouch(e))
+    {
+      e.preventDefault();
+      const touch: Touch = e.touches[0];
+      Input._pointer[0] = Math.floor((touch.clientX - canvasBounds.left) / (canvasBounds.width / screenWidth));
+      Input._pointer[1] = Math.floor((touch.clientY - canvasBounds.top) / (canvasBounds.height / screenHeight));
+      return;
+    }
+    e = e as PointerEvent;
     Input._pointer[0] = Math.floor((e.clientX - canvasBounds.left) / (canvasBounds.width / screenWidth));
     Input._pointer[1] = Math.floor((e.clientY - canvasBounds.top) / (canvasBounds.height / screenHeight));
-  });
+  }
 
-  document.addEventListener("pointerdown", (e) =>
+  function pointerDown(e: PointerEvent | TouchEvent)
   {
+    if (isTouch(e))
+    {
+      const canvasBounds = canvas.getBoundingClientRect();
+      const touchEvent = e as TouchEvent;
+      touchEvent.preventDefault();
+      const touch: Touch = touchEvent.touches[0];
+      Input._pointer[0] = Math.floor((touch.clientX - canvasBounds.left) / (canvasBounds.width / screenWidth));
+      Input._pointer[1] = Math.floor((touch.clientY - canvasBounds.top) / (canvasBounds.height / screenHeight));
+    }
     Input._mouseDown = true;
-  });
+  }
 
-  document.addEventListener("pointerup", (e) =>
+  function pointerUp(e: PointerEvent | TouchEvent)
   {
     Input._mouseDown = false;
-  });
+  }
+
+  document.addEventListener("pointermove", pointerMove);
+  document.addEventListener("touchmove", pointerMove);
+
+  canvas.addEventListener("pointerdown", pointerDown);
+  canvas.addEventListener("touchstart", pointerDown);
+
+  canvas.addEventListener("pointerup", pointerUp);
+  canvas.addEventListener("touchend", pointerUp);
 
   let then = 0;
   let delta = 0;
@@ -120,7 +157,7 @@ window.addEventListener("load", async () =>
   }
 
   await loadAsset("sheet");
-  setClearColour(45, 45, 45);
+  setClearColour(16, 16, 16);
   then = performance.now();
   requestAnimationFrame(loop);
 });
