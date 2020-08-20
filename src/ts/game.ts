@@ -159,5 +159,6 @@ window.addEventListener("load", async () =>
   await loadAsset("sheet");
   setClearColour(16, 16, 16);
   then = performance.now();
+  window.scrollTo(0, 1);
   requestAnimationFrame(loop);
 });
