@@ -26,3 +26,29 @@ export let playerHand: number[] = [0, 0, 0, 0, 0, 0, 0];
 // Player Hand
 // Event Deck
 // Event In-Play Area
+
+export function requestFullscreen(): void
+{
+  if (document.fullscreenEnabled)
+  {
+    if (!document.fullscreenElement)
+    {
+      if (document.documentElement.requestFullscreen)
+      {
+        document.documentElement.requestFullscreen();
+      }
+      else if (document.documentElement.mozRequestFullScreen)
+      {
+        document.documentElement.mozRequestFullScreen();
+      }
+      else if (document.documentElement.webkitRequestFullscreen)
+      {
+        document.documentElement.webkitRequestFullscreen();
+      }
+      else if (document.documentElement.msRequestFullscreen)
+      {
+        document.documentElement.msRequestFullscreen();
+      }
+    }
+  }
+}

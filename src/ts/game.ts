@@ -1,6 +1,6 @@
 // @ifdef DEBUG
 import { tickStats } from "./stats";
-import { toggleDEBUG } from "./gamestate";
+import { toggleDEBUG, requestFullscreen } from "./gamestate";
 // @endif
 
 import { clear, flush, initGL, setClearColour } from "./gl";
@@ -40,11 +40,6 @@ window.addEventListener("load", async () =>
     return (e.type[0] === "t");
   }
 
-  function isPointer(e: Event | PointerEvent | TouchEvent): e is PointerEvent
-  {
-    return (e.type[0] === "p");
-  }
-
   function pointerMove(e: PointerEvent | TouchEvent)
   {
     const canvasBounds = canvas.getBoundingClientRect();
@@ -65,6 +60,7 @@ window.addEventListener("load", async () =>
   {
     if (isTouch(e))
     {
+      requestFullscreen();
       const canvasBounds = canvas.getBoundingClientRect();
       const touchEvent = e as TouchEvent;
       touchEvent.preventDefault();
@@ -159,6 +155,5 @@ window.addEventListener("load", async () =>
   await loadAsset("sheet");
   setClearColour(16, 16, 16);
   then = performance.now();
-  window.scrollTo(0, 1);
   requestAnimationFrame(loop);
 });
