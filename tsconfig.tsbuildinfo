@@ -192,8 +192,8 @@
         "affectsGlobalScope": false
       },
       "./src/ts/gamestate.ts": {
-        "version": "c59109452b4f8f8335f2887cb963f40c2ccaf72738942f843985d8a856db8dff",
-        "signature": "fe66aaf3f580b7251145e9f1e4956af171917997e20dcc2c62fb4c92db5e2886",
+        "version": "1db87039ddeeffc479f78884e26052fa13cc1a21a3a7cf73dac4f420e3962d62",
+        "signature": "8a4f93ee4355c568182ddc190a2901224813fe88a20d50c78b7585ce55b265dd",
         "affectsGlobalScope": false
       },
       "./src/ts/stats.ts": {
@@ -232,7 +232,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/scenes/mainmenu.ts": {
-        "version": "e28a5f08e6cec303d292b44f0e327d71d6dc8dfdcbff1e779cf9320193ff4b35",
+        "version": "bdab1c10de6e6429f538afca7409224908647e9d040d82fb0d0901410f8dc324",
         "signature": "efc7cc36a9d3f57f41235a11f61776d752ae7ac29a56056efd8f6aab955ebe09",
         "affectsGlobalScope": false
       },
@@ -247,8 +247,8 @@
         "affectsGlobalScope": false
       },
       "./src/ts/game.ts": {
-        "version": "12b599adebddf28bf04451668fec74ed5df9a6cec7a9c9c52bf5d005fc8a6c6e",
-        "signature": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
+        "version": "5b693ececb18abda095d4d68687aff7ca9d2da7093ae05cf424d77af115073db",
+        "signature": "2fc3a17e0b7cb714ddf74ecb59d49071234ff3a251f39003c5702174a6dd3128",
         "affectsGlobalScope": false
       },
       "./src/ts/types.d.ts": {
@@ -1291,6 +1291,7 @@
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./src/ts/draw.ts",
+        "./src/ts/game.ts",
         "./src/ts/gamestate.ts",
         "./src/ts/node.ts",
         "./src/ts/nodes/button.ts",

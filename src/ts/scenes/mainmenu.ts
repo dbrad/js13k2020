@@ -2,8 +2,9 @@ import { pushText, Align } from "../draw";
 import { screenHeight, screenCenterX, screenCenterY, screenWidth } from "../screen";
 import { renderNode, createNode, addChildNode, node_visible, node_size } from "../node";
 import { createButton } from "../nodes/button";
-import { Input, requestFullscreen } from "../gamestate";
+import { Input } from "../gamestate";
 import { pushScene, Scenes } from "../scene";
+import { requestFullscreen } from "../game";
 
 export let mainMenuRootId = -1;
 let playGameButtonId = -1;

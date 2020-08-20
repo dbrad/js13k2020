@@ -1,6 +1,6 @@
 // @ifdef DEBUG
 import { tickStats } from "./stats";
-import { toggleDEBUG, requestFullscreen } from "./gamestate";
+import { toggleDEBUG } from "./gamestate";
 // @endif
 
 import { clear, flush, initGL, setClearColour } from "./gl";
@@ -14,6 +14,26 @@ import { interp } from "./interpolate";
 import { v2 } from "./v2";
 import { gameScreen, setupGameScreen } from "./scenes/gamescreen";
 
+let canvas: HTMLCanvasElement;
+export function requestFullscreen(): void
+{
+  try
+  {
+    if (document.fullscreenEnabled)
+    {
+      if (!document.fullscreenElement)
+      {
+        const fullscreen = canvas.requestFullscreen || canvas.mozRequestFullScreen || canvas.webkitRequestFullscreen || canvas.msRequestFullscreen;
+        //@ts-ignore
+        fullscreen.call(canvas);
+      }
+    }
+  }
+  catch (ex)
+  {
+    console.log(ex);
+  }
+}
 window.addEventListener("load", async () =>
 {
   // @ifdef DEBUG
@@ -27,7 +47,7 @@ window.addEventListener("load", async () =>
     }
   })
   // @endif
-  const canvas = document.querySelector("canvas");
+  canvas = document.querySelector("canvas");
   canvas.width = screenWidth;
   canvas.height = screenHeight;
 
