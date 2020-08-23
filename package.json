@@ -11,7 +11,7 @@
     "create-dist": "yarn mkdirp ./dist/src",
     "inline": "html-inline -i ./build/release/www/index.html -o ./dist/src/index.html",
     "build": "yarn run delete-dist && yarn run create-dist && yarn run compile && yarn run inline",
-    "zip": "yarn run build -s && yarn node ./scripts/zip-file.js -s && yarn size -s",
+    "zip": "yarn run build -s && yarn node ./scripts/zip-file.js -s && ./ect-0.8.3.exe -9 -zip ./dist/game.zip  && yarn size -s",
     "size": "yarn node ./scripts/check-file-size.js",
     "submit": "yarn run zip"
   },

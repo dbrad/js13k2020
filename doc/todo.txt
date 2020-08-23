@@ -1,12 +1,22 @@
-renderPlayerCards
-renderPlayerDeck
-renderEventDeck
-renderEventCards
-renderDice
-
 state machine for handling game phases / turns
 tagging for droppables
 
-Dice
-PlayerCard
-EventCard
+Game Phases
+
+Pre-Game
+Event Draw
+Player Power
+Player Draw
+Player Actions
+Player Discard
+Event Resolution
+Resource Consumption
+Check for Loss
+
+Event Types
+Boons - Spend Power to Collect a Resource, goes away if gets to end spot
+Consumption Events - Random events that consume resources.
+Perils - Negative effect for each turn in play, bigger negative effect if it reaches the 6th spot. Require resources + power to address.
+Win Conditions: Passing Ship (need signal strength + power amount)
+
+Distress Signal Strength

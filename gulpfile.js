@@ -108,7 +108,7 @@ function rollupJs()
       rollupSourcemaps(),
       rollupTerser({
         compress: {
-          passes: 1
+          passes: 10
         },
         toplevel: true,
         mangle: {

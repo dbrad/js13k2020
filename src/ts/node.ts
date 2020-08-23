@@ -5,7 +5,7 @@ import { DEBUG } from "./gamestate";
 import * as gl from "./gl.js";
 import { v2, subV2 } from "./v2";
 import { Input } from "./gamestate";
-import { pushQuad, pushSprite, pushText, Align, textHeight, parseText } from "./draw";
+import { pushQuad, pushSprite, pushText, Align, textHeight, parseText, pushSpriteAndSave } from "./draw";
 import { mouseInside } from "./util.js";
 import { Easing, InterpolationData, createInterpolationData } from "./interpolate";
 import { buttonHover, buttonClick } from "./zzfx";
@@ -16,7 +16,8 @@ export const enum TAG
   PLAYER_CARD,
   PLAYER_DECK,
   PLAYER_DISCARD,
-  PLAY_SLOT,
+  IN_PLAY_SLOT,
+  IN_PLAY_CARD,
   EVENT_CARD,
   EVENT_DECK,
   EVENT_SLOT,
@@ -27,12 +28,13 @@ export const node_position: v2[] = [];
 export const node_abs_position: v2[] = [];
 export const node_movement: Map<number, InterpolationData> = new Map();
 export const node_size: v2[] = [];
+export const node_scale: number[] = [];
 export const node_enabled: boolean[] = [];
 
 export const node_tags: TAG[] = [];
 
 export const node_draggable: Map<number, boolean> = new Map();
-export const node_dropable: Map<number, boolean> = new Map();
+export const node_droppable: Map<number, boolean> = new Map();
 export const node_clickable: Map<number, boolean> = new Map();
 export const node_hoverable: Map<number, boolean> = new Map();
 
@@ -54,6 +56,7 @@ export function createNode(): number
   node_children[0].push(id);
 
   node_size[id] = [16, 16];
+  node_scale[id] = 1;
   node_position[id] = [0, 0];
 
   node_enabled[id] = true;
@@ -112,7 +115,14 @@ export function moveNode(nodeId: number, pos: v2, ease: Easing = Easing.None, du
   return Promise.resolve();
 }
 
-function nodeAbsolutePosition(nodeId: number, refresh: boolean = false): v2
+export function nodeSize(nodeId: number): v2
+{
+  const size = node_size[nodeId];
+  const scale = node_scale[nodeId];
+  return [size[0] * scale, size[1] * scale];
+}
+
+export function nodeAbsolutePosition(nodeId: number, refresh: boolean = false): v2
 {
   if (node_abs_position[nodeId] && !refresh)
   {
@@ -132,8 +142,8 @@ function nodeAbsolutePosition(nodeId: number, refresh: boolean = false): v2
 
 function nodesUnderPoint(nodeId: number, point: v2): number[]
 {
-  let pos = node_position[nodeId];
-  let size = node_size[nodeId];
+  let pos = nodeAbsolutePosition(nodeId);
+  let size = nodeSize(nodeId);
   let result: number[] = [];
 
   if (mouseInside(pos[0], pos[1], size[0], size[1]))
@@ -150,7 +160,7 @@ function nodesUnderPoint(nodeId: number, point: v2): number[]
 export function setNodeDropable(nodeId: number, val: boolean = true): void
 {
   // TODO(dbrad): need to make this a mask for the tags instead of boolean
-  node_dropable.set(nodeId, val);
+  node_droppable.set(nodeId, val);
 }
 
 export function setNodeDraggable(nodeId: number, val: boolean = true): void
@@ -171,13 +181,12 @@ export function setNodeHoverable(nodeId: number, val: boolean = true): void
   node_hoverable.set(nodeId, val);
 }
 
-
 export function nodeInput(nodeId: number, rootId: number = nodeId): void
 {
   if (node_enabled[nodeId])
   {
-    let pos = nodeAbsolutePosition(nodeId);
-    const size = node_size[nodeId];
+    let pos = nodeAbsolutePosition(nodeId, true);
+    const size = nodeSize(nodeId);
 
     if (Input._active > 0)
     {
@@ -187,7 +196,8 @@ export function nodeInput(nodeId: number, rootId: number = nodeId): void
     // Hover
     if (node_hoverable.get(nodeId)
       && Input._hot <= 0
-      && mouseInside(pos[0], pos[1], size[0], size[1]))
+      && mouseInside(pos[0], pos[1], size[0], size[1])
+      && !node_movement.has(nodeId))
     {
       Input._hot = nodeId;
     }
@@ -220,26 +230,37 @@ export function nodeInput(nodeId: number, rootId: number = nodeId): void
     }
 
     // Mouse Up
-    if (Input._active === nodeId
-      && !Input._mouseDown)
+    if (Input._active === nodeId && !Input._mouseDown)
     {
+      // If this node is draggable
       if (node_draggable.get(nodeId))
       {
-        // Drop
+        // Attempt to drop
+        // Look for nodes under the mouse right now
         let targetIds = nodesUnderPoint(rootId, Input._pointer);
         let dropped = false;
-        for (let target of targetIds)
+        for (const targetId of targetIds)
         {
-          if (node_dropable.get(target))
+          // Check if the target is enabled, and droppable
+          if (node_enabled[targetId] && node_droppable.get(targetId))
           {
+            // If the target is a play slot, and the dropped node isnt a card, move on
+            if (node_tags[targetId] === TAG.IN_PLAY_SLOT && node_tags[nodeId] !== TAG.PLAYER_CARD) { continue; }
+            // If the target is an in-play card, and the dropped node isnt a die, move on
+            else if (node_tags[targetId] === TAG.IN_PLAY_CARD && node_tags[nodeId] !== TAG.DICE) { continue; }
+
+            if (node_tags[nodeId] === TAG.DICE)
+            {
+              console.log("DIE DROPPED");
+            }
             pos = nodeAbsolutePosition(nodeId);
-            addChildNode(target, nodeId);
-            moveNode(nodeId, subV2(pos, nodeAbsolutePosition(target)));
-            moveNode(nodeId, [0, 0], Easing.EaseOutQuad, 350);
+            addChildNode(targetId, nodeId);
+            moveNode(nodeId, subV2(pos, nodeAbsolutePosition(targetId)));
             dropped = true;
             break;
           }
         }
+        // If we didn't find a drop target, send it back to where it came from.
         if (!dropped)
         {
           pos = nodeAbsolutePosition(nodeId);
@@ -265,8 +286,9 @@ export function renderNode(nodeId: number): void
 {
   if (node_enabled[nodeId])
   {
-    let pos = node_position[nodeId];
-    let size = node_size[nodeId];
+    const pos = node_position[nodeId];
+    const size = nodeSize(nodeId);
+    const scale = node_scale[nodeId];
     gl.save();
 
     if (node_visible[nodeId])
@@ -274,45 +296,49 @@ export function renderNode(nodeId: number): void
       switch (node_tags[nodeId])
       {
         case TAG.DICE:
-          pushSprite("d1", pos[0], pos[1], 0xFFFFFFFF, 2, 2);
+          pushSprite("d1", pos[0], pos[1], 0xFFFFFFFF, scale, scale);
           if (Input._hot === nodeId && Input._active !== nodeId)
           {
-            pushSprite("ds", 0, 0, 0xFFAA1111, 2, 2);
+            pushSprite("ds", 0, 0, 0xFFAA1111, scale, scale);
           }
           break;
         case TAG.DICE_SLOT:
-          pushSprite("d0", pos[0], pos[1], 0xFFFFFFFF, 2, 2);
+          pushSprite("d0", pos[0], pos[1], 0xFFFFFFFF, scale, scale);
           break;
 
         case TAG.EVENT_CARD:
-          pushSprite("card", pos[0], pos[1], 0xFFFFFFFF, 3, 3);
+          pushSprite("card", pos[0], pos[1], 0xFFFFFFFF, scale, scale);
           break;
 
         case TAG.EVENT_DECK:
-          pushSprite("card", pos[0], pos[1], 0xFFFFFFFF, 3, 3);
+          pushSprite("card", pos[0], pos[1], 0xFFFFFFFF, scale, scale);
           break;
 
         case TAG.EVENT_SLOT:
-          pushSprite("ds", pos[0], pos[1], 0xFF303030, 3, 3);
+          pushSprite("ds", pos[0], pos[1], 0xFF303030, scale, scale);
           break;
 
         case TAG.PLAYER_CARD:
-          // TODO(dbrad): render card art
-          pushSprite("card", pos[0], pos[1], 0xFFFFFFFF, 2, 2);
+        case TAG.IN_PLAY_CARD:
+          let temp = size[0] / 4;
+          let temp2 = size[0] / 2;
+          gl.translate(pos[0], pos[1]);
+          pushQuad(temp, temp, temp2, temp2, 0xFFFFFFFF);
+          pushSpriteAndSave("food", temp, temp, 0xFFFFFFFF, scale, scale);
+          pushSprite("card", 0, 0, 0xFF33FF33, scale, scale);
           break;
 
         case TAG.PLAYER_DECK:
-          pushSprite("card", pos[0], pos[1], 0xFFFFFFFF, 2, 2);
+          pushSprite("card", pos[0], pos[1], 0xFFFFFFFF, scale, scale);
           pushQuad(8, 8, 16, 16, 0xFF666666);
           break;
 
         case TAG.PLAYER_DISCARD:
-          pushSprite("ds", pos[0], pos[1], 0xFF303030, 2, 2);
+          pushSprite("ds", pos[0], pos[1], 0xFF303030, scale, scale);
           break;
 
-        case TAG.PLAY_SLOT:
-          pushSprite("ds", pos[0], pos[1], 0xFF303030, 3, 3);
-
+        case TAG.IN_PLAY_SLOT:
+          pushSprite("ds", pos[0], pos[1], 0xFF303030, scale, scale);
           break;
 
         case TAG.BUTTON:
@@ -359,21 +385,21 @@ export function renderNode(nodeId: number): void
       pushQuad(size[0] - 1, 0, 1, size[1], 0xFF00ff00);
       pushQuad(0, size[1] - 1, size[0], 1, 0xFF00ff00);
 
-      if (node_hoverable.get(nodeId) && Input._hot === nodeId)
-      {
-        pushQuad(0, 0, 1, size[1], 0xFF00ffFF);
-        pushQuad(0, 0, size[0], 1, 0xFF00ffFF);
-        pushQuad(size[0] - 1, 0, 1, size[1], 0xFF00ffFF);
-        pushQuad(0, size[1] - 1, size[0], 1, 0xFF00ffFF);
-      }
+      // if (node_hoverable.get(nodeId) && Input._hot === nodeId)
+      // {
+      //   pushQuad(0, 0, 1, size[1], 0xFF00ffFF);
+      //   pushQuad(0, 0, size[0], 1, 0xFF00ffFF);
+      //   pushQuad(size[0] - 1, 0, 1, size[1], 0xFF00ffFF);
+      //   pushQuad(0, size[1] - 1, size[0], 1, 0xFF00ffFF);
+      // }
 
-      if (node_clickable.get(nodeId) && Input._active === nodeId)
-      {
-        pushQuad(0, 0, 1, size[1], 0xFF0000FF);
-        pushQuad(0, 0, size[0], 1, 0xFF0000FF);
-        pushQuad(size[0] - 1, 0, 1, size[1], 0xFF0000FF);
-        pushQuad(0, size[1] - 1, size[0], 1, 0xFF0000FF);
-      }
+      // if (node_clickable.get(nodeId) && Input._active === nodeId)
+      // {
+      //   pushQuad(0, 0, 1, size[1], 0xFF0000FF);
+      //   pushQuad(0, 0, size[0], 1, 0xFF0000FF);
+      //   pushQuad(size[0] - 1, 0, 1, size[1], 0xFF0000FF);
+      //   pushQuad(0, size[1] - 1, size[0], 1, 0xFF0000FF);
+      // }
     }
     // @endif
 

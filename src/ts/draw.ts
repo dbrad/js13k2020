@@ -15,6 +15,13 @@ export function pushSprite(textureName: string, x: number, y: number, colour: nu
   gl.push(t._atlas, 0, 0, t.w * sx, t.h * sy, t.u0, t.v0, t.u1, t.v1, colour);
 }
 
+export function pushSpriteAndSave(textureName: string, x: number, y: number, colour: number = 0xFFFFFFFF, sx: number = 1, sy: number = 1): void
+{
+  gl.save();
+  pushSprite(textureName, x, y, colour, sx, sy);
+  gl.restore();
+}
+
 
 export function pushQuad(x: number, y: number, w: number, h: number, colour: number = 0xFFFFFFFF): void
 {

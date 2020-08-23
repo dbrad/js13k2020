@@ -182,8 +182,8 @@
         "affectsGlobalScope": false
       },
       "./src/ts/draw.ts": {
-        "version": "9c951b79ebae69f2775fb7ab305b69b036961b47838d605792e702bfda9459e4",
-        "signature": "4f2ff7ab0aced82525ea962be082d5f31666d826d73284e5ec8db2da39284f84",
+        "version": "6c58354656a51aed39bd0692a12cb65df795f0d9b9b568a54dc0e19e3a21b0c2",
+        "signature": "954448bea5ce04389ed88db0b9dd5b4725b6f43e78aaf05ccb8010dceebaa9bc",
         "affectsGlobalScope": false
       },
       "./src/ts/v2.ts": {
@@ -222,8 +222,8 @@
         "affectsGlobalScope": false
       },
       "./src/ts/node.ts": {
-        "version": "2fe3b21ec450a180e9324264e99df41a849de8cc68ed2fdb547334e79be8db7e",
-        "signature": "d0be210b10000ee4c2de30861759532f09792f433de615bd36dd8dbe8c7dee34",
+        "version": "365c531f9e50d2bd8ef8fc9f5276d9b3846d58c050cffd548e15f038d1693572",
+        "signature": "53ba0de3e48d50d9cb9a3f4906a95024ca0c8962bc869f689a502a00d0e3f342",
         "affectsGlobalScope": false
       },
       "./src/ts/nodes/button.ts": {
@@ -237,7 +237,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/scenes/gamescreen.ts": {
-        "version": "66475d5e27f6ce9675be43f48f44d69413163fe0d5f005e36bf819d058e8df1d",
+        "version": "a21dc6f346228f457c011e95fe0d67f644d7835a439786046d822d0723df2c4f",
         "signature": "40e6fc0edee6193c0a87d763bd893451a412101f954aa0e002b8b2a7658ad50c",
         "affectsGlobalScope": false
       },
@@ -247,7 +247,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/game.ts": {
-        "version": "5b693ececb18abda095d4d68687aff7ca9d2da7093ae05cf424d77af115073db",
+        "version": "d460d981b8a644b6c0899b9f7458c85fd3853c104331cd36060814ecadd1f19d",
         "signature": "2fc3a17e0b7cb714ddf74ecb59d49071234ff3a251f39003c5702174a6dd3128",
         "affectsGlobalScope": false
       },
@@ -1283,7 +1283,8 @@
         "./src/ts/interpolate.ts",
         "./src/ts/node.ts",
         "./src/ts/nodes/button.ts",
-        "./src/ts/screen.ts"
+        "./src/ts/screen.ts",
+        "./src/ts/v2.ts"
       ],
       "./src/ts/scenes/mainmenu.ts": [
         "./node_modules/@types/node/fs.d.ts",

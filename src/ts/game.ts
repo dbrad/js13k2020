@@ -29,10 +29,7 @@ export function requestFullscreen(): void
       }
     }
   }
-  catch (ex)
-  {
-    console.log(ex);
-  }
+  catch (_) { }
 }
 window.addEventListener("load", async () =>
 {
