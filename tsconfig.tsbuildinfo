@@ -181,6 +181,11 @@
         "signature": "ea83fe80180e24bd549615ad36aaa19ef877f0feab032e96044bcb4f305092d2",
         "affectsGlobalScope": false
       },
+      "./src/ts/cards.ts": {
+        "version": "d20b638641c347a065232addc05124037bce035e8ab31262e553248270c7109c",
+        "signature": "37d27da47852161df8b8dab2c47823a24e64008e90cfee666c9ce30551509ff2",
+        "affectsGlobalScope": false
+      },
       "./src/ts/draw.ts": {
         "version": "6c58354656a51aed39bd0692a12cb65df795f0d9b9b568a54dc0e19e3a21b0c2",
         "signature": "954448bea5ce04389ed88db0b9dd5b4725b6f43e78aaf05ccb8010dceebaa9bc",
@@ -192,8 +197,8 @@
         "affectsGlobalScope": false
       },
       "./src/ts/gamestate.ts": {
-        "version": "1db87039ddeeffc479f78884e26052fa13cc1a21a3a7cf73dac4f420e3962d62",
-        "signature": "8a4f93ee4355c568182ddc190a2901224813fe88a20d50c78b7585ce55b265dd",
+        "version": "849fa6d1730050e5276c9a9a4d4cd55585dfb7fbde1ffeb208debb2032f23309",
+        "signature": "4186870f65f3f8d6d5adf80b2b84dbc8932bfeb103456e8f95053e8eb0ba3d3b",
         "affectsGlobalScope": false
       },
       "./src/ts/stats.ts": {
@@ -222,8 +227,8 @@
         "affectsGlobalScope": false
       },
       "./src/ts/node.ts": {
-        "version": "365c531f9e50d2bd8ef8fc9f5276d9b3846d58c050cffd548e15f038d1693572",
-        "signature": "53ba0de3e48d50d9cb9a3f4906a95024ca0c8962bc869f689a502a00d0e3f342",
+        "version": "8032ddda6e1a684b0f5f9039c3aa3abeb8d9315bfc1080058651246d735c52eb",
+        "signature": "0d007431126af9a815a0d21e9d670d85db5a88d7bc3db773c0d4b00d890e9ff5",
         "affectsGlobalScope": false
       },
       "./src/ts/nodes/button.ts": {
@@ -237,7 +242,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/scenes/gamescreen.ts": {
-        "version": "a21dc6f346228f457c011e95fe0d67f644d7835a439786046d822d0723df2c4f",
+        "version": "4b07d7a437f4ac44e0e5e737379e50939a6ceb8d485fa60701b946462a2a4c92",
         "signature": "40e6fc0edee6193c0a87d763bd893451a412101f954aa0e002b8b2a7658ad50c",
         "affectsGlobalScope": false
       },
@@ -1194,6 +1199,12 @@
         "./src/ts/lzw.ts",
         "./src/ts/texture.ts"
       ],
+      "./src/ts/cards.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
       "./src/ts/draw.ts": [
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
@@ -1284,7 +1295,7 @@
         "./src/ts/node.ts",
         "./src/ts/nodes/button.ts",
         "./src/ts/screen.ts",
-        "./src/ts/v2.ts"
+        "./src/ts/zzfx.ts"
       ],
       "./src/ts/scenes/mainmenu.ts": [
         "./node_modules/@types/node/fs.d.ts",
@@ -2083,6 +2094,7 @@
       "./node_modules/typescript/lib/lib.scripthost.d.ts",
       "./node_modules/typescript/lib/lib.webworker.importscripts.d.ts",
       "./src/ts/asset.ts",
+      "./src/ts/cards.ts",
       "./src/ts/draw.ts",
       "./src/ts/game.ts",
       "./src/ts/gamestate.ts",

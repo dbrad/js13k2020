@@ -1,5 +1,5 @@
 // @ifdef DEBUG
-import { DEBUG } from "./gamestate";
+import { DEBUG, energy } from "./gamestate";
 // @endif
 
 import * as gl from "./gl.js";
@@ -32,6 +32,7 @@ export const node_scale: number[] = [];
 export const node_enabled: boolean[] = [];
 
 export const node_tags: TAG[] = [];
+export const node_index: number[] = [];
 
 export const node_draggable: Map<number, boolean> = new Map();
 export const node_droppable: Map<number, boolean> = new Map();
@@ -249,10 +250,6 @@ export function nodeInput(nodeId: number, rootId: number = nodeId): void
             // If the target is an in-play card, and the dropped node isnt a die, move on
             else if (node_tags[targetId] === TAG.IN_PLAY_CARD && node_tags[nodeId] !== TAG.DICE) { continue; }
 
-            if (node_tags[nodeId] === TAG.DICE)
-            {
-              console.log("DIE DROPPED");
-            }
             pos = nodeAbsolutePosition(nodeId);
             addChildNode(targetId, nodeId);
             moveNode(nodeId, subV2(pos, nodeAbsolutePosition(targetId)));
@@ -296,7 +293,7 @@ export function renderNode(nodeId: number): void
       switch (node_tags[nodeId])
       {
         case TAG.DICE:
-          pushSprite("d1", pos[0], pos[1], 0xFFFFFFFF, scale, scale);
+          pushSprite(`d${ energy[node_index[nodeId]] }`, pos[0], pos[1], 0xFFFFFFFF, scale, scale);
           if (Input._hot === nodeId && Input._active !== nodeId)
           {
             pushSprite("ds", 0, 0, 0xFFAA1111, scale, scale);

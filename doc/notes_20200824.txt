@@ -1,0 +1,29 @@
+i need a reliable way to go from node to gamestate value
+right now I drive the node state from the game state values (but only kind of)
+the card art is hardcoded to a test value, I need a way to lookup the real value...
+... for both tooltips and for gameplay logic also
+currently i figure out which index a card node is and relate that back to an index in the gamestate
+that might get out of hand for dealing with the dice, cards, events, and in play cards...
+if i store the indexes in a lookup map... i need to keep it in sync, but it would speed up the data lookup...
+i could jam it into an int...
+used the first x bits to flag what game data it is, then use the remaining to store an index....
+or i could store it in 2 ints, 1 for an enum, and for index...
+previously i used an event system to signal what card was being played / discarded... but those cards stored an internal ref to what they were....
+
+Need some sort of timing method...
+
+Gameplay loop
+
+Gain energy
+  Loop through dice
+Draw a card
+Draw an event
+
+Play Cards and Energy
+Most win conditions require a minimum signal strength
+
+Discard down to __ cards
+Destroy event in final slot
+Cosume: 1 Food, 1 Water, 1 O2
+  If cannot: lose
+Decrease Signal Strength

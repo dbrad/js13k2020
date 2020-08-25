@@ -1,12 +1,15 @@
-import { createNode, node_visible, node_size, moveNode, addChildNode, renderNode, node_tags, TAG, setNodeDraggable, node_movement, node_enabled, setNodeHoverable, setNodeDropable, node_parent, node_droppable, node_children, node_scale, nodeAbsolutePosition, node_position, node_hoverable } from "../node";
-import { screenWidth, screenHeight } from "../screen";
-import { pushText, Align, pushSpriteAndSave } from "../draw";
-import { playerHand, Input } from "../gamestate";
+import { createNode, node_visible, node_size, moveNode, addChildNode, renderNode, node_tags, TAG, setNodeDraggable, node_movement, node_enabled, setNodeHoverable, setNodeDropable, node_parent, node_droppable, node_children, node_scale, node_position, node_index, setNodeClickable } from "../node";
+import { screenWidth, screenHeight, screenCenterX, screenCenterY } from "../screen";
+import { pushText, Align, pushSpriteAndSave, pushQuad, textWidth } from "../draw";
+import { playerHand, Input, energy } from "../gamestate";
 import { Easing } from "../interpolate";
 import { createButton } from "../nodes/button";
-import { subV2 } from "../v2";
+import { buttonClick } from "../zzfx";
 
 export let gameScreenRootId = -1;
+
+let endTurnButton = -1;
+
 let playerCardIds: number[] = [];
 let cardDeckSlotId = -1;
 let playerCardSlotIds: number[] = [];
@@ -43,6 +46,7 @@ export function setupGameScreen(): void
   node_scale[playerDeckId] = 2;
   node_tags[playerDeckId] = TAG.PLAYER_DECK;
   addChildNode(playerHandId, playerDeckId);
+  setNodeHoverable(playerDeckId);
 
   const playerDiscardPileId = createNode();
   node_size[playerDiscardPileId] = [16, 16];
@@ -93,6 +97,7 @@ export function setupGameScreen(): void
     node_size[diceId] = [16, 16];
     node_scale[diceId] = 2;
     node_tags[diceId] = TAG.DICE;
+    node_index[diceId] = i;
     setNodeDraggable(diceId);
     addChildNode(diceSlotId, diceId);
 
@@ -161,12 +166,25 @@ export function setupGameScreen(): void
   }
   //#endregion PLAY AREA
 
-  let endTurnButton = createButton("End Turn", [96, 32], [400, 192]);
+  endTurnButton = createButton("End Turn", [96, 32], [400, 192]);
   addChildNode(gameScreenRootId, endTurnButton);
 }
 
 export function gameScreen(now: number, delta: number): void
 {
+  for (let [idx, timer] of timers.entries())
+  {
+    if (timer._start === -1)
+    {
+      timer._start = now;
+    }
+    if (now - timer._start >= timer._delay)
+    {
+      timer._fn();
+      timers.splice(idx, 1);
+    }
+  }
+
   for (let emptyIdx = playerHand.length; emptyIdx < playerCardSlotIds.length; emptyIdx++)
   {
     const cardId = playerCardIds[emptyIdx];
@@ -178,6 +196,7 @@ export function gameScreen(now: number, delta: number): void
     }
     moveNode(slotId, [0, 0]);
     moveNode(cardId, [0, 0]);
+    node_index[cardId] = -1;
   }
 
   let offsetX = 48;
@@ -185,6 +204,8 @@ export function gameScreen(now: number, delta: number): void
   {
     const cardId = playerCardIds[handIndex];
     const slotId = playerCardSlotIds[handIndex];
+
+    node_index[cardId] = handIndex;
 
     if (node_droppable.get(node_parent[cardId])) { continue; }
 
@@ -295,8 +316,19 @@ export function gameScreen(now: number, delta: number): void
     }
   }
 
+  if (Input._active === endTurnButton)
+  {
+    endPhase();
+    drawPhase();
+    Input._active = 0;
+    Input._hot = 0;
+    Input._lastHot = 0;
+    setNodeClickable(endTurnButton, false);
+  }
+
   pushText("Turn 0", 448, 88, { _textAlign: Align.Center, _scale: 2 });
 
+  // TODO(dbrad): make the sprites hoverable node for tooltipping
   pushSpriteAndSave("food", 64, 68 + 16);
   pushText("0", 80, 68 + 16);
 
@@ -310,4 +342,81 @@ export function gameScreen(now: number, delta: number): void
   pushText("0", 80 + 64, 68 + 32);
 
   renderNode(gameScreenRootId);
+
+  if (Input._hot > 0 && Input._active === 0)
+  {
+    if (node_tags[Input._hot] === TAG.BUTTON) { }
+    else
+    {
+      let text = "";
+      let w = 120;
+      let h = 50
+      switch (node_tags[Input._hot])
+      {
+        case TAG.PLAYER_DECK:
+          text = "Player Deck";
+          h = 8 + 10;
+          break;
+        case TAG.DICE:
+          text = "Energy Node";
+          h = 8 + 10;
+          break;
+      }
+      w = textWidth(text.length, 1) + 10;
+      let x = Input._pointer[0];
+      let y = Input._pointer[1];
+      if (x > screenCenterX)
+      {
+        x -= w + 10;
+      }
+      else
+      {
+        x += 10;
+      }
+      if (y > screenCenterY)
+      {
+        y -= h + 10;
+      }
+      else
+      {
+        y -= Math.floor(h / 2);
+      }
+      if (text !== "")
+      {
+        pushQuad(x, y, w, h, 0xDD000000);
+        pushText(text, x + 5, y + 5);
+      }
+    }
+  }
+}
+
+function drawPhase(): void
+{
+  let stagger = 250;
+  for (let d = 0; d < 6; d++)
+  {
+    queueTimer(() => { energy[d] = Math.min(energy[d] + 1, 9); buttonClick(); }, stagger);
+    stagger += 50;
+  }
+  // draw card
+  // event card
+  queueTimer(() => { setNodeClickable(endTurnButton); }, 1500);
+}
+
+function endPhase(): void
+{
+
+}
+
+type timer = {
+  _start: number,
+  _delay: number,
+  _fn: () => void
+}
+
+const timers: timer[] = [];
+
+function queueTimer(fn: () => void, delay: number): void
+{
+  timers.push({ _start: -1, _delay: delay, _fn: fn });
 }

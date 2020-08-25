@@ -21,6 +21,8 @@ export const Input = {
 export let playerDeck: number[] = [];
 export let playerHand: number[] = [0, 0, 0, 0, 0, 0, 0];
 
+export let energy: Uint8Array = new Uint8Array([0, 0, 0, 0, 0, 0]);
+
 // Dice Array
 // Player Deck
 // Player Hand
