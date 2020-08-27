@@ -1,10 +1,11 @@
-import { createNode, node_visible, node_size, moveNode, addChildNode, renderNode, node_tags, TAG, setNodeDraggable, node_movement, node_enabled, setNodeHoverable, setNodeDropable, node_parent, node_droppable, node_children, node_scale, node_position, node_index, setNodeClickable } from "../node";
+import { createNode, node_visible, node_size, moveNode, addChildNode, renderNode, node_tags, TAG, setNodeDraggable, node_movement, node_enabled, setNodeHoverable, setNodeDropable, node_parent, node_droppable, node_children, node_scale, node_position, node_index, setNodeClickable, node_draggable } from "../node";
 import { screenWidth, screenHeight, screenCenterX, screenCenterY } from "../screen";
 import { pushText, Align, pushSpriteAndSave, pushQuad, textWidth } from "../draw";
-import { playerHand, Input, energy } from "../gamestate";
+import { playerHand, Input, energy, eventsInPlay, playerResources, Resources, inPlayCards } from "../gamestate";
 import { Easing } from "../interpolate";
 import { createButton } from "../nodes/button";
 import { buttonClick } from "../zzfx";
+import { EventCard, drawCard, drawEvent, PlayerCards, EventCards } from "../cards";
 
 export let gameScreenRootId = -1;
 
@@ -20,6 +21,9 @@ let playerDiceSlotIds: number[] = [];
 let eventDeckSlotId = -1;
 let eventCardSlotIds: number[] = [];
 let eventCardIds: number[] = [];
+
+let firstInPlayId = -1;
+
 export function setupGameScreen(): void
 {
   gameScreenRootId = createNode();
@@ -119,19 +123,16 @@ export function setupGameScreen(): void
   addChildNode(eventAreaId, eventDeckSlotId);
   moveNode(eventDeckSlotId, [384, 0]);
 
-  const eventDeckId = createNode();
-  node_size[eventDeckId] = [16, 16];
-  node_scale[eventDeckId] = 3;
-  node_tags[eventDeckId] = TAG.EVENT_DECK;
-  addChildNode(eventAreaId, eventDeckId);
-  moveNode(eventDeckId, [384, 0]);
-
   for (let i = 0; i < 6; i++)
   {
     const eventCardSlotId = createNode();
     node_size[eventCardSlotId] = [16, 16];
     node_scale[eventCardSlotId] = 3;
     node_tags[eventCardSlotId] = TAG.EVENT_SLOT;
+    if (i === 5)
+    {
+      node_tags[eventCardSlotId] = TAG.EVENT_SLOT_FINAL;
+    }
     addChildNode(eventAreaId, eventCardSlotId);
     moveNode(eventCardSlotId, [320 - 64 * i, 0]);
     eventCardSlotIds.push(eventCardSlotId);
@@ -141,8 +142,18 @@ export function setupGameScreen(): void
     node_scale[eventCardId] = 3;
     node_tags[eventCardId] = TAG.EVENT_CARD;
     addChildNode(eventDeckSlotId, eventCardId);
+    moveNode(eventCardId, [0, 0]);
+    setNodeDropable(eventCardId);
     eventCardIds.push(eventCardId);
   }
+
+  const eventDeckId = createNode();
+  node_size[eventDeckId] = [16, 16];
+  node_scale[eventDeckId] = 3;
+  node_tags[eventDeckId] = TAG.EVENT_DECK;
+  addChildNode(eventAreaId, eventDeckId);
+  moveNode(eventDeckId, [384, 0]);
+
   //#endregion EVENT CARDS
 
   //#region PLAY AREA
@@ -155,6 +166,8 @@ export function setupGameScreen(): void
     setNodeDropable(inPlaySlotId);
     addChildNode(gameScreenRootId, inPlaySlotId);
     moveNode(inPlaySlotId, [64 + 64 * i, 128])
+
+    if (firstInPlayId === -1) { firstInPlayId = inPlaySlotId; }
 
     const inPlayCardId = createNode();
     node_enabled[inPlayCardId] = false;
@@ -172,6 +185,7 @@ export function setupGameScreen(): void
 
 export function gameScreen(now: number, delta: number): void
 {
+  // Process Timed Functions
   for (let [idx, timer] of timers.entries())
   {
     if (timer._start === -1)
@@ -185,6 +199,7 @@ export function gameScreen(now: number, delta: number): void
     }
   }
 
+  // Process Cards that shouldn't be in hand
   for (let emptyIdx = playerHand.length; emptyIdx < playerCardSlotIds.length; emptyIdx++)
   {
     const cardId = playerCardIds[emptyIdx];
@@ -199,8 +214,9 @@ export function gameScreen(now: number, delta: number): void
     node_index[cardId] = -1;
   }
 
+  // Process and Arrange Card in hand
   let offsetX = 48;
-  for (let handIndex = 0, len = playerHand.length; handIndex < len; handIndex++)
+  for (let handIndex = 0, len = Math.min(playerHand.length, 8); handIndex < len; handIndex++)
   {
     const cardId = playerCardIds[handIndex];
     const slotId = playerCardSlotIds[handIndex];
@@ -254,10 +270,12 @@ export function gameScreen(now: number, delta: number): void
         {
           if (node_tags[childId] === TAG.IN_PLAY_CARD)
           {
+            // Node Id of the "fake" card in play
             inPlayCardId = childId;
           }
           else if (node_tags[childId] === TAG.PLAYER_CARD)
           {
+            // Node Id of the card that stays in the player's hand
             handCardId = childId;
           }
         }
@@ -266,19 +284,13 @@ export function gameScreen(now: number, delta: number): void
         node_droppable.set(droppableId, false);
         moveNode(inPlayCardId, node_position[handCardId]);
 
-        let idx = -1;
-        for (let i = 0; i < playerCardIds.length; i++)
-        {
-          if (playerCardIds[i] === handCardId)
-          {
-            idx = i;
-            break;
-          }
-        }
-        playerHand.splice(idx, 1);
+        let idx = node_index[handCardId];
+        let ipIdx = droppableId - firstInPlayId;
+        const card = playerHand.splice(idx, 1);
+        inPlayCards[ipIdx] = card[0];
+        node_index[inPlayCardId] = ipIdx;
 
-
-
+        // Make sure removing the card doesn't cause jank animations
         for (let handIndex = idx, len = playerHand.length;
           handIndex < len;
           handIndex++)
@@ -300,6 +312,7 @@ export function gameScreen(now: number, delta: number): void
         Input._lastHot = 0;
         Input._active = 0;
 
+        // Move the fake card into place and scale it up
         moveNode(inPlayCardId, [0, 0], Easing.EaseOutQuad, 150)
           .then(() =>
           {
@@ -307,11 +320,32 @@ export function gameScreen(now: number, delta: number): void
           });
       }
     }
-    else if (node_tags[droppableId] === TAG.IN_PLAY_CARD)
+    else if (node_tags[droppableId] === TAG.IN_PLAY_CARD
+      || node_tags[droppableId] === TAG.EVENT_CARD)
     {
-      if (node_children[droppableId].length > 0)
+      if (node_children[droppableId].length === 1)
       {
-        console.log("DROPPED DICE");
+        const nodeId = node_children[droppableId][0];
+        if (node_draggable.get(nodeId))
+        {
+          setNodeDraggable(nodeId, false);
+          moveNode(nodeId, [8, 8], Easing.EaseOutQuad, 200).then(() =>
+          {
+            if (node_tags[droppableId] === TAG.IN_PLAY_CARD)
+            {
+              const card = inPlayCards[node_index[droppableId]];
+              PlayerCards.get(card)._effect(energy[node_index[nodeId]]);
+              //discardCard(card);
+            }
+            else
+            {
+              const card = eventsInPlay[node_index[droppableId]];
+              EventCards.get(card)._effect(energy[node_index[nodeId]]);
+            }
+            node_enabled[nodeId] = false;
+            addChildNode(gameScreenRootId, nodeId);
+          });
+        }
       }
     }
   }
@@ -323,26 +357,27 @@ export function gameScreen(now: number, delta: number): void
     Input._active = 0;
     Input._hot = 0;
     Input._lastHot = 0;
+    Input._enabled = false;
     setNodeClickable(endTurnButton, false);
   }
 
   pushText("Turn 0", 448, 88, { _textAlign: Align.Center, _scale: 2 });
 
-  // TODO(dbrad): make the sprites hoverable node for tooltipping
   pushSpriteAndSave("food", 64, 68 + 16);
-  pushText("0", 80, 68 + 16);
+  pushText(`${ playerResources[Resources.Food] }`, 80, 68 + 16);
 
   pushSpriteAndSave("water", 64, 68 + 32);
-  pushText("0", 80, 68 + 32);
+  pushText(`${ playerResources[Resources.Water] }`, 80, 68 + 32);
 
   pushSpriteAndSave("o2", 64 + 64, 68 + 16);
-  pushText("0", 80 + 64, 68 + 16);
+  pushText(`${ playerResources[Resources.O2] }`, 80 + 64, 68 + 16);
 
   pushSpriteAndSave("mat", 64 + 64, 68 + 32);
-  pushText("0", 80 + 64, 68 + 32);
+  pushText(`${ playerResources[Resources.Materials] }`, 80 + 64, 68 + 32);
 
   renderNode(gameScreenRootId);
 
+  // Tooltips
   if (Input._hot > 0 && Input._active === 0)
   {
     if (node_tags[Input._hot] === TAG.BUTTON) { }
@@ -392,18 +427,75 @@ export function gameScreen(now: number, delta: number): void
 
 function drawPhase(): void
 {
+  for (let i = 0; i < 6; i++)
+  {
+    let slotId = playerDiceSlotIds[i];
+    let diceId = playerDiceIds[i];
+    if (node_parent[diceId] !== slotId)
+    {
+      addChildNode(slotId, diceId);
+      node_enabled[diceId] = true;
+      setNodeDraggable(diceId);
+      moveNode(diceId, [0, 0])
+      energy[i] = 0;
+    }
+  }
   let stagger = 250;
   for (let d = 0; d < 6; d++)
   {
     queueTimer(() => { energy[d] = Math.min(energy[d] + 1, 9); buttonClick(); }, stagger);
-    stagger += 50;
+    stagger += 75;
   }
   // draw card
+  stagger += 250;
+  queueTimer(() => { drawCard(); }, stagger);
+  stagger += 250;
+  queueTimer(() => { drawCard(); }, stagger);
+  stagger += 250;
+  queueTimer(() => { drawCard(); }, stagger);
+  queueTimer(() =>
+  {
+    drawEvent();
+    // Process and Arrange Event Cards
+    for (let eventsIdx = 0,
+      len = Math.min(eventsInPlay.length, 6);
+      eventsIdx < len;
+      eventsIdx++)
+    {
+      const cardId = eventCardIds[eventsIdx];
+      const slotId = eventCardSlotIds[eventsIdx];
+
+      if (eventsInPlay[eventsIdx] !== EventCard.None)
+      {
+        node_index[cardId] = eventsIdx;
+        node_enabled[cardId] = true;
+        addChildNode(slotId, cardId);
+        moveNode(cardId, [64, 0]);
+        queueTimer(() =>
+        {
+          moveNode(cardId, [0, 0], Easing.EaseOutQuad, 200);
+        }, 750 - eventsIdx * 100);
+      }
+      else
+      {
+        node_index[cardId] = -1;
+        node_enabled[cardId] = false;
+      }
+    }
+  }, stagger);
+
   // event card
-  queueTimer(() => { setNodeClickable(endTurnButton); }, 1500);
+  queueTimer(() => { setNodeClickable(endTurnButton); }, stagger + 500);
 }
 
 function endPhase(): void
+{
+  playerResources[Resources.Food] -= 1;
+  playerResources[Resources.Water] -= 1;
+  playerResources[Resources.O2] -= 1;
+}
+
+function discardCard(index: number): void
 {
 
 }
@@ -419,4 +511,9 @@ const timers: timer[] = [];
 function queueTimer(fn: () => void, delay: number): void
 {
   timers.push({ _start: -1, _delay: delay, _fn: fn });
+}
+
+function cardTooltip(): void
+{
+
 }

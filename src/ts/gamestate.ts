@@ -1,4 +1,5 @@
 import { v2 } from "./v2";
+import { EventCard, PlayerCard } from "./cards";
 
 // @ifdef DEBUG
 export let DEBUG: boolean = false;
@@ -9,6 +10,7 @@ export function toggleDEBUG(): void
 // @endif
 
 export const Input = {
+  _enabled: true,
   _pointer: [0, 0] as v2,
   _dragOffset: [0, 0] as v2,
   _dragParent: 0,
@@ -18,13 +20,21 @@ export const Input = {
   _active: 0
 }
 
-export let playerDeck: number[] = [];
-export let playerHand: number[] = [0, 0, 0, 0, 0, 0, 0];
+export const enum Resources
+{
+  Food,
+  Water,
+  O2,
+  Materials
+}
+
+export const playerResources: number[] = [5, 10, 3, 0];
+export let playerDeck: PlayerCard[] = [PlayerCard.Water, PlayerCard.Oxygen, PlayerCard.Food];
+export let playerHand: PlayerCard[] = [];
+export let playerDiscard: PlayerCard[] = [];
+export let inPlayCards: PlayerCard[] = [0, 0, 0, 0, 0, 0, 0];
+
+export let eventDeck: number[] = [EventCard.Food, EventCard.Water];
+export let eventsInPlay: EventCard[] = [EventCard.None, EventCard.None, EventCard.None, EventCard.None, EventCard.None, EventCard.None];
 
 export let energy: Uint8Array = new Uint8Array([0, 0, 0, 0, 0, 0]);
-
-// Dice Array
-// Player Deck
-// Player Hand
-// Event Deck
-// Event In-Play Area

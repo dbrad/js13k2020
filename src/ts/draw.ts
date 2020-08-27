@@ -1,8 +1,9 @@
 import * as gl from "./gl.js";
 
 import { TEXTURE_CACHE, Texture } from "./texture.js";
+import { white } from "./util.js";
 
-export function pushSprite(textureName: string, x: number, y: number, colour: number = 0xFFFFFFFF, sx: number = 1, sy: number = 1): void
+export function pushSprite(textureName: string, x: number, y: number, colour: number = white, sx: number = 1, sy: number = 1): void
 {
   const t: Texture = TEXTURE_CACHE.get(textureName);
   // @ifdef DEBUG
@@ -15,7 +16,7 @@ export function pushSprite(textureName: string, x: number, y: number, colour: nu
   gl.push(t._atlas, 0, 0, t.w * sx, t.h * sy, t.u0, t.v0, t.u1, t.v1, colour);
 }
 
-export function pushSpriteAndSave(textureName: string, x: number, y: number, colour: number = 0xFFFFFFFF, sx: number = 1, sy: number = 1): void
+export function pushSpriteAndSave(textureName: string, x: number, y: number, colour: number = white, sx: number = 1, sy: number = 1): void
 {
   gl.save();
   pushSprite(textureName, x, y, colour, sx, sy);
@@ -23,7 +24,7 @@ export function pushSpriteAndSave(textureName: string, x: number, y: number, col
 }
 
 
-export function pushQuad(x: number, y: number, w: number, h: number, colour: number = 0xFFFFFFFF): void
+export function pushQuad(x: number, y: number, w: number, h: number, colour: number = white): void
 {
   const t: Texture = TEXTURE_CACHE.get("flat");
   // @ifdef DEBUG
@@ -64,9 +65,9 @@ export function textHeight(lineCount: number, scale: number): number
   return (fontSize * scale + scale) * lineCount;
 }
 
-export function parseText(text: string, params: TextParams = { _colour: 0xFFFFFFFF, _textAlign: Align.Left, _scale: 1, _wrap: 0 }): number
+export function parseText(text: string, params: TextParams = { _colour: white, _textAlign: Align.Left, _scale: 1, _wrap: 0 }): number
 {
-  params._colour = params._colour || 0xFFFFFFFF;
+  params._colour = params._colour || white;
   params._textAlign = params._textAlign || Align.Left;
   params._scale = params._scale || 1;
   params._wrap = params._wrap || 0;
@@ -108,9 +109,9 @@ export function parseText(text: string, params: TextParams = { _colour: 0xFFFFFF
   return lines.length;
 }
 
-export function pushText(text: string, x: number, y: number, params: TextParams = { _colour: 0xFFFFFFFF, _textAlign: Align.Left, _scale: 1, _wrap: 0 }): number
+export function pushText(text: string, x: number, y: number, params: TextParams = { _colour: white, _textAlign: Align.Left, _scale: 1, _wrap: 0 }): number
 {
-  params._colour = params._colour || 0xFFFFFFFF;
+  params._colour = params._colour || white;
   params._textAlign = params._textAlign || Align.Left;
   params._scale = params._scale || 1;
   params._wrap = params._wrap || 0;

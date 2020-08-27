@@ -1,14 +1,16 @@
 // @ifdef DEBUG
-import { DEBUG, energy } from "./gamestate";
+import { DEBUG, playerHand, inPlayCards } from "./gamestate";
 // @endif
+import { energy } from "./gamestate";
 
 import * as gl from "./gl.js";
 import { v2, subV2 } from "./v2";
 import { Input } from "./gamestate";
-import { pushQuad, pushSprite, pushText, Align, textHeight, parseText, pushSpriteAndSave } from "./draw";
-import { mouseInside } from "./util.js";
+import { pushQuad, pushSprite, pushText, Align, parseText, pushSpriteAndSave } from "./draw";
+import { mouseInside, white } from "./util.js";
 import { Easing, InterpolationData, createInterpolationData } from "./interpolate";
 import { buttonHover, buttonClick } from "./zzfx";
+import { getEventCard, PlayerCards, PlayerCard } from "./cards";
 
 export const enum TAG
 {
@@ -21,6 +23,7 @@ export const enum TAG
   EVENT_CARD,
   EVENT_DECK,
   EVENT_SLOT,
+  EVENT_SLOT_FINAL,
   DICE,
   DICE_SLOT,
 }
@@ -160,7 +163,6 @@ function nodesUnderPoint(nodeId: number, point: v2): number[]
 
 export function setNodeDropable(nodeId: number, val: boolean = true): void
 {
-  // TODO(dbrad): need to make this a mask for the tags instead of boolean
   node_droppable.set(nodeId, val);
 }
 
@@ -249,6 +251,7 @@ export function nodeInput(nodeId: number, rootId: number = nodeId): void
             if (node_tags[targetId] === TAG.IN_PLAY_SLOT && node_tags[nodeId] !== TAG.PLAYER_CARD) { continue; }
             // If the target is an in-play card, and the dropped node isnt a die, move on
             else if (node_tags[targetId] === TAG.IN_PLAY_CARD && node_tags[nodeId] !== TAG.DICE) { continue; }
+            else if (node_tags[targetId] === TAG.EVENT_CARD && node_tags[nodeId] !== TAG.DICE) { continue; }
 
             pos = nodeAbsolutePosition(nodeId);
             addChildNode(targetId, nodeId);
@@ -288,45 +291,78 @@ export function renderNode(nodeId: number): void
     const scale = node_scale[nodeId];
     gl.save();
 
+    let cardBackingXY = 0;
+    let cardBackingWH = 0;
     if (node_visible[nodeId])
     {
       switch (node_tags[nodeId])
       {
         case TAG.DICE:
-          pushSprite(`d${ energy[node_index[nodeId]] }`, pos[0], pos[1], 0xFFFFFFFF, scale, scale);
+          pushSprite(`d${ energy[node_index[nodeId]] }`, pos[0], pos[1], white, scale, scale);
           if (Input._hot === nodeId && Input._active !== nodeId)
           {
             pushSprite("ds", 0, 0, 0xFFAA1111, scale, scale);
           }
           break;
+
         case TAG.DICE_SLOT:
-          pushSprite("d0", pos[0], pos[1], 0xFFFFFFFF, scale, scale);
+          pushSprite("d0", pos[0], pos[1], white, scale, scale);
           break;
 
         case TAG.EVENT_CARD:
-          pushSprite("card", pos[0], pos[1], 0xFFFFFFFF, scale, scale);
+          cardBackingXY = size[0] / 4;
+          cardBackingWH = size[0] / 2;
+          gl.translate(pos[0], pos[1]);
+          const eventCard = getEventCard(node_index[nodeId]);
+          if (eventCard)
+          {
+            pushQuad(cardBackingXY, cardBackingXY, cardBackingWH, cardBackingWH, 0xFF202020);
+            pushSpriteAndSave(eventCard._art, cardBackingXY, cardBackingXY, white, scale, scale);
+            pushSprite("card", 0, 0, 0xFF33FF33, scale, scale);
+          }
           break;
 
         case TAG.EVENT_DECK:
-          pushSprite("card", pos[0], pos[1], 0xFFFFFFFF, scale, scale);
+          cardBackingXY = size[0] / 4;
+          cardBackingWH = size[0] / 2;
+          gl.translate(pos[0], pos[1]);
+          pushQuad(cardBackingXY, cardBackingXY, cardBackingWH, cardBackingWH, 0xFF666666);
+          pushSprite("card", 0, 0, white, scale, scale);
           break;
 
         case TAG.EVENT_SLOT:
-          pushSprite("ds", pos[0], pos[1], 0xFF303030, scale, scale);
+          pushSprite("ds", pos[0], pos[1], 0xFF606060, scale, scale);
+          break;
+
+        case TAG.EVENT_SLOT_FINAL:
+          pushSprite("ds", pos[0], pos[1], 0xFF2020A0, scale, scale);
           break;
 
         case TAG.PLAYER_CARD:
         case TAG.IN_PLAY_CARD:
-          let temp = size[0] / 4;
-          let temp2 = size[0] / 2;
+          cardBackingXY = size[0] / 4;
+          cardBackingWH = size[0] / 2;
           gl.translate(pos[0], pos[1]);
-          pushQuad(temp, temp, temp2, temp2, 0xFFFFFFFF);
-          pushSpriteAndSave("food", temp, temp, 0xFFFFFFFF, scale, scale);
+          let cardType: PlayerCard;
+          if (node_tags[nodeId] === TAG.PLAYER_CARD)
+          {
+            cardType = playerHand[node_index[nodeId]];
+          }
+          else
+          {
+            cardType = inPlayCards[node_index[nodeId]];
+          }
+          const playerCard = PlayerCards.get(cardType);
+          if (playerCard)
+          {
+            pushQuad(cardBackingXY, cardBackingXY, cardBackingWH, cardBackingWH, 0xFF202020);
+            pushSpriteAndSave(playerCard._art, cardBackingXY, cardBackingXY, white, scale, scale);
+          }
           pushSprite("card", 0, 0, 0xFF33FF33, scale, scale);
           break;
 
         case TAG.PLAYER_DECK:
-          pushSprite("card", pos[0], pos[1], 0xFFFFFFFF, scale, scale);
+          pushSprite("card", pos[0], pos[1], white, scale, scale);
           pushQuad(8, 8, 16, 16, 0xFF666666);
           break;
 
@@ -335,7 +371,7 @@ export function renderNode(nodeId: number): void
           break;
 
         case TAG.IN_PLAY_SLOT:
-          pushSprite("ds", pos[0], pos[1], 0xFF303030, scale, scale);
+          pushSprite("ds", pos[0], pos[1], 0xFF606060, scale, scale);
           break;
 
         case TAG.BUTTON:
@@ -347,7 +383,7 @@ export function renderNode(nodeId: number): void
           }
           else if (Input._hot === nodeId)
           {
-            pushQuad(pos[0], pos[1], size[0], size[1], 0XFFFFFFFF);
+            pushQuad(pos[0], pos[1], size[0], size[1], white);
             if (Input._lastHot !== nodeId)
             {
               buttonHover();

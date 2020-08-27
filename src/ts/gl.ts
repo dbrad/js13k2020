@@ -1,3 +1,4 @@
+import { white } from "./util";
 
 let ctx: WebGLRenderingContext;
 let width: number;
@@ -176,7 +177,7 @@ export function restore(): void
     mat[5] = stack[stackp + 5];
 }
 
-export function push(texture: WebGLTexture, x: number, y: number, w: number, h: number, u0: number, v0: number, u1: number, v1: number, aabbggrr: number = 0xFFFFFFFF): void
+export function push(texture: WebGLTexture, x: number, y: number, w: number, h: number, u0: number, v0: number, u1: number, v1: number, aabbggrr: number = white): void
 {
     const x0: number = x;
     const y0: number = y;

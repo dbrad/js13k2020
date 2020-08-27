@@ -1,22 +1,8 @@
-state machine for handling game phases / turns
-tagging for droppables
+Tooltips for cards
+Actual Player Card Collection
+Actioning cards during end phase
+  Some will do stuff by being on field
 
-Game Phases
-
-Pre-Game
-Event Draw
-Player Power
-Player Draw
-Player Actions
-Player Discard
-Event Resolution
-Resource Consumption
-Check for Loss
-
-Event Types
-Boons - Spend Power to Collect a Resource, goes away if gets to end spot
-Consumption Events - Random events that consume resources.
-Perils - Negative effect for each turn in play, bigger negative effect if it reaches the 6th spot. Require resources + power to address.
-Win Conditions: Passing Ship (need signal strength + power amount)
-
-Distress Signal Strength
+Should dice dropping on a card action right away?
+Allows player to control order better
+Things like Water => 02 could be annoying if the player is going to get water but the game wont let them because they don't have it yet....

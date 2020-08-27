@@ -1,10 +1,5 @@
 import { Input } from "./gamestate";
 
-export function random(min: number, max: number): number
-{
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 export function colourToHex(a: number, b: number, g: number, r: number): number
 {
   let out: number = 0x0;
@@ -23,3 +18,5 @@ export function mouseInside(x: number, y: number, w: number, h: number)
   }
   return true;
 }
+
+export const white = 0xFFFFFFFF;
