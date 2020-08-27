@@ -1,8 +1,9 @@
 // @ifdef DEBUG
-import { DEBUG, playerHand, inPlayCards } from "./gamestate";
+import { DEBUG } from "./gamestate";
 // @endif
 import { energy } from "./gamestate";
 
+import { playerHand, inPlayCards } from "./gamestate";
 import * as gl from "./gl.js";
 import { v2, subV2 } from "./v2";
 import { Input } from "./gamestate";
