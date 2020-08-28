@@ -125,7 +125,10 @@ window.addEventListener("load", async () =>
 
     // Update
     // Input for Nodes
-    nodeInput(rootNodeId);
+    if (Input._enabled)
+    {
+      nodeInput(rootNodeId);
+    }
 
     // Node Systems Here
     for (let [childId, iData] of node_movement)

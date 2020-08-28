@@ -1,8 +1,9 @@
 // @ifdef DEBUG
 import { DEBUG } from "./gamestate";
 // @endif
-import { energy } from "./gamestate";
 
+import { assert } from "./debug";
+import { energy, playerDiscard } from "./gamestate";
 import { playerHand, inPlayCards } from "./gamestate";
 import * as gl from "./gl.js";
 import { v2, subV2 } from "./v2";
@@ -311,12 +312,12 @@ export function renderNode(nodeId: number): void
           break;
 
         case TAG.EVENT_CARD:
-          cardBackingXY = size[0] / 4;
-          cardBackingWH = size[0] / 2;
-          gl.translate(pos[0], pos[1]);
-          const eventCard = getEventCard(node_index[nodeId]);
-          if (eventCard)
           {
+            cardBackingXY = size[0] / 4;
+            cardBackingWH = size[0] / 2;
+            gl.translate(pos[0], pos[1]);
+            const eventCard = getEventCard(node_index[nodeId]);
+            assert(eventCard !== undefined, `Event cardtype ${ node_index[nodeId] } not found.`);
             pushQuad(cardBackingXY, cardBackingXY, cardBackingWH, cardBackingWH, 0xFF202020);
             pushSpriteAndSave(eventCard._art, cardBackingXY, cardBackingXY, white, scale, scale);
             pushSprite("card", 0, 0, 0xFF33FF33, scale, scale);
@@ -324,11 +325,13 @@ export function renderNode(nodeId: number): void
           break;
 
         case TAG.EVENT_DECK:
-          cardBackingXY = size[0] / 4;
-          cardBackingWH = size[0] / 2;
-          gl.translate(pos[0], pos[1]);
-          pushQuad(cardBackingXY, cardBackingXY, cardBackingWH, cardBackingWH, 0xFF666666);
-          pushSprite("card", 0, 0, white, scale, scale);
+          {
+            cardBackingXY = size[0] / 4;
+            cardBackingWH = size[0] / 2;
+            gl.translate(pos[0], pos[1]);
+            pushQuad(cardBackingXY, cardBackingXY, cardBackingWH, cardBackingWH, 0xFF666666);
+            pushSprite("card", 0, 0, white, scale, scale);
+          }
           break;
 
         case TAG.EVENT_SLOT:
@@ -341,25 +344,25 @@ export function renderNode(nodeId: number): void
 
         case TAG.PLAYER_CARD:
         case TAG.IN_PLAY_CARD:
-          cardBackingXY = size[0] / 4;
-          cardBackingWH = size[0] / 2;
-          gl.translate(pos[0], pos[1]);
-          let cardType: PlayerCard;
-          if (node_tags[nodeId] === TAG.PLAYER_CARD)
           {
-            cardType = playerHand[node_index[nodeId]];
-          }
-          else
-          {
-            cardType = inPlayCards[node_index[nodeId]];
-          }
-          const playerCard = PlayerCards.get(cardType);
-          if (playerCard)
-          {
+            cardBackingXY = size[0] / 4;
+            cardBackingWH = size[0] / 2;
+            gl.translate(pos[0], pos[1]);
+            let cardType: PlayerCard;
+            if (node_tags[nodeId] === TAG.PLAYER_CARD)
+            {
+              cardType = playerHand[node_index[nodeId]];
+            }
+            else
+            {
+              cardType = inPlayCards[node_index[nodeId]];
+            }
+            const playerCard = PlayerCards.get(cardType);
+            assert(playerCard !== undefined, `Player cardtype ${ cardType } not found. ${ (node_tags[nodeId] === TAG.PLAYER_CARD) ? "PLAYER CARD" : "IN PLAY CARD" }`);
             pushQuad(cardBackingXY, cardBackingXY, cardBackingWH, cardBackingWH, 0xFF202020);
             pushSpriteAndSave(playerCard._art, cardBackingXY, cardBackingXY, white, scale, scale);
+            pushSprite("card", 0, 0, 0xFF33FF33, scale, scale);
           }
-          pushSprite("card", 0, 0, 0xFF33FF33, scale, scale);
           break;
 
         case TAG.PLAYER_DECK:
@@ -368,7 +371,22 @@ export function renderNode(nodeId: number): void
           break;
 
         case TAG.PLAYER_DISCARD:
-          pushSprite("ds", pos[0], pos[1], 0xFF303030, scale, scale);
+          if (playerDiscard.length == 0)
+          {
+            pushSprite("ds", pos[0], pos[1], 0xFF303030, scale, scale);
+          }
+          else
+          {
+            cardBackingXY = size[0] / 4;
+            cardBackingWH = size[0] / 2;
+            gl.translate(pos[0], pos[1]);
+            let cardType: PlayerCard = playerDiscard[playerDiscard.length];
+            const playerCard = PlayerCards.get(cardType);
+            assert(playerCard !== undefined, `Player cardtype ${ cardType } not found.`);
+            pushQuad(cardBackingXY, cardBackingXY, cardBackingWH, cardBackingWH, 0xFF202020);
+            pushSpriteAndSave(playerCard._art, cardBackingXY, cardBackingXY, white, scale, scale);
+            pushSprite("card", 0, 0, 0xFF33FF33, scale, scale);
+          }
           break;
 
         case TAG.IN_PLAY_SLOT:
@@ -376,31 +394,33 @@ export function renderNode(nodeId: number): void
           break;
 
         case TAG.BUTTON:
-          if (Input._active === nodeId)
           {
-            pushQuad(pos[0], pos[1], size[0], size[1], 0xFF111111);
-            buttonClick();
-
-          }
-          else if (Input._hot === nodeId)
-          {
-            pushQuad(pos[0], pos[1], size[0], size[1], white);
-            if (Input._lastHot !== nodeId)
+            if (Input._active === nodeId)
             {
-              buttonHover();
-            }
-          }
-          else
-          {
-            pushQuad(pos[0], pos[1], size[0], size[1], 0xFFAAAAAA);
+              pushQuad(pos[0], pos[1], size[0], size[1], 0xFF111111);
+              buttonClick();
 
+            }
+            else if (Input._hot === nodeId)
+            {
+              pushQuad(pos[0], pos[1], size[0], size[1], white);
+              if (Input._lastHot !== nodeId)
+              {
+                buttonHover();
+              }
+            }
+            else
+            {
+              pushQuad(pos[0], pos[1], size[0], size[1], 0xFFAAAAAA);
+
+            }
+            pushQuad(pos[0] + 1, pos[1] + 1, size[0] - 2, size[1] - 2, 0xFF2d2d2d);
+            gl.translate(pos[0], pos[1]);
+            const lineCount = parseText(node_button_text.get(nodeId), { _textAlign: Align.Center, _wrap: size[0] - 2 });
+            pushText(node_button_text.get(nodeId),
+              size[0] / 2, size[1] / 2 - (lineCount * 8 / 2),
+              { _textAlign: Align.Center, _wrap: size[0] - 2 });
           }
-          pushQuad(pos[0] + 1, pos[1] + 1, size[0] - 2, size[1] - 2, 0xFF2d2d2d);
-          gl.translate(pos[0], pos[1]);
-          const lineCount = parseText(node_button_text.get(nodeId), { _textAlign: Align.Center, _wrap: size[0] - 2 });
-          pushText(node_button_text.get(nodeId),
-            size[0] / 2, size[1] / 2 - (lineCount * 8 / 2),
-            { _textAlign: Align.Center, _wrap: size[0] - 2 });
           break;
         default:
           gl.translate(pos[0], pos[1]);

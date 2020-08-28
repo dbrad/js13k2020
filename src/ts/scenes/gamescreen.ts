@@ -57,7 +57,13 @@ export function setupGameScreen(): void
   node_scale[playerDiscardPileId] = 2;
   node_tags[playerDiscardPileId] = TAG.PLAYER_DISCARD;
   addChildNode(gameScreenRootId, playerDiscardPileId);
-  moveNode(playerDiscardPileId, [464, 240])
+  moveNode(playerDiscardPileId, [464, 240]);
+
+  const playerDiscardCardId = createNode();
+  node_size[playerDiscardCardId] = [16, 16];
+  node_scale[playerDiscardCardId] = 2;
+  addChildNode(playerDiscardPileId, playerDiscardCardId);
+  moveNode(playerDiscardCardId, [0, 0]);
 
   for (let i = 0; i < 8; i++)
   {
@@ -141,6 +147,7 @@ export function setupGameScreen(): void
     node_size[eventCardId] = [16, 16];
     node_scale[eventCardId] = 3;
     node_tags[eventCardId] = TAG.EVENT_CARD;
+    node_enabled[eventCardId] = false;
     addChildNode(eventDeckSlotId, eventCardId);
     moveNode(eventCardId, [0, 0]);
     setNodeDropable(eventCardId);
@@ -298,12 +305,23 @@ export function gameScreen(now: number, delta: number): void
           const cardId = playerCardIds[handIndex];
           const slotId = playerCardSlotIds[handIndex];
           const slotPos = node_position[slotId];
+          node_index[cardId] = handIndex;
           addChildNode(slotId, cardId);
           if (handIndex > idx)
           {
             moveNode(slotId, [slotPos[0] + 48, 0]);
           }
           moveNode(cardId, [0, 0]);
+        }
+
+        for (let handIndex = playerHand.length,
+          len = playerCardIds.length;
+          handIndex < len;
+          handIndex++)
+        {
+          const cardId = playerCardIds[handIndex];
+          node_index[cardId] = -1;
+          node_enabled[cardId] = false;
         }
 
         setNodeDraggable(handCardId, false);
@@ -473,8 +491,8 @@ function drawPhase(): void
         moveNode(cardId, [64, 0]);
         queueTimer(() =>
         {
-          moveNode(cardId, [0, 0], Easing.EaseOutQuad, 200);
-        }, 750 - eventsIdx * 100);
+          moveNode(cardId, [0, 0], Easing.EaseOutQuad, 300);
+        }, 600 - eventsIdx * 75);
       }
       else
       {
@@ -485,19 +503,27 @@ function drawPhase(): void
   }, stagger);
 
   // event card
-  queueTimer(() => { setNodeClickable(endTurnButton); }, stagger + 500);
+  queueTimer(() => { Input._enabled = true; setNodeClickable(endTurnButton); }, stagger + 500);
 }
 
 function endPhase(): void
 {
-  playerResources[Resources.Food] -= 1;
-  playerResources[Resources.Water] -= 1;
-  playerResources[Resources.O2] -= 1;
+  playerResources[Resources.Food] = Math.max(playerResources[Resources.Food] - 1, 0);
+  playerResources[Resources.Water] = Math.max(playerResources[Resources.Water] - 1, 0);
+  playerResources[Resources.O2] = Math.max(playerResources[Resources.O2] - 1, 0);
+
+  // TODO(dbrad): Action all ongoing card effects
 }
 
-function discardCard(index: number): void
+function discardInPlayCard(index: number): void
 {
-
+  const card = inPlayCards.splice(index, 1);
+  // remove card from in play
+  // start animation for discard pile...
+  // show the discard card, move to the pile
+  // then, add to discard pile
+  // hide the discard card
+  // discard pile should show last card on top
 }
 
 type timer = {
