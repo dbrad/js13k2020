@@ -28,6 +28,5 @@ canvas {
 canvas,
 img {
   image-rendering: optimizeSpeed;            
-  image-rendering: pixelated;                 
-  user-select: none;
+  image-rendering: pixelated;
 }
