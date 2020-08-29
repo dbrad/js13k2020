@@ -1,6 +1,4 @@
-// @ifdef DEBUG
 import { assert, DEBUG } from "./debug";
-// @endif
 
 import { energy, playerDiscard } from "./gamestate";
 import { playerHand, inPlayCards } from "./gamestate";

@@ -1,4 +1,3 @@
-// @ifdef DEBUG
 import { Align, pushQuad, pushText } from "./draw";
 import { DEBUG } from "./debug";
 
@@ -14,6 +13,8 @@ let displayFrameTime = "0.00 ms";
 
 export function tickStats(delta: number, beginTime: number, endTime: number): void
 {
+    // @ifdef DEBUG
+
     ms = (0.9 * delta) + (0.1 * ms);
     frameTime = (0.9 * (endTime - beginTime)) + (0.1 * frameTime);
 
@@ -41,5 +42,5 @@ export function tickStats(delta: number, beginTime: number, endTime: number): vo
         pushText(displayMs, 64, 10, { _textAlign: Align.Right });
         pushText(displayFrameTime, 64, 20, { _textAlign: Align.Right });
     }
+    // @endif
 }
-// @endif

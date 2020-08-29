@@ -1,7 +1,5 @@
-// @ifdef DEBUG
 import { tickStats } from "./stats";
 import { toggleDEBUG } from "./debug";
-// @endif
 
 import { clear, flush, initGL, setClearColour } from "./gl";
 import { loadAsset } from "./asset";
