@@ -1,7 +1,7 @@
-import { createNode, node_visible, node_size, moveNode, addChildNode, renderNode, node_tags, TAG, setNodeDraggable, node_movement, node_enabled, setNodeHoverable, setNodeDropable, node_parent, node_droppable, node_children, node_scale, node_position, node_index, setNodeClickable, node_draggable } from "../node";
+import { createNode, node_visible, node_size, moveNode, addChildNode, renderNode, node_tags, TAG, setNodeDraggable, node_movement, node_enabled, setNodeHoverable, setNodeDroppable, node_parent, node_droppable, node_children, node_scale, node_position, node_index, setNodeClickable, node_draggable } from "../node";
 import { screenWidth, screenHeight, screenCenterX, screenCenterY } from "../screen";
 import { pushText, Align, pushSpriteAndSave, pushQuad, textWidth } from "../draw";
-import { playerHand, Input, energy, eventsInPlay, playerResources, Resources, inPlayCards } from "../gamestate";
+import { playerHand, Input, energy, eventsInPlay, playerResources, Resources, inPlayCards, playerDiscard, newDecks, clearState } from "../gamestate";
 import { Easing } from "../interpolate";
 import { createButton } from "../nodes/button";
 import { buttonClick } from "../zzfx";
@@ -22,7 +22,7 @@ let eventDeckSlotId = -1;
 let eventCardSlotIds: number[] = [];
 let eventCardIds: number[] = [];
 
-let firstInPlayId = -1;
+let firstInPlaySlotId = -1;
 
 export function setupGameScreen(): void
 {
@@ -150,7 +150,7 @@ export function setupGameScreen(): void
     node_enabled[eventCardId] = false;
     addChildNode(eventDeckSlotId, eventCardId);
     moveNode(eventCardId, [0, 0]);
-    setNodeDropable(eventCardId);
+    setNodeDroppable(eventCardId);
     eventCardIds.push(eventCardId);
   }
 
@@ -170,24 +170,42 @@ export function setupGameScreen(): void
     node_size[inPlaySlotId] = [16, 16];
     node_scale[inPlaySlotId] = 3;
     node_tags[inPlaySlotId] = TAG.IN_PLAY_SLOT;
-    setNodeDropable(inPlaySlotId);
+    setNodeDroppable(inPlaySlotId);
     addChildNode(gameScreenRootId, inPlaySlotId);
     moveNode(inPlaySlotId, [64 + 64 * i, 128])
 
-    if (firstInPlayId === -1) { firstInPlayId = inPlaySlotId; }
+    if (firstInPlaySlotId === -1) { firstInPlaySlotId = inPlaySlotId; }
 
     const inPlayCardId = createNode();
     node_enabled[inPlayCardId] = false;
     node_size[inPlayCardId] = [16, 16];
     node_scale[inPlayCardId] = 3;
     node_tags[inPlayCardId] = TAG.IN_PLAY_CARD;
-    setNodeDropable(inPlayCardId);
+    setNodeDroppable(inPlayCardId);
     addChildNode(inPlaySlotId, inPlayCardId);
   }
   //#endregion PLAY AREA
 
   endTurnButton = createButton("End Turn", [96, 32], [400, 192]);
   addChildNode(gameScreenRootId, endTurnButton);
+}
+
+export function initializeGame(): void
+{
+  Input._enabled = false;
+
+  playerResources[Resources.Food] = 5;
+  playerResources[Resources.Water] = 5;
+  playerResources[Resources.O2] = 5;
+  playerResources[Resources.Materials] = 0;
+
+  playerHand.length = 0;
+  playerDiscard.length = 0;
+
+  newDecks();
+  clearState();
+
+  drawPhase();
 }
 
 export function gameScreen(now: number, delta: number): void
@@ -266,6 +284,7 @@ export function gameScreen(now: number, delta: number): void
   for (let [droppableId, droppable] of node_droppable)
   {
     if (!droppable) { continue; }
+
     // Play Slot Drop
     if (node_tags[droppableId] === TAG.IN_PLAY_SLOT)
     {
@@ -286,15 +305,25 @@ export function gameScreen(now: number, delta: number): void
             handCardId = childId;
           }
         }
+        // reset the scale to 2 (to match the hand card)
         node_scale[inPlayCardId] = 2;
+
+        // enabled the in-play card
         node_enabled[inPlayCardId] = true;
+
+        // make it so we can't drop another card on this slot
         node_droppable.set(droppableId, false);
+
+        // move the 'fake' in-play card to the same location the hand card was dropped
         moveNode(inPlayCardId, node_position[handCardId]);
 
+        // remove the card from the player's hand
         let idx = node_index[handCardId];
-        let ipIdx = droppableId - firstInPlayId;
-        const card = playerHand.splice(idx, 1);
-        inPlayCards[ipIdx] = card[0];
+        const card = playerHand.splice(idx, 1)[0];
+
+        // set the index of the card to the index of the slot
+        let ipIdx = (droppableId - firstInPlaySlotId) / 2;
+        inPlayCards[ipIdx] = card;
         node_index[inPlayCardId] = ipIdx;
 
         // Make sure removing the card doesn't cause jank animations
@@ -343,25 +372,34 @@ export function gameScreen(now: number, delta: number): void
     {
       if (node_children[droppableId].length === 1)
       {
-        const nodeId = node_children[droppableId][0];
-        if (node_draggable.get(nodeId))
+        const energyId = node_children[droppableId][0];
+        if (node_draggable.get(energyId))
         {
-          setNodeDraggable(nodeId, false);
-          moveNode(nodeId, [8, 8], Easing.EaseOutQuad, 200).then(() =>
+          setNodeDraggable(energyId, false);
+          moveNode(energyId, [8, 8], Easing.EaseOutQuad, 200).then(() =>
           {
             if (node_tags[droppableId] === TAG.IN_PLAY_CARD)
             {
+              const slotId = node_parent[droppableId];
               const card = inPlayCards[node_index[droppableId]];
-              PlayerCards.get(card)._effect(energy[node_index[nodeId]]);
-              //discardCard(card);
+              PlayerCards.get(card)._effect(energy[node_index[energyId]]);
+
+              // make the slot a drop target again
+              setNodeDroppable(slotId);
+
+              // discard the card by splicing its type out, and adding it to discard array
+              discardInPlayCard(node_index[droppableId]);
+
+              // disabled the in-play card node
+              node_enabled[droppableId] = false;
             }
             else
             {
               const card = eventsInPlay[node_index[droppableId]];
-              EventCards.get(card)._effect(energy[node_index[nodeId]]);
+              EventCards.get(card)._effect(energy[node_index[energyId]]);
             }
-            node_enabled[nodeId] = false;
-            addChildNode(gameScreenRootId, nodeId);
+            node_enabled[energyId] = false;
+            addChildNode(gameScreenRootId, energyId);
           });
         }
       }
@@ -517,8 +555,9 @@ function endPhase(): void
 
 function discardInPlayCard(index: number): void
 {
-  const card = inPlayCards.splice(index, 1);
-  // remove card from in play
+  const card = inPlayCards[index];
+  inPlayCards[index] = 0;
+  playerDiscard.push(card);
   // start animation for discard pile...
   // show the discard card, move to the pile
   // then, add to discard pile

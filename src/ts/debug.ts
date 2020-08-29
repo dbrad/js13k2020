@@ -7,3 +7,11 @@ export function assert(predicate: (() => boolean) | boolean, message: string): a
   }
   // @endif
 }
+
+export let DEBUG: boolean = false;
+export function toggleDEBUG(): void
+{
+  // @ifdef DEBUG
+  DEBUG = !DEBUG;
+  // @endif
+}

@@ -1,6 +1,6 @@
 // @ifdef DEBUG
 import { Align, pushQuad, pushText } from "./draw";
-import { DEBUG } from "./gamestate";
+import { DEBUG } from "./debug";
 
 let frameCount: number = 0;
 let fps: number = 60;

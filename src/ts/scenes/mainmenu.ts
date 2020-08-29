@@ -5,6 +5,7 @@ import { createButton } from "../nodes/button";
 import { Input } from "../gamestate";
 import { pushScene, Scenes } from "../scene";
 import { requestFullscreen } from "../game";
+import { initializeGame } from "./gamescreen";
 
 export let mainMenuRootId = -1;
 let playGameButtonId = -1;
@@ -30,14 +31,14 @@ export function mainMenu(now: number, delta: number): void
 {
   if (Input._active === playGameButtonId)
   {
-    window.scrollTo(0, 1);
+    initializeGame();
     pushScene(Scenes.Game);
   }
 
   if (Input._active === playGameFSButtonId)
   {
     requestFullscreen();
-    window.scrollTo(0, 1);
+    initializeGame();
     pushScene(Scenes.Game);
   }
 

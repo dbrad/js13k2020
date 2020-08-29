@@ -1,13 +1,6 @@
 import { v2 } from "./v2";
 import { EventCard, PlayerCard } from "./cards";
-
-// @ifdef DEBUG
-export let DEBUG: boolean = false;
-export function toggleDEBUG(): void
-{
-  DEBUG = !DEBUG;
-}
-// @endif
+import { shuffle } from "./random";
 
 export const Input = {
   _enabled: true,
@@ -29,12 +22,46 @@ export const enum Resources
 }
 
 export const playerResources: number[] = [5, 10, 3, 0];
-export let playerDeck: PlayerCard[] = [PlayerCard.Water, PlayerCard.Oxygen, PlayerCard.Food];
+export let playerDeck: PlayerCard[] = [];
+
+export function newDecks(): void
+{
+  playerDeck = shuffle([
+    PlayerCard.Food,
+    PlayerCard.Food,
+    PlayerCard.Food,
+    PlayerCard.Water,
+    PlayerCard.Water,
+    PlayerCard.Water,
+    PlayerCard.Oxygen,
+    PlayerCard.Oxygen,
+    PlayerCard.Oxygen,
+  ]);
+
+  eventDeck = shuffle([
+    EventCard.Food,
+    EventCard.Food,
+    EventCard.Food,
+    EventCard.Water,
+    EventCard.Water,
+    EventCard.Water,
+    EventCard.Oxygen,
+    EventCard.Oxygen,
+    EventCard.Oxygen,
+  ]);
+}
 export let playerHand: PlayerCard[] = [];
 export let playerDiscard: PlayerCard[] = [];
 export let inPlayCards: PlayerCard[] = [0, 0, 0, 0, 0, 0, 0];
 
 export let eventDeck: number[] = [EventCard.Food, EventCard.Water];
-export let eventsInPlay: EventCard[] = [EventCard.None, EventCard.None, EventCard.None, EventCard.None, EventCard.None, EventCard.None];
+export let eventsInPlay: EventCard[] = [0, 0, 0, 0, 0, 0];
 
 export let energy: Uint8Array = new Uint8Array([0, 0, 0, 0, 0, 0]);
+
+export function clearState(): void
+{
+  inPlayCards = [0, 0, 0, 0, 0, 0, 0];
+  eventsInPlay = [0, 0, 0, 0, 0, 0];
+  energy = new Uint8Array([0, 0, 0, 0, 0, 0]);
+}

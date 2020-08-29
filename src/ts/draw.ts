@@ -23,7 +23,6 @@ export function pushSpriteAndSave(textureName: string, x: number, y: number, col
   gl.restore();
 }
 
-
 export function pushQuad(x: number, y: number, w: number, h: number, colour: number = white): void
 {
   const t: Texture = TEXTURE_CACHE.get("flat");

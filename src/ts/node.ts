@@ -1,8 +1,7 @@
 // @ifdef DEBUG
-import { DEBUG } from "./gamestate";
+import { assert, DEBUG } from "./debug";
 // @endif
 
-import { assert } from "./debug";
 import { energy, playerDiscard } from "./gamestate";
 import { playerHand, inPlayCards } from "./gamestate";
 import * as gl from "./gl.js";
@@ -86,6 +85,7 @@ export function addChildNode(parentId: number, childId: number): void
     }
   }
 
+  assert(index !== -1, `[${ childId }] This node was not present in its parrent's child list [${ parentId }]`)
   // Remove this node from that list
   if (index > -1)
   {
@@ -163,7 +163,7 @@ function nodesUnderPoint(nodeId: number, point: v2): number[]
   return result;
 }
 
-export function setNodeDropable(nodeId: number, val: boolean = true): void
+export function setNodeDroppable(nodeId: number, val: boolean = true): void
 {
   node_droppable.set(nodeId, val);
 }
@@ -358,7 +358,7 @@ export function renderNode(nodeId: number): void
               cardType = inPlayCards[node_index[nodeId]];
             }
             const playerCard = PlayerCards.get(cardType);
-            assert(playerCard !== undefined, `Player cardtype ${ cardType } not found. ${ (node_tags[nodeId] === TAG.PLAYER_CARD) ? "PLAYER CARD" : "IN PLAY CARD" }`);
+            assert(playerCard !== undefined, `[${ nodeId }] Player cardtype ${ cardType } not found. ${ (node_tags[nodeId] === TAG.PLAYER_CARD) ? "PLAYER CARD" : "IN PLAY CARD" }`);
             pushQuad(cardBackingXY, cardBackingXY, cardBackingWH, cardBackingWH, 0xFF202020);
             pushSpriteAndSave(playerCard._art, cardBackingXY, cardBackingXY, white, scale, scale);
             pushSprite("card", 0, 0, 0xFF33FF33, scale, scale);
@@ -380,7 +380,7 @@ export function renderNode(nodeId: number): void
             cardBackingXY = size[0] / 4;
             cardBackingWH = size[0] / 2;
             gl.translate(pos[0], pos[1]);
-            let cardType: PlayerCard = playerDiscard[playerDiscard.length];
+            let cardType: PlayerCard = playerDiscard[playerDiscard.length - 1];
             const playerCard = PlayerCards.get(cardType);
             assert(playerCard !== undefined, `Player cardtype ${ cardType } not found.`);
             pushQuad(cardBackingXY, cardBackingXY, cardBackingWH, cardBackingWH, 0xFF202020);

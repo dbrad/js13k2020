@@ -1,6 +1,6 @@
 // @ifdef DEBUG
 import { tickStats } from "./stats";
-import { toggleDEBUG } from "./gamestate";
+import { toggleDEBUG } from "./debug";
 // @endif
 
 import { clear, flush, initGL, setClearColour } from "./gl";
@@ -35,7 +35,7 @@ window.addEventListener("load", async () =>
 {
   // @ifdef DEBUG
   console.log(`DEBUG BUILD`);
-  document.title = `Game - DEBUG`;
+  document.title = `Rescue Not Found - DEBUG BUILD`;
   document.addEventListener("keyup", (event) =>
   {
     if (event.code === "KeyD")
