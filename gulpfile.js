@@ -26,39 +26,39 @@ const preprocessContext = { DEBUG: true };
 const port = devBuild ? 1234 : 2345;
 const env = devBuild ? `debug` : `release`;
 
-function lzw_encode(s)
-{
-  if (!s) return s;
-  const dict = new Map(); // Use a Map!
-  const data = (s + ``).split(``);
-  const out = [];
-  let currChar;
-  let phrase = data[0];
-  let code = 256;
-  for (let i = 1; i < data.length; i++)
-  {
-    currChar = data[i];
-    if (dict.has(phrase + currChar))
-    {
-      phrase += currChar;
-    }
-    else
-    {
-      out.push(phrase.length > 1 ? dict.get(phrase) : phrase.codePointAt(0));
-      dict.set(phrase + currChar, code);
-      code++;
-      if (code === 0xd800) { code = 0xe000; }
-      phrase = currChar;
-    }
-  }
-  out.push(phrase.length > 1 ? dict.get(phrase) : phrase.codePointAt(0));
-  for (let i = 0; i < out.length; i++)
-  {
-    out[i] = String.fromCodePoint(out[i]);
-  }
-  //console.log (`LZW MAP SIZE`, dict.size, out.slice (-50), out.length, out.join(``).length);
-  return out.join(``);
-};
+// function lzw_encode(s)
+// {
+//   if (!s) return s;
+//   const dict = new Map(); // Use a Map!
+//   const data = (s + ``).split(``);
+//   const out = [];
+//   let currChar;
+//   let phrase = data[0];
+//   let code = 256;
+//   for (let i = 1; i < data.length; i++)
+//   {
+//     currChar = data[i];
+//     if (dict.has(phrase + currChar))
+//     {
+//       phrase += currChar;
+//     }
+//     else
+//     {
+//       out.push(phrase.length > 1 ? dict.get(phrase) : phrase.codePointAt(0));
+//       dict.set(phrase + currChar, code);
+//       code++;
+//       if (code === 0xd800) { code = 0xe000; }
+//       phrase = currChar;
+//     }
+//   }
+//   out.push(phrase.length > 1 ? dict.get(phrase) : phrase.codePointAt(0));
+//   for (let i = 0; i < out.length; i++)
+//   {
+//     out[i] = String.fromCodePoint(out[i]);
+//   }
+//   //console.log (`LZW MAP SIZE`, dict.size, out.slice (-50), out.length, out.join(``).length);
+//   return out.join(``);
+// };
 
 // HTML
 function buildHtml()
@@ -164,11 +164,11 @@ function buildJson()
   return gulp
     .src(`src/res/*.json`)
     .pipe(jsonMinify())
-    .pipe(transfob(function (file, enc, next)
-    {
-      file.contents = Buffer.from(lzw_encode(file.contents.toString()), `utf8`);
-      next(null, file);
-    }))
+    // .pipe(transfob(function (file, enc, next)
+    // {
+    //   file.contents = Buffer.from(lzw_encode(file.contents.toString()), `utf8`);
+    //   next(null, file);
+    // }))
     .pipe(gulp.dest(`./build/${env}/pre`));
 }
 

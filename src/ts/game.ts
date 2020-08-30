@@ -5,12 +5,14 @@ import { clear, flush, initGL, setClearColour } from "./gl";
 import { loadAsset } from "./asset";
 import { CurrentScene, getSceneRoot, Scenes } from "./scene";
 import { setupMainMenu, mainMenu } from "./scenes/mainmenu";
-import { screenWidth, screenHeight } from "./screen";
+import { screenWidth, screenHeight, screenCenterX, screenCenterY } from "./screen";
 import { Input } from "./gamestate";
 import { nodeInput as nodeInput, node_movement, moveNode } from "./node";
 import { interp } from "./interpolate";
 import { v2 } from "./v2";
 import { gameScreen, setupGameScreen } from "./scenes/gamescreen";
+import { pushQuad, pushSpriteAndSave } from "./draw";
+import { colourToHex } from "./util";
 
 let canvas: HTMLCanvasElement;
 export function requestFullscreen(): void
@@ -29,8 +31,11 @@ export function requestFullscreen(): void
   }
   catch (_) { }
 }
+
 window.addEventListener("load", async () =>
 {
+  type star = { _position: v2, velocity: v2 };
+  const stars: star[] = [];
   // @ifdef DEBUG
   console.log(`DEBUG BUILD`);
   document.title = `Rescue Not Found - DEBUG BUILD`;
@@ -111,6 +116,31 @@ window.addEventListener("load", async () =>
     then = now;
 
     clear();
+
+    if (stars.length < 300 && Math.random() < .5)
+    {
+      let star: star = { _position: [0, 0], velocity: [-0.5 + Math.random() * 1, -0.5 + Math.random() * 1] };
+      stars.push(star);
+    }
+
+    for (let n = 0, len = stars.length; n < len; n++)
+    {
+      let pos = stars[n]._position;
+      pos[0] += stars[n].velocity[0];
+      pos[1] += stars[n].velocity[1];
+      if (pos[0] > screenCenterX || pos[0] < -screenCenterX)
+      {
+        pos[0] = pos[1] = 0;
+      }
+      let c = Math.max(16, Math.floor((Math.abs(pos[0]) + Math.abs(pos[1])) / 2));
+      let s = ((Math.abs(pos[1] / 100 + n / 200) / 4) / 0.2) * 0.2;
+      pushSpriteAndSave("star", screenCenterX + pos[0], screenCenterY + pos[1], colourToHex(
+        255,
+        Math.min(255, c * (n % 6 === 0 ? 1.5 : 1)),
+        c,
+        Math.min(255, c * (n % 14 === 0 ? 1.5 : 1))),
+        s, s)
+    }
 
     let rootNodeId = getSceneRoot(CurrentScene);
 

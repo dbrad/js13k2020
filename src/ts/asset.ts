@@ -1,5 +1,4 @@
 import { TextureAssetJson, loadSpriteSheet } from "./texture.js";
-import { lzw_decode } from "./lzw.js";
 
 type AssetJson = TextureAssetJson;
 
@@ -10,7 +9,7 @@ export async function loadAsset(name: string): Promise<{}>
     // @endif
 
     const raw = document.querySelector("#" + name).innerHTML;
-    const asset: AssetJson = JSON.parse(lzw_decode(raw));
+    const asset: AssetJson = JSON.parse(raw);
 
     // @ifdef DEBUG
     console.log("ASSET FETCHED => " + asset.name);

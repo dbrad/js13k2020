@@ -1,7 +1,7 @@
 import { createNode, node_visible, node_size, moveNode, addChildNode, renderNode, node_tags, TAG, setNodeDraggable, node_movement, node_enabled, setNodeHoverable, setNodeDroppable, node_parent, node_droppable, node_children, node_scale, node_position, node_index, setNodeClickable, node_draggable } from "../node";
 import { screenWidth, screenHeight, screenCenterX, screenCenterY } from "../screen";
 import { pushText, Align, pushSpriteAndSave, pushQuad, textWidth } from "../draw";
-import { playerHand, Input, energy, eventsInPlay, playerResources, Resources, inPlayCards, playerDiscard, newDecks, clearState } from "../gamestate";
+import { playerHand, Input, energy, eventsInPlay, playerResources, Resources, inPlayCards, playerDiscard, newDecks, clearState, playerDeck } from "../gamestate";
 import { Easing } from "../interpolate";
 import { createButton } from "../nodes/button";
 import { buttonClick } from "../zzfx";
@@ -439,21 +439,32 @@ export function gameScreen(now: number, delta: number): void
     if (node_tags[Input._hot] === TAG.BUTTON) { }
     else
     {
+      const nodeId = Input._hot;
       let text = "";
+      let text2 = "";
       let w = 120;
       let h = 50
-      switch (node_tags[Input._hot])
+      switch (node_tags[nodeId])
       {
         case TAG.PLAYER_DECK:
           text = "Player Deck";
-          h = 8 + 10;
+          text2 = `Cards: ${ playerDeck.length }`
+          h = 16 + 10;
           break;
         case TAG.DICE:
           text = "Energy Node";
+          text2 = `Energy Level: ${ energy[node_index[nodeId]] }`;
+          h = 16 + 10;
+          break;
+        case TAG.PLAYER_CARD:
+          const card = PlayerCards.get(playerHand[node_index[nodeId]]);
+          text = card._name;
+          // TODO(dbrad): Fulled descriptions in tooltips
           h = 8 + 10;
           break;
       }
-      w = textWidth(text.length, 1) + 10;
+      const tw = Math.max(text.length, text2.length);
+      w = textWidth(tw, 1) + 10;
       let x = Input._pointer[0];
       let y = Input._pointer[1];
       if (x > screenCenterX)
@@ -476,6 +487,10 @@ export function gameScreen(now: number, delta: number): void
       {
         pushQuad(x, y, w, h, 0xDD000000);
         pushText(text, x + 5, y + 5);
+        if (text2 !== "")
+        {
+          pushText(text2, x + 5, y + 5 + 8);
+        }
       }
     }
   }
