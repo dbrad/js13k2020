@@ -247,7 +247,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/scenes/mainmenu.ts": {
-        "version": "ad40c45239ddf9f57cc1b2fd31e8ef34e846a120a19daffe3326ea8985cb58b5",
+        "version": "88ccbdc22f1c98acdf6e8813c16d4843c9b2f60a9537e9f808aee02d99119758",
         "signature": "efc7cc36a9d3f57f41235a11f61776d752ae7ac29a56056efd8f6aab955ebe09",
         "affectsGlobalScope": false
       },
@@ -257,8 +257,8 @@
         "affectsGlobalScope": false
       },
       "./src/ts/game.ts": {
-        "version": "94d626cbeb31e272f4e9dd9bb535989a537517b1d77ac2c080c0a492b077ebfd",
-        "signature": "2fc3a17e0b7cb714ddf74ecb59d49071234ff3a251f39003c5702174a6dd3128",
+        "version": "eac8011cb99d0064f50079141295b18ae67c5cdfeefc8744d97a994447ab64c7",
+        "signature": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
         "affectsGlobalScope": false
       },
       "./src/ts/types.d.ts": {
@@ -2133,7 +2133,19 @@
       "./src/ts/random.ts",
       "./src/ts/scene.ts",
       "./src/ts/scenes/gamescreen.ts",
-      "./src/ts/scenes/mainmenu.ts",
+      [
+        "./src/ts/scenes/mainmenu.ts",
+        [
+          {
+            "file": "./src/ts/scenes/mainmenu.ts",
+            "start": 364,
+            "length": 17,
+            "messageText": "Module '\"../game\"' has no exported member 'requestFullscreen'.",
+            "category": 1,
+            "code": 2305
+          }
+        ]
+      ],
       "./src/ts/screen.ts",
       "./src/ts/stats.ts",
       "./src/ts/texture.ts",

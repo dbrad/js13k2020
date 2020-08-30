@@ -11,29 +11,25 @@ import { nodeInput as nodeInput, node_movement, moveNode } from "./node";
 import { interp } from "./interpolate";
 import { v2 } from "./v2";
 import { gameScreen, setupGameScreen } from "./scenes/gamescreen";
-import { pushQuad, pushSpriteAndSave } from "./draw";
+import { pushSpriteAndSave } from "./draw";
 import { colourToHex } from "./util";
 
 let canvas: HTMLCanvasElement;
-export function requestFullscreen(): void
-{
-  try
-  {
-    if (document.fullscreenEnabled)
-    {
-      if (!document.fullscreenElement)
-      {
-        const fullscreen = canvas.requestFullscreen || canvas.mozRequestFullScreen || canvas.webkitRequestFullscreen || canvas.msRequestFullscreen;
-        //@ts-ignore
-        fullscreen.call(canvas).then(() =>
-        {
-          window.screen.orientation.lock("landscape").catch(() => { });
-        });
-      }
-    }
-  }
-  catch (_) { }
-}
+// export function requestFullscreen(): void
+// {
+//   if (document.fullscreenEnabled)
+//   {
+//     if (!document.fullscreenElement)
+//     {
+//       const fullscreen = canvas.requestFullscreen || canvas.mozRequestFullScreen || canvas.webkitRequestFullscreen || canvas.msRequestFullscreen;
+//       //@ts-ignore
+//       fullscreen.call(canvas).then(() =>
+//       {
+//         window.screen.orientation.lock("landscape").catch(_ => _);
+//       }).catch(_ => _);
+//     }
+//   }
+// }
 
 window.addEventListener("load", async () =>
 {
@@ -83,7 +79,7 @@ window.addEventListener("load", async () =>
   {
     if (isTouch(e))
     {
-      requestFullscreen();
+      // requestFullscreen();
       const canvasBounds = canvas.getBoundingClientRect();
       const touchEvent = e as TouchEvent;
       touchEvent.preventDefault();
