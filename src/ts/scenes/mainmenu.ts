@@ -4,7 +4,6 @@ import { renderNode, createNode, addChildNode, node_visible, node_size } from ".
 import { createButton } from "../nodes/button";
 import { Input } from "../gamestate";
 import { pushScene, Scenes } from "../scene";
-import { requestFullscreen } from "../game";
 import { initializeGame } from "./gamescreen";
 
 export let mainMenuRootId = -1;

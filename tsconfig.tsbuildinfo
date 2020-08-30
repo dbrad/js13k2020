@@ -247,7 +247,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/scenes/mainmenu.ts": {
-        "version": "88ccbdc22f1c98acdf6e8813c16d4843c9b2f60a9537e9f808aee02d99119758",
+        "version": "5f6c93086a5f5ca986a13a6aae87cddf5418aaafd2d5fed716ab4d8dbfd556c0",
         "signature": "efc7cc36a9d3f57f41235a11f61776d752ae7ac29a56056efd8f6aab955ebe09",
         "affectsGlobalScope": false
       },
@@ -1325,7 +1325,6 @@
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./src/ts/draw.ts",
-        "./src/ts/game.ts",
         "./src/ts/gamestate.ts",
         "./src/ts/node.ts",
         "./src/ts/nodes/button.ts",
@@ -2133,19 +2132,7 @@
       "./src/ts/random.ts",
       "./src/ts/scene.ts",
       "./src/ts/scenes/gamescreen.ts",
-      [
-        "./src/ts/scenes/mainmenu.ts",
-        [
-          {
-            "file": "./src/ts/scenes/mainmenu.ts",
-            "start": 364,
-            "length": 17,
-            "messageText": "Module '\"../game\"' has no exported member 'requestFullscreen'.",
-            "category": 1,
-            "code": 2305
-          }
-        ]
-      ],
+      "./src/ts/scenes/mainmenu.ts",
       "./src/ts/screen.ts",
       "./src/ts/stats.ts",
       "./src/ts/texture.ts",
