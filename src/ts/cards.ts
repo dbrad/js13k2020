@@ -110,19 +110,19 @@ export const EventCards: Map<EventCard, CardData> = new Map([
     _name: _OXYGEN,
     _art: art_o2,
     _type: CardType.Boon,
-    _effect: (value: number) => { gain(Resources.Food, value) }
+    _effect: (value: number) => { gain(Resources.O2, value) }
   }],
   [EventCard.Water, {
     _name: _WATER,
     _art: art_water,
     _type: CardType.Boon,
-    _effect: (value: number) => { gain(Resources.Food, value) }
+    _effect: (value: number) => { gain(Resources.Water, value) }
   }],
   [EventCard.Materials, {
     _name: _MATERIALS,
     _art: art_mat,
     _type: CardType.Boon,
-    _effect: (value: number) => { gain(Resources.Food, value) }
+    _effect: (value: number) => { gain(Resources.Materials, value) }
   }],
   [EventCard.HullBreach, {
     _name: _HULL_BREACH,

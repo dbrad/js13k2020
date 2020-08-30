@@ -30,3 +30,15 @@ img {
   image-rendering: optimizeSpeed;            
   image-rendering: pixelated;
 }
+
+@media only screen and (orientation:portrait){
+  body {
+   transform: rotate(90deg);
+  }
+}
+
+@media only screen and (orientation:landscape){
+  body {
+  transform: rotate(0deg);
+  }
+}

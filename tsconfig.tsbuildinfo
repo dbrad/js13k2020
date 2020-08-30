@@ -172,7 +172,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/cards.ts": {
-        "version": "d723c7574dc8dbf3e00de7e931b815bb8fe02338801e5f2c6223283dad354e33",
+        "version": "696735b1867c0b21e73a3ac175b61bdc6c9268e9d92e80506c2d62529af13c53",
         "signature": "9ecdb837e1ef10c50c632719cc44abc7c744d5905c9cc2fb4577e2a70a7b917f",
         "affectsGlobalScope": false
       },
@@ -257,7 +257,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/game.ts": {
-        "version": "46a4ae00ea4d48f30ffdbc5d6ecfa20bb3d3b39cc09498176e8606e8e5f2e793",
+        "version": "94d626cbeb31e272f4e9dd9bb535989a537517b1d77ac2c080c0a492b077ebfd",
         "signature": "2fc3a17e0b7cb714ddf74ecb59d49071234ff3a251f39003c5702174a6dd3128",
         "affectsGlobalScope": false
       },

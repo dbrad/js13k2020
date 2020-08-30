@@ -25,7 +25,10 @@ export function requestFullscreen(): void
       {
         const fullscreen = canvas.requestFullscreen || canvas.mozRequestFullScreen || canvas.webkitRequestFullscreen || canvas.msRequestFullscreen;
         //@ts-ignore
-        fullscreen.call(canvas);
+        fullscreen.call(canvas).then(() =>
+        {
+          window.screen.orientation.lock("landscape").catch(() => { });
+        });
       }
     }
   }
