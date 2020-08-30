@@ -15,21 +15,22 @@ import { pushSpriteAndSave } from "./draw";
 import { colourToHex } from "./util";
 
 let canvas: HTMLCanvasElement;
-// export function requestFullscreen(): void
-// {
-//   if (document.fullscreenEnabled)
-//   {
-//     if (!document.fullscreenElement)
-//     {
-//       const fullscreen = canvas.requestFullscreen || canvas.mozRequestFullScreen || canvas.webkitRequestFullscreen || canvas.msRequestFullscreen;
-//       //@ts-ignore
-//       fullscreen.call(canvas).then(() =>
-//       {
-//         window.screen.orientation.lock("landscape").catch(_ => _);
-//       }).catch(_ => _);
-//     }
-//   }
-// }
+export function requestFullscreen(): void
+{
+  if (document.fullscreenEnabled)
+  {
+    if (!document.fullscreenElement)
+    {
+      const body = document.querySelector('body');
+      const fullscreen = canvas.requestFullscreen || canvas.mozRequestFullScreen || canvas.webkitRequestFullscreen || canvas.msRequestFullscreen;
+      //@ts-ignore
+      fullscreen.call(body).then(() =>
+      {
+        window.screen.orientation.lock("landscape-primary").catch(_ => _);
+      }).catch(_ => _);
+    }
+  }
+}
 
 window.addEventListener("load", async () =>
 {
@@ -79,7 +80,7 @@ window.addEventListener("load", async () =>
   {
     if (isTouch(e))
     {
-      // requestFullscreen();
+      requestFullscreen();
       const canvasBounds = canvas.getBoundingClientRect();
       const touchEvent = e as TouchEvent;
       touchEvent.preventDefault();

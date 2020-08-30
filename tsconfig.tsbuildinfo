@@ -247,7 +247,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/scenes/mainmenu.ts": {
-        "version": "5f6c93086a5f5ca986a13a6aae87cddf5418aaafd2d5fed716ab4d8dbfd556c0",
+        "version": "ad40c45239ddf9f57cc1b2fd31e8ef34e846a120a19daffe3326ea8985cb58b5",
         "signature": "efc7cc36a9d3f57f41235a11f61776d752ae7ac29a56056efd8f6aab955ebe09",
         "affectsGlobalScope": false
       },
@@ -257,8 +257,8 @@
         "affectsGlobalScope": false
       },
       "./src/ts/game.ts": {
-        "version": "eac8011cb99d0064f50079141295b18ae67c5cdfeefc8744d97a994447ab64c7",
-        "signature": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
+        "version": "f6d296534bf48b20805ba339cb9c8751b7c642091d58d5e5ba7823900cfa1549",
+        "signature": "2fc3a17e0b7cb714ddf74ecb59d49071234ff3a251f39003c5702174a6dd3128",
         "affectsGlobalScope": false
       },
       "./src/ts/types.d.ts": {
@@ -1325,6 +1325,7 @@
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./src/ts/draw.ts",
+        "./src/ts/game.ts",
         "./src/ts/gamestate.ts",
         "./src/ts/node.ts",
         "./src/ts/nodes/button.ts",

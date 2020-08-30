@@ -4,11 +4,12 @@ import { renderNode, createNode, addChildNode, node_visible, node_size } from ".
 import { createButton } from "../nodes/button";
 import { Input } from "../gamestate";
 import { pushScene, Scenes } from "../scene";
+import { requestFullscreen } from "../game";
 import { initializeGame } from "./gamescreen";
 
 export let mainMenuRootId = -1;
 let playGameButtonId = -1;
-// let playGameFSButtonId = -1;
+let playGameFSButtonId = -1;
 export function setupMainMenu(): void
 {
   mainMenuRootId = createNode();
@@ -19,11 +20,11 @@ export function setupMainMenu(): void
   playGameButtonId = createButton("New Game", [104, 40], [screenCenterX - 52, screenCenterY]);
   addChildNode(mainMenuRootId, playGameButtonId);
 
-  // if (!("ontouchstart" in window))
-  // {
-  //   playGameFSButtonId = createButton("New Game (Fullscreen)", [104, 40], [screenCenterX - 52, screenCenterY + 50]);
-  //   addChildNode(mainMenuRootId, playGameFSButtonId);
-  // }
+  if (!("ontouchstart" in window))
+  {
+    playGameFSButtonId = createButton("New Game (Fullscreen)", [104, 40], [screenCenterX - 52, screenCenterY + 50]);
+    addChildNode(mainMenuRootId, playGameFSButtonId);
+  }
 }
 
 export function mainMenu(now: number, delta: number): void
@@ -34,12 +35,12 @@ export function mainMenu(now: number, delta: number): void
     pushScene(Scenes.Game);
   }
 
-  // if (Input._active === playGameFSButtonId)
-  // {
-  //   requestFullscreen();
-  //   initializeGame();
-  //   pushScene(Scenes.Game);
-  // }
+  if (Input._active === playGameFSButtonId)
+  {
+    requestFullscreen();
+    initializeGame();
+    pushScene(Scenes.Game);
+  }
 
   renderNode(mainMenuRootId);
   pushText("RESCUE  FOUND.", screenCenterX, screenCenterY - 90, { _textAlign: Align.Center, _scale: 4 });
