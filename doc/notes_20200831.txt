@@ -1,0 +1,52 @@
+404: Not Found
+Space Survival Theme / Setting
+
+What do you want players to do?
+  Players needs to survive a scenario of being set adrift in space.
+
+How can they win the game?
+  Players would win the game by surviving long enough to somehow contact another ship for rescue
+
+What are the rules?
+
+Are there exceptions to the rules?
+
+How many people can play at once?
+  One
+
+What is the minimum and maximum amount of players?
+  One, 1, 0x1, 01, 0001
+
+Is it meant for teams or individual play?
+  individual
+
+Can there be a tie?
+  no...
+
+Is the game timed?
+  Maybe?
+
+How does the game progress (turn-based or rounds)?
+  Turn Based
+
+How will the players interact?
+  Cards as a minimum
+
+
+  -----
+
+Event Deck will only have quests and perils?
+Cards played will fulfill some sort of criteria toward quests or perils?
+
+Fail Quest miss rewards
+Completed quests give rewards
+Failed Perils give penalities
+Completed Perils avoid penalities
+
+
+Elder Signs-like?
+Assign 4 quests...
+player rolls dice and draws a hand each turn?
+player resolves or semi-resolves as much as possible each turn
+ends turn when no more is possible...
+take supply costs (food, water, o2, crew?)

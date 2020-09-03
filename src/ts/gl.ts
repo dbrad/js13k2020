@@ -100,7 +100,7 @@ export function initGL(canvas: HTMLCanvasElement): void
     ctx.activeTexture(ctx.TEXTURE0);
 }
 
-export function createTexture(image: HTMLImageElement): WebGLTexture
+export function createTexture(image: HTMLImageElement | HTMLCanvasElement): WebGLTexture
 {
     const texture: WebGLTexture = ctx.createTexture();
     ctx.bindTexture(ctx.TEXTURE_2D, texture);

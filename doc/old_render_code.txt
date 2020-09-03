@@ -1,0 +1,123 @@
+switch (node_tags[nodeId])
+{
+  case TAG.DICE:
+    pushSprite(`d${ energy[node_index[nodeId]] }`, pos[0], pos[1], white, scale, scale);
+    if (Input._hot === nodeId && Input._active !== nodeId)
+    {
+      pushSprite("ds", 0, 0, 0xFFAA1111, scale, scale);
+    }
+    break;
+
+  // case TAG.DICE_SLOT:
+  //   pushSprite("d0", pos[0], pos[1], white, scale, scale);
+  //   break;
+
+  case TAG.EVENT_CARD:
+    {
+      cardBackingXY = size[0] / 4;
+      cardBackingWH = size[0] / 2;
+      gl.translate(pos[0], pos[1]);
+      const eventCard = getEventCard(node_index[nodeId]);
+      assert(eventCard !== undefined, `Event cardtype ${ node_index[nodeId] } not found.`);
+      pushSpriteAndSave(eventCard._art, cardBackingXY, cardBackingXY, white, scale, scale);
+      pushSprite("card", 0, 0, 0xFF33FF33, scale, scale);
+    }
+    break;
+
+  case TAG.EVENT_DECK:
+    {
+      gl.translate(pos[0], pos[1]);
+      pushQuad(1, 1, 45, 46, 0xFF101010);
+      pushSprite("card", 0, 0, white, scale, scale);
+    }
+    break;
+
+  case TAG.EVENT_SLOT:
+    pushSprite("cs", pos[0], pos[1], 0xFF606060, scale, scale);
+    break;
+
+  case TAG.EVENT_SLOT_FINAL:
+    pushSprite("cs", pos[0], pos[1], 0xFF2020A0, scale, scale);
+    break;
+
+  case TAG.PLAYER_CARD:
+  case TAG.IN_PLAY_CARD:
+    {
+      cardBackingXY = size[0] / 4;
+      cardBackingWH = size[0] / 2;
+      gl.translate(pos[0], pos[1]);
+      let cardType: PlayerCard;
+      if (node_tags[nodeId] === TAG.PLAYER_CARD)
+      {
+        cardType = playerHand[node_index[nodeId]];
+      }
+      else
+      {
+        cardType = inPlayCards[node_index[nodeId]];
+      }
+      const playerCard = PlayerCards.get(cardType);
+      assert(playerCard !== undefined, `[${ nodeId }] Player cardtype ${ cardType } not found. ${ (node_tags[nodeId] === TAG.PLAYER_CARD) ? "PLAYER CARD" : "IN PLAY CARD" }`);
+      pushSpriteAndSave(playerCard._art, cardBackingXY, cardBackingXY, white, scale, scale);
+      pushSprite("card", 0, 0, 0xFF33FF33, scale, scale);
+    }
+    break;
+
+  case TAG.PLAYER_DECK:
+    pushQuad(pos[0] + 1, pos[1] + 1, 29, 30, 0xFF101010);
+    pushSprite("card", pos[0], pos[1], white, scale, scale);
+    break;
+
+  case TAG.PLAYER_DISCARD:
+    if (playerDiscard.length == 0)
+    {
+      pushSprite("ds", pos[0], pos[1], 0xFF303030, scale, scale);
+    }
+    else
+    {
+      cardBackingXY = size[0] / 4;
+      cardBackingWH = size[0] / 2;
+      gl.translate(pos[0], pos[1]);
+      let cardType: PlayerCard = playerDiscard[playerDiscard.length - 1];
+      const playerCard = PlayerCards.get(cardType);
+      assert(playerCard !== undefined, `Player cardtype ${ cardType } not found.`);
+      pushSpriteAndSave(playerCard._art, cardBackingXY, cardBackingXY, white, scale, scale);
+      pushSprite("card", 0, 0, 0xFF33FF33, scale, scale);
+    }
+    break;
+
+  case TAG.IN_PLAY_SLOT:
+    pushSprite("cs", pos[0], pos[1], 0xFF606060, scale, scale);
+    break;
+
+  case TAG.BUTTON:
+    {
+      if (Input._active === nodeId)
+      {
+        pushQuad(pos[0], pos[1], size[0], size[1], 0xFF111111);
+        buttonClick();
+
+      }
+      else if (Input._hot === nodeId)
+      {
+        pushQuad(pos[0], pos[1], size[0], size[1], white);
+        if (Input._lastHot !== nodeId)
+        {
+          buttonHover();
+        }
+      }
+      else
+      {
+        pushQuad(pos[0], pos[1], size[0], size[1], 0xFFAAAAAA);
+
+      }
+      pushQuad(pos[0] + 1, pos[1] + 1, size[0] - 2, size[1] - 2, 0xFF2d2d2d);
+      gl.translate(pos[0], pos[1]);
+      const lineCount = parseText(node_button_text.get(nodeId), { _textAlign: Align.Center, _wrap: size[0] - 2 });
+      pushText(node_button_text.get(nodeId),
+        size[0] / 2, size[1] / 2 - (lineCount * 8 / 2),
+        { _textAlign: Align.Center, _wrap: size[0] - 2 });
+    }
+    break;
+  default:
+    gl.translate(pos[0], pos[1]);
+}

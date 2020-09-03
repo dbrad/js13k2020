@@ -1,31 +1,25 @@
 import { assert, DEBUG } from "./debug";
 
-import { energy, playerDiscard } from "./gamestate";
-import { playerHand, inPlayCards } from "./gamestate";
 import * as gl from "./gl.js";
 import { v2, subV2 } from "./v2";
 import { Input } from "./gamestate";
-import { pushQuad, pushSprite, pushText, Align, parseText, pushSpriteAndSave } from "./draw";
+import { pushQuad, parseText, Align, pushText, pushSprite, pushSpriteAndSave } from "./draw";
 import { mouseInside, white } from "./util.js";
 import { Easing, InterpolationData, createInterpolationData } from "./interpolate";
-import { buttonHover, buttonClick } from "./zzfx";
-import { getEventCard, PlayerCards, PlayerCard } from "./cards";
+import { buttonClick, buttonHover } from "./zzfx";
 
 export const enum TAG
 {
   BUTTON,
-  PLAYER_CARD,
-  PLAYER_DECK,
-  PLAYER_DISCARD,
-  IN_PLAY_SLOT,
-  IN_PLAY_CARD,
-  EVENT_CARD,
-  EVENT_DECK,
-  EVENT_SLOT,
-  EVENT_SLOT_FINAL,
   DICE,
   DICE_SLOT,
+  QUEST_AREA,
+  QUEST_CARD,
+  QUEST_SLOT,
+  CREW_CARD,
+  CREW_SLOT
 }
+
 export const node_position: v2[] = [];
 export const node_abs_position: v2[] = [];
 export const node_movement: Map<number, InterpolationData> = new Map();
@@ -34,7 +28,9 @@ export const node_scale: number[] = [];
 export const node_enabled: boolean[] = [];
 
 export const node_tags: TAG[] = [];
-export const node_index: number[] = [];
+
+export const node_ref_index: Map<number, number> = new Map();
+export const node_home: Map<number, number> = new Map();
 
 export const node_draggable: Map<number, boolean> = new Map();
 export const node_droppable: Map<number, boolean> = new Map();
@@ -111,7 +107,7 @@ export function moveNode(nodeId: number, pos: v2, ease: Easing = Easing.None, du
     return new Promise((resolve, reject) =>
     {
       node_movement.set(nodeId, createInterpolationData(duration, node_position[nodeId], pos, ease, resolve));
-    })
+    });
   }
   node_position[nodeId][0] = pos[0];
   node_position[nodeId][1] = pos[1];
@@ -247,12 +243,6 @@ export function nodeInput(nodeId: number, rootId: number = nodeId): void
           // Check if the target is enabled, and droppable
           if (node_enabled[targetId] && node_droppable.get(targetId))
           {
-            // If the target is a play slot, and the dropped node isnt a card, move on
-            if (node_tags[targetId] === TAG.IN_PLAY_SLOT && node_tags[nodeId] !== TAG.PLAYER_CARD) { continue; }
-            // If the target is an in-play card, and the dropped node isnt a die, move on
-            else if (node_tags[targetId] === TAG.IN_PLAY_CARD && node_tags[nodeId] !== TAG.DICE) { continue; }
-            else if (node_tags[targetId] === TAG.EVENT_CARD && node_tags[nodeId] !== TAG.DICE) { continue; }
-
             pos = nodeAbsolutePosition(nodeId);
             addChildNode(targetId, nodeId);
             moveNode(nodeId, subV2(pos, nodeAbsolutePosition(targetId)));
@@ -291,134 +281,53 @@ export function renderNode(nodeId: number): void
     const scale = node_scale[nodeId];
     gl.save();
 
-    let cardBackingXY = 0;
-    let cardBackingWH = 0;
     if (node_visible[nodeId])
     {
       switch (node_tags[nodeId])
       {
+        case TAG.CREW_CARD:
+          gl.translate(pos[0], pos[1]);
+          pushSpriteAndSave("t1", size[0] / 4, size[0] / 4, white, scale, scale);
+          pushSprite("card", 0, 0, 0xFF33FF33, scale, scale);
+          break;
         case TAG.DICE:
-          pushSprite(`d${ energy[node_index[nodeId]] }`, pos[0], pos[1], white, scale, scale);
-          if (Input._hot === nodeId && Input._active !== nodeId)
-          {
-            pushSprite("ds", 0, 0, 0xFFAA1111, scale, scale);
-          }
+          pushSprite(`d1`, pos[0], pos[1], white, scale, scale);
           break;
-
+        case TAG.QUEST_SLOT:
+        case TAG.CREW_SLOT:
+          pushSprite(`cs`, pos[0], pos[1], white, scale, scale);
+          break;
         case TAG.DICE_SLOT:
-          pushSprite("d0", pos[0], pos[1], white, scale, scale);
+          pushSprite(`ds`, pos[0], pos[1], white, scale, scale);
           break;
-
-        case TAG.EVENT_CARD:
+        case TAG.BUTTON:
+          //#region Render Button
+          if (Input._active === nodeId)
           {
-            cardBackingXY = size[0] / 4;
-            cardBackingWH = size[0] / 2;
-            gl.translate(pos[0], pos[1]);
-            const eventCard = getEventCard(node_index[nodeId]);
-            assert(eventCard !== undefined, `Event cardtype ${ node_index[nodeId] } not found.`);
-            pushQuad(cardBackingXY, cardBackingXY, cardBackingWH, cardBackingWH, 0xFF202020);
-            pushSpriteAndSave(eventCard._art, cardBackingXY, cardBackingXY, white, scale, scale);
-            pushSprite("card", 0, 0, 0xFF33FF33, scale, scale);
+            pushQuad(pos[0], pos[1], size[0], size[1], 0xFF111111);
+            buttonClick();
+
           }
-          break;
-
-        case TAG.EVENT_DECK:
+          else if (Input._hot === nodeId)
           {
-            cardBackingXY = size[0] / 4;
-            cardBackingWH = size[0] / 2;
-            gl.translate(pos[0], pos[1]);
-            pushQuad(cardBackingXY, cardBackingXY, cardBackingWH, cardBackingWH, 0xFF666666);
-            pushSprite("card", 0, 0, white, scale, scale);
-          }
-          break;
-
-        case TAG.EVENT_SLOT:
-          pushSprite("ds", pos[0], pos[1], 0xFF606060, scale, scale);
-          break;
-
-        case TAG.EVENT_SLOT_FINAL:
-          pushSprite("ds", pos[0], pos[1], 0xFF2020A0, scale, scale);
-          break;
-
-        case TAG.PLAYER_CARD:
-        case TAG.IN_PLAY_CARD:
-          {
-            cardBackingXY = size[0] / 4;
-            cardBackingWH = size[0] / 2;
-            gl.translate(pos[0], pos[1]);
-            let cardType: PlayerCard;
-            if (node_tags[nodeId] === TAG.PLAYER_CARD)
+            pushQuad(pos[0], pos[1], size[0], size[1], white);
+            if (Input._lastHot !== nodeId)
             {
-              cardType = playerHand[node_index[nodeId]];
+              buttonHover();
             }
-            else
-            {
-              cardType = inPlayCards[node_index[nodeId]];
-            }
-            const playerCard = PlayerCards.get(cardType);
-            assert(playerCard !== undefined, `[${ nodeId }] Player cardtype ${ cardType } not found. ${ (node_tags[nodeId] === TAG.PLAYER_CARD) ? "PLAYER CARD" : "IN PLAY CARD" }`);
-            pushQuad(cardBackingXY, cardBackingXY, cardBackingWH, cardBackingWH, 0xFF202020);
-            pushSpriteAndSave(playerCard._art, cardBackingXY, cardBackingXY, white, scale, scale);
-            pushSprite("card", 0, 0, 0xFF33FF33, scale, scale);
-          }
-          break;
-
-        case TAG.PLAYER_DECK:
-          pushSprite("card", pos[0], pos[1], white, scale, scale);
-          pushQuad(8, 8, 16, 16, 0xFF666666);
-          break;
-
-        case TAG.PLAYER_DISCARD:
-          if (playerDiscard.length == 0)
-          {
-            pushSprite("ds", pos[0], pos[1], 0xFF303030, scale, scale);
           }
           else
           {
-            cardBackingXY = size[0] / 4;
-            cardBackingWH = size[0] / 2;
-            gl.translate(pos[0], pos[1]);
-            let cardType: PlayerCard = playerDiscard[playerDiscard.length - 1];
-            const playerCard = PlayerCards.get(cardType);
-            assert(playerCard !== undefined, `Player cardtype ${ cardType } not found.`);
-            pushQuad(cardBackingXY, cardBackingXY, cardBackingWH, cardBackingWH, 0xFF202020);
-            pushSpriteAndSave(playerCard._art, cardBackingXY, cardBackingXY, white, scale, scale);
-            pushSprite("card", 0, 0, 0xFF33FF33, scale, scale);
+            pushQuad(pos[0], pos[1], size[0], size[1], 0xFFAAAAAA);
+
           }
-          break;
-
-        case TAG.IN_PLAY_SLOT:
-          pushSprite("ds", pos[0], pos[1], 0xFF606060, scale, scale);
-          break;
-
-        case TAG.BUTTON:
-          {
-            if (Input._active === nodeId)
-            {
-              pushQuad(pos[0], pos[1], size[0], size[1], 0xFF111111);
-              buttonClick();
-
-            }
-            else if (Input._hot === nodeId)
-            {
-              pushQuad(pos[0], pos[1], size[0], size[1], white);
-              if (Input._lastHot !== nodeId)
-              {
-                buttonHover();
-              }
-            }
-            else
-            {
-              pushQuad(pos[0], pos[1], size[0], size[1], 0xFFAAAAAA);
-
-            }
-            pushQuad(pos[0] + 1, pos[1] + 1, size[0] - 2, size[1] - 2, 0xFF2d2d2d);
-            gl.translate(pos[0], pos[1]);
-            const lineCount = parseText(node_button_text.get(nodeId), { _textAlign: Align.Center, _wrap: size[0] - 2 });
-            pushText(node_button_text.get(nodeId),
-              size[0] / 2, size[1] / 2 - (lineCount * 8 / 2),
-              { _textAlign: Align.Center, _wrap: size[0] - 2 });
-          }
+          pushQuad(pos[0] + 1, pos[1] + 1, size[0] - 2, size[1] - 2, 0xFF2d2d2d);
+          gl.translate(pos[0], pos[1]);
+          const lineCount = parseText(node_button_text.get(nodeId), { _textAlign: Align.Center, _wrap: size[0] - 2 });
+          pushText(node_button_text.get(nodeId),
+            size[0] / 2, size[1] / 2 - (lineCount * 8 / 2),
+            { _textAlign: Align.Center, _wrap: size[0] - 2 });
+          //#endregion Render Button
           break;
         default:
           gl.translate(pos[0], pos[1]);
@@ -436,22 +345,6 @@ export function renderNode(nodeId: number): void
       pushQuad(0, 0, size[0], 1, 0xFF00ff00);
       pushQuad(size[0] - 1, 0, 1, size[1], 0xFF00ff00);
       pushQuad(0, size[1] - 1, size[0], 1, 0xFF00ff00);
-
-      // if (node_hoverable.get(nodeId) && Input._hot === nodeId)
-      // {
-      //   pushQuad(0, 0, 1, size[1], 0xFF00ffFF);
-      //   pushQuad(0, 0, size[0], 1, 0xFF00ffFF);
-      //   pushQuad(size[0] - 1, 0, 1, size[1], 0xFF00ffFF);
-      //   pushQuad(0, size[1] - 1, size[0], 1, 0xFF00ffFF);
-      // }
-
-      // if (node_clickable.get(nodeId) && Input._active === nodeId)
-      // {
-      //   pushQuad(0, 0, 1, size[1], 0xFF0000FF);
-      //   pushQuad(0, 0, size[0], 1, 0xFF0000FF);
-      //   pushQuad(size[0] - 1, 0, 1, size[1], 0xFF0000FF);
-      //   pushQuad(0, size[1] - 1, size[0], 1, 0xFF0000FF);
-      // }
     }
     // @endif
 

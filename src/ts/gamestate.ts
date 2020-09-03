@@ -1,6 +1,4 @@
 import { v2 } from "./v2";
-import { EventCard, PlayerCard } from "./cards";
-import { shuffle } from "./random";
 
 export const Input = {
   _enabled: true,
@@ -13,55 +11,95 @@ export const Input = {
   _active: 0
 }
 
-export const enum Resources
-{
-  Food,
-  Water,
-  O2,
-  Materials
+export type Crew = {
+  _level: number,
+  _dice: number[]
 }
 
-export const playerResources: number[] = [5, 10, 3, 0];
-export let playerDeck: PlayerCard[] = [];
-
-export function newDecks(): void
-{
-  playerDeck = shuffle([
-    PlayerCard.Food,
-    PlayerCard.Food,
-    PlayerCard.Food,
-    PlayerCard.Water,
-    PlayerCard.Water,
-    PlayerCard.Water,
-    PlayerCard.Oxygen,
-    PlayerCard.Oxygen,
-    PlayerCard.Oxygen,
-  ]);
-
-  eventDeck = shuffle([
-    EventCard.Food,
-    EventCard.Food,
-    EventCard.Food,
-    EventCard.Water,
-    EventCard.Water,
-    EventCard.Water,
-    EventCard.Oxygen,
-    EventCard.Oxygen,
-    EventCard.Oxygen,
-  ]);
+export type Quest = {
+  _name: string,
+  _crew?: Crew,
+  _dice: number[],
+  _objective: number[],
+  _reward: () => void,
+  _penalty: () => void
 }
-export let playerHand: PlayerCard[] = [];
-export let playerDiscard: PlayerCard[] = [];
-export let inPlayCards: PlayerCard[] = [0, 0, 0, 0, 0, 0, 0];
 
-export let eventDeck: number[] = [EventCard.Food, EventCard.Water];
-export let eventsInPlay: EventCard[] = [0, 0, 0, 0, 0, 0];
+export const CrewMembers: Crew[] = [];
+export const Quests: Quest[] = [];
 
-export let energy: Uint8Array = new Uint8Array([0, 0, 0, 0, 0, 0]);
-
-export function clearState(): void
+export function newQuests(): void
 {
-  inPlayCards = [0, 0, 0, 0, 0, 0, 0];
-  eventsInPlay = [0, 0, 0, 0, 0, 0];
-  energy = new Uint8Array([0, 0, 0, 0, 0, 0]);
+  Quests[0] = {
+    _name: "Test",
+    _dice: [],
+    _objective: [1, 2],
+    _reward: () =>
+    {
+      console.log("Winner");
+    },
+    _penalty: () =>
+    {
+      console.log("Boooo");
+    }
+  }
+  Quests[1] = {
+    _name: "Test",
+    _dice: [],
+    _objective: [1, 2],
+    _reward: () =>
+    {
+      console.log("Winner");
+    },
+    _penalty: () =>
+    {
+      console.log("Boooo");
+    }
+  }
+  Quests[2] = {
+    _name: "Test",
+    _dice: [],
+    _objective: [1, 2],
+    _reward: () =>
+    {
+      console.log("Winner");
+    },
+    _penalty: () =>
+    {
+      console.log("Boooo");
+    }
+  }
+  Quests[3] = {
+    _name: "Test",
+    _dice: [],
+    _objective: [1, 2],
+    _reward: () =>
+    {
+      console.log("Winner");
+    },
+    _penalty: () =>
+    {
+      console.log("Boooo");
+    }
+  }
+}
+
+export function newCrew(): void
+{
+  CrewMembers[0] = {
+    _level: 1,
+    _dice: [1, 1, 1]
+  };
+  CrewMembers[1] = {
+    _level: 1,
+    _dice: [1, 1, 1]
+  };
+  CrewMembers[2] = {
+    _level: 1,
+    _dice: [1, 1, 1]
+  };
+  CrewMembers[3] = {
+    _level: 1,
+    _dice: [1, 1, 1]
+  };
 }
