@@ -2,7 +2,7 @@ import { assert, DEBUG } from "./debug";
 
 import * as gl from "./gl.js";
 import { v2, subV2 } from "./v2";
-import { Input } from "./gamestate";
+import { Input, Quests } from "./gamestate";
 import { pushQuad, parseText, Align, pushText, pushSprite, pushSpriteAndSave } from "./draw";
 import { mouseInside, white } from "./util.js";
 import { Easing, InterpolationData, createInterpolationData } from "./interpolate";
@@ -13,6 +13,7 @@ export const enum TAG
   BUTTON,
   DICE,
   DICE_SLOT,
+  HOLD_SLOT,
   QUEST_AREA,
   QUEST_CARD,
   QUEST_SLOT,
@@ -272,6 +273,15 @@ export function nodeInput(nodeId: number, rootId: number = nodeId): void
   }
 }
 
+export function returnNodeHome(nodeId: number): void
+{
+  const homeId = node_home.get(nodeId);
+  const pos = nodeAbsolutePosition(nodeId);
+  addChildNode(homeId, nodeId);
+  moveNode(nodeId, subV2(pos, nodeAbsolutePosition(homeId)));
+  moveNode(nodeId, [0, 0], Easing.EaseOutQuad, 250);
+}
+
 export function renderNode(nodeId: number): void
 {
   if (node_enabled[nodeId])
@@ -298,7 +308,18 @@ export function renderNode(nodeId: number): void
           pushSprite(`cs`, pos[0], pos[1], white, scale, scale);
           break;
         case TAG.DICE_SLOT:
-          pushSprite(`ds`, pos[0], pos[1], white, scale, scale);
+          {
+            gl.translate(pos[0], pos[1]);
+            const quest = Quests[node_ref_index.get(node_parent[nodeId])];
+            const dieVal = quest._objective[node_ref_index.get(nodeId)];
+            if (!dieVal) break;
+            pushSpriteAndSave(`d${ dieVal }`, 0, 0, 0x99FFFFFF, scale, scale);
+            pushSprite(`ds`, 0, 0, white, scale, scale);
+            break;
+          }
+        case TAG.HOLD_SLOT:
+          gl.translate(pos[0], pos[1]);
+          pushSprite(`ds`, 0, 0, white, scale, scale);
           break;
         case TAG.BUTTON:
           //#region Render Button

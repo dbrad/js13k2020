@@ -1,10 +1,21 @@
-import { createNode, node_visible, node_size, renderNode, node_scale, moveNode, addChildNode, setNodeDroppable, setNodeDraggable, node_tags, TAG, node_droppable, node_children, node_ref_index, nodeAbsolutePosition, node_home } from "../node";
+import { createNode, node_visible, node_size, renderNode, node_scale, moveNode, addChildNode, setNodeDroppable, setNodeDraggable, node_tags, TAG, node_droppable, node_children, node_ref_index, nodeAbsolutePosition, node_home, returnNodeHome, node_parent } from "../node";
 import { screenWidth, screenHeight } from "../screen";
 import { v2, subV2 } from "../v2";
-import { Quests, CrewMembers, newQuests, newCrew } from "../gamestate";
+import { Quests, CrewMembers, newQuests, newCrew, CurrentQuestIndex, setCurrentQuest, Dice, isQuestComplete } from "../gamestate";
 import { Easing } from "../interpolate";
+import { pushText, pushQuad, Align, pushSprite } from "../draw";
+import { createButton } from "../nodes/button";
+import * as gl from "../gl.js";
+import { white } from "../util";
 
 export let gameScreenRootId = -1;
+let crewCardIds: number[] = [];
+let diceIds: number[] = [];
+let lockedIntoQuest: boolean = false;
+let rollButtonId = -1;
+
+const containerPositions: v2[] = [[16, 16], [224, 16], [16, 128], [224, 128]];
+const containerSize: v2 = [176, 96];
 export function setupGameScreen(): void
 {
   gameScreenRootId = createNode();
@@ -13,12 +24,12 @@ export function setupGameScreen(): void
   node_size[gameScreenRootId][1] = screenHeight;
 
   //#region QUESTS
-  const containerPositions: v2[] = [[16, 16], [224, 16], [16, 128], [224, 128]];
+
   for (let questContainerIdx = 0; questContainerIdx < 4; questContainerIdx++)
   {
     const questContainerId = createNode();
     node_visible[questContainerId] = false;
-    node_size[questContainerId] = [176, 96];
+    node_size[questContainerId] = containerSize;
     node_tags[questContainerId] = TAG.QUEST_AREA;
     node_ref_index.set(questContainerId, questContainerIdx);
     setNodeDroppable(questContainerId);
@@ -49,6 +60,7 @@ export function setupGameScreen(): void
       node_size[dieSlotId] = [16, 16];
       node_scale[dieSlotId] = 2;
       node_tags[dieSlotId] = TAG.DICE_SLOT;
+      node_ref_index.set(dieSlotId, diceIdx);
       addChildNode(questContainerId, dieSlotId);
       moveNode(dieSlotId, [48 * diceIdx, 64]);
     }
@@ -72,6 +84,7 @@ export function setupGameScreen(): void
     node_home.set(crewCardId, crewSlotId);
     setNodeDraggable(crewCardId);
     addChildNode(crewSlotId, crewCardId);
+    crewCardIds.push(crewCardId);
   }
   //#endregion CREW CARDS
 
@@ -88,11 +101,28 @@ export function setupGameScreen(): void
     node_size[diceId] = [16, 16];
     node_scale[diceId] = 2;
     node_tags[diceId] = TAG.DICE;
+    node_ref_index.set(diceId, diceIdx);
     node_home.set(diceId, diceSlotId);
     setNodeDraggable(diceId);
     addChildNode(diceSlotId, diceId);
+    diceIds.push(diceId);
   }
   //#endregion DICE
+
+  rollButtonId = createButton(`Roll Dice`, [80, 32], [416, 192]);
+  addChildNode(gameScreenRootId, rollButtonId);
+
+  const holdAreaId = createNode();
+  node_size[holdAreaId] = [80, 64];
+  addChildNode(gameScreenRootId, holdAreaId);
+  moveNode(holdAreaId, [416, 112]);
+
+  const holdSlotId = createNode();
+  node_size[holdSlotId] = [16, 16];
+  node_scale[holdSlotId] = 2;
+  node_tags[holdSlotId] = TAG.HOLD_SLOT;
+  addChildNode(holdAreaId, holdSlotId);
+  moveNode(holdSlotId, [24, 8]);
 }
 
 export function initializeGame(): void
@@ -115,18 +145,17 @@ export function gameScreen(now: number, delta: number): void
       {
         case TAG.QUEST_AREA:
           const questIndex = node_ref_index.get(parentId);
+          const quest = Quests[questIndex];
           const pos = nodeAbsolutePosition(childId);
-          const homeId = node_home.get(childId);
           const childIndex = node_ref_index.get(childId);
 
           switch (childTag)
           {
             case TAG.CREW_CARD:
-              if (Quests[questIndex]._crew)
+              //#region DROP CREW CARD LOGIC
+              if (quest._crew)
               {
-                addChildNode(homeId, childId);
-                moveNode(childId, subV2(pos, nodeAbsolutePosition(homeId)));
-                moveNode(childId, [0, 0], Easing.EaseOutQuad, 250);
+                returnNodeHome(childId);
                 break;
               }
               let crewSlotId = -1;
@@ -141,44 +170,104 @@ export function gameScreen(now: number, delta: number): void
               addChildNode(crewSlotId, childId);
               moveNode(childId, subV2(pos, nodeAbsolutePosition(crewSlotId)));
               moveNode(childId, [0, 0], Easing.EaseOutQuad, 250);
-              setNodeDraggable(childId, false);
-              Quests[questIndex]._crew = CrewMembers[childIndex];
+              quest._crew = CrewMembers[childIndex];
+              setCurrentQuest(questIndex);
+
+              lockedIntoQuest = true;
+              for (const crewCard of crewCardIds)
+              {
+                setNodeDraggable(crewCard, false);
+              }
               break;
+            //#endregion DROP CREW CARD LOGIC
 
             case TAG.DICE:
-              if (!Quests[questIndex]._crew)
+              //#region DROP DICE LOGIC
+              if (CurrentQuestIndex !== questIndex)
               {
-                addChildNode(homeId, childId);
-                moveNode(childId, subV2(pos, nodeAbsolutePosition(homeId)));
-                moveNode(childId, [0, 0], Easing.EaseOutQuad, 250);
+                returnNodeHome(childId);
                 break;
               }
-              // TODO(dbrad): find an empty die slot that matches the value of the dropped die
+              let dieValue = Dice[node_ref_index.get(childId)];
               let diceSlotId = -1;
               for (let searchId of children)
               {
-                if (node_tags[searchId] === TAG.DICE_SLOT && node_children[searchId].length === 0)
+                // Needs to be a dice slot, empty, and the value of the die should match its objective value
+                let objetiveValue = Quests[CurrentQuestIndex]._objective[node_ref_index.get(searchId)];
+                if (node_tags[searchId] === TAG.DICE_SLOT
+                  && node_children[searchId].length === 0
+                  && objetiveValue === dieValue)
                 {
                   diceSlotId = searchId;
                   break;
                 }
               }
+              if (diceSlotId === -1)
+              {
+                returnNodeHome(childId);
+                break;
+              }
               addChildNode(diceSlotId, childId);
               moveNode(childId, subV2(pos, nodeAbsolutePosition(diceSlotId)));
               moveNode(childId, [0, 0], Easing.EaseOutQuad, 250);
               setNodeDraggable(childId, false);
+              quest._dice[node_ref_index.get(diceSlotId)] = dieValue;
               break;
+            //#endregion DROP DICE LOGIC
           }
           break;
       }
     }
   }
 
+  // check if quest complete or out of chances
+  if (CurrentQuestIndex >= 0 || Dice.length === 0)
+  {
+    if (isQuestComplete(Quests[CurrentQuestIndex]))
+    {
+      lockedIntoQuest = false;
+      for (const crewCard of crewCardIds)
+      {
+        if (node_parent[crewCard] !== node_home.get(crewCard)) continue;
+        setNodeDraggable(crewCard);
+      }
+      setCurrentQuest(-1);
+    }
+  }
 
+  const res = [3, 2, 4];
+  const resName = ["Oxygen", "Hull", "Power"];
+  for (let r = 0; r < 3; r++)
+  {
+    let off = 32 * r;
+    pushText(resName[r], 416, 16 + off);
+    pushQuad(416, 25 + off, 80, 8, white);
+    pushQuad(417, 26 + off, 78, 6, 0xFF333333);
+    pushQuad(418, 27 + off, 76, 4, 0xFF101010);
+    pushQuad(418, 27 + off, (res[r] * 16 - 2) - (res[r] === 5 ? 2 : 0), 4, 0xFF4040FF);
+    for (let l = 0; l < 4; l++)
+    {
+      pushQuad(432 + l * 16, 27 + off, 1, 4, 0xFF333333);
+    }
+  }
+
+  pushQuad(416, 112, 80, 64, white);
+  pushQuad(417, 113, 78, 62, 0xFF101010);
+  pushText(`Hold Die`, 456, 160, { _textAlign: Align.Center });
 
   renderNode(gameScreenRootId);
-}
 
+  if (lockedIntoQuest)
+  {
+    for (let i = 0; i < 4; i++)
+    {
+      if (i == CurrentQuestIndex) continue;
+      let pos = containerPositions[i];
+      pushQuad(pos[0], pos[1], containerSize[0], containerSize[1], 0x99000000);
+      pushText("QUEST IN PROGRESS", pos[0] + containerSize[0] / 2, pos[1] + containerSize[1] / 2, { _colour: 0XFF3232BF, _textAlign: Align.Center })
+    }
+  }
+}
 
 type timer = {
   _start: number,

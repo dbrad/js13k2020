@@ -1,8 +1,3 @@
-Tooltips for cards
-Actual Player Card Collection
-Actioning cards during end phase
-  Some will do stuff by being on field
-
-Should dice dropping on a card action right away?
-Allows player to control order better
-Things like Water => 02 could be annoying if the player is going to get water but the game wont let them because they don't have it yet....
+Add ReRoll Button
+Stock dice from crew's array on play
+Add Resources & meters

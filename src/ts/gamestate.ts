@@ -1,4 +1,5 @@
 import { v2 } from "./v2";
+import { rand } from "./random";
 
 export const Input = {
   _enabled: true,
@@ -25,15 +26,29 @@ export type Quest = {
   _penalty: () => void
 }
 
+export const Dice: number[] = [1, 1, 1, 1, 1, 1];
+
 export const CrewMembers: Crew[] = [];
 export const Quests: Quest[] = [];
-
+export let CurrentQuestIndex: number = -1;
+export function setCurrentQuest(index: number): void
+{
+  CurrentQuestIndex = index;
+}
+export function isQuestComplete(quest: Quest): boolean
+{
+  for (const [idx, objective] of quest._objective.entries())
+  {
+    if (objective !== quest._dice[idx]) { return false; }
+  }
+  return true;
+}
 export function newQuests(): void
 {
   Quests[0] = {
     _name: "Test",
     _dice: [],
-    _objective: [1, 2],
+    _objective: [1, 1],
     _reward: () =>
     {
       console.log("Winner");
