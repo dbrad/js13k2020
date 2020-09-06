@@ -1,0 +1,33 @@
+tasks based on resource levels
+o2 and power drain each turn
+let player retry failed tasks
+
+0 - n oxygen kills 1 crew member at random
+0 - n power drains 1 extra o2
+0 hull you lose
+0 crew you lose
+
+4-5 power will cause signal boost task to spawn in slot 4
+3 signal will cause rescue event to spawn in slot 4
+slot 1 will spawn tasks related to o2 levels
+slot 2 will spawn tasks realted to hull levels
+slot 3 will spawn tasks related to power levels
+slot 4 will spawn 1 random peril or a victory related task
+
+need to do the swap trick  on dice to allow old dice to linger, and the hold dice to work without spawning a million dice
+
+completeing a task will increase level of only the active crew on it
+
+crew levels
+0 = 3 dice?
+1 = 4 dice
+2 = 5 dice
+3 = 6 dice
+
+task levels
+1 = 2 dice
+2 = 3 dice
+3 = 4 dice
+
+Get turn loop working?
+Reroll mechanic

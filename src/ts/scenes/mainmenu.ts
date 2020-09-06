@@ -10,6 +10,7 @@ import { initializeGame } from "./gamescreen";
 export let mainMenuRootId = -1;
 let playGameButtonId = -1;
 let playGameFSButtonId = -1;
+let coilMessage = "";
 export function setupMainMenu(): void
 {
   mainMenuRootId = createNode();
@@ -42,6 +43,14 @@ export function mainMenu(now: number, delta: number): void
     pushScene(Scenes.Game);
   }
 
+  if (document.monetization && document.monetization.state === "pending")
+  {
+    pushText("Checking Coil Subscription...", screenCenterX, screenCenterY - 26, { _textAlign: Align.Center, _scale: 1, _colour: 0xFFAAAAAA });
+  } else if (document.monetization && document.monetization.state === "started")
+  {
+    pushText("Welcome Coil User!", screenCenterX, screenCenterY - 26, { _textAlign: Align.Center, _scale: 1, _colour: 0xFFAAAAAA });
+    pushText("Enjoy a level 2 crew member from the start!", screenCenterX, screenCenterY - 16, { _textAlign: Align.Center, _scale: 1, _colour: 0xFFAAAAAA });
+  }
   renderNode(mainMenuRootId);
   pushText("RESCUE  FOUND.", screenCenterX, screenCenterY - 90, { _textAlign: Align.Center, _scale: 4 });
   pushText("not", screenCenterX, screenCenterY - 76, { _textAlign: Align.Center, _scale: 2, _colour: 0xFF2020A0 });

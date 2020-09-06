@@ -2,7 +2,7 @@ import { assert, DEBUG } from "./debug";
 
 import * as gl from "./gl.js";
 import { v2, subV2 } from "./v2";
-import { Input, Quests } from "./gamestate";
+import { Input, Quests, Dice, QuestType, CrewMembers } from "./gamestate";
 import { pushQuad, parseText, Align, pushText, pushSprite, pushSpriteAndSave } from "./draw";
 import { mouseInside, white } from "./util.js";
 import { Easing, InterpolationData, createInterpolationData } from "./interpolate";
@@ -13,9 +13,9 @@ export const enum TAG
   BUTTON,
   DICE,
   DICE_SLOT,
+  HOLD_AREA,
   HOLD_SLOT,
   QUEST_AREA,
-  QUEST_CARD,
   QUEST_SLOT,
   CREW_CARD,
   CREW_SLOT
@@ -31,6 +31,7 @@ export const node_enabled: boolean[] = [];
 export const node_tags: TAG[] = [];
 
 export const node_ref_index: Map<number, number> = new Map();
+export const node_dice_value: number[] = [];
 export const node_home: Map<number, number> = new Map();
 
 export const node_draggable: Map<number, boolean> = new Map();
@@ -141,7 +142,7 @@ export function nodeAbsolutePosition(nodeId: number, refresh: boolean = false): 
   return result;
 }
 
-function nodesUnderPoint(nodeId: number, point: v2): number[]
+export function nodesUnderPoint(nodeId: number, point: v2): number[]
 {
   let pos = nodeAbsolutePosition(nodeId);
   let size = nodeSize(nodeId);
@@ -296,14 +297,33 @@ export function renderNode(nodeId: number): void
       switch (node_tags[nodeId])
       {
         case TAG.CREW_CARD:
+          const crew = CrewMembers[node_ref_index.get(nodeId)];
+          let crewColour = crew._level === 3 ? 0xFF32bfbf
+            : crew._level === 2 ? 0xFF32bf32
+              : white;
           gl.translate(pos[0], pos[1]);
-          pushSpriteAndSave("t1", size[0] / 4, size[0] / 4, white, scale, scale);
-          pushSprite("card", 0, 0, 0xFF33FF33, scale, scale);
+          pushSpriteAndSave(`t${ node_ref_index.get(nodeId) + 1 }`, size[0] / 4, size[0] / 4, white, scale, scale);
+          pushSprite("card", 0, 0, crewColour, scale, scale);
           break;
         case TAG.DICE:
-          pushSprite(`d1`, pos[0], pos[1], white, scale, scale);
+          pushSprite(`d${ node_dice_value[nodeId] }`, pos[0], pos[1], white, scale, scale);
           break;
         case TAG.QUEST_SLOT:
+          gl.translate(pos[0], pos[1]);
+          const quest = Quests[node_ref_index.get(nodeId)];
+          let art = "task";
+          let taskColour = white;
+          switch (quest._questType)
+          {
+            case QuestType.Hull: art = "hull"; break;
+            case QuestType.Oxygen: art = "o2"; break;
+            case QuestType.Power: art = "pow"; break;
+            case QuestType.Peril: art = "skull"; break;
+          }
+          if (quest._penaltyResource >= 0) taskColour = 0xff3232bf;
+          pushSpriteAndSave(art, size[0] / 4, size[0] / 4, white, scale, scale);
+          pushSprite("card", 0, 0, taskColour, scale, scale);
+          break;
         case TAG.CREW_SLOT:
           pushSprite(`cs`, pos[0], pos[1], white, scale, scale);
           break;
@@ -313,7 +333,7 @@ export function renderNode(nodeId: number): void
             const quest = Quests[node_ref_index.get(node_parent[nodeId])];
             const dieVal = quest._objective[node_ref_index.get(nodeId)];
             if (!dieVal) break;
-            pushSpriteAndSave(`d${ dieVal }`, 0, 0, 0x99FFFFFF, scale, scale);
+            pushSpriteAndSave(`d${ dieVal }`, 0, 0, 0x33DDDDDD, scale, scale);
             pushSprite(`ds`, 0, 0, white, scale, scale);
             break;
           }

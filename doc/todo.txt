@@ -1,3 +1,57 @@
-Add ReRoll Button
-Stock dice from crew's array on play
-Add Resources & meters
+Signal strength mechanic art
+0 power, -1 oxygen
+0 oxygen, -1 crew
+0 hull, lose
+3 signal +  final task = win
+
+Faint tip text (Crew, Discard 1 die and reroll, etc)
+
+Level up indicator
+End of Turn indicators? + sounds
+
+
+
+rules for tasks generated....
+if player gets 1 resource to 5, flip a flag, start spawning medium diff tasks
+crew level combined / average plays in?
+
+if average level is >2 start spawing 2 easy 2 medium
+if average level 
+1+1+1+1=4
+1+2+2+1=6
+2+2+2+2=8
+
+2 perils @ 8, both allowed in resources
+@ 4 power make a signal boost in slot 4
+2 perils must be on resources
+
+each lvl 2 has a 50.50 chance of 1 low vs medium task
+each lvl 3 have a 50/50 change of 1 medium vs high task?
+
+spawn 1 task for each resource
+
+the 4th task will be a special task if conditions are met
+of the 4th task will be a peril task if 2 perils have not spawned already this round
+resource tasks wont have penalities if combined crew level is less than....7?
+
+
+ // Perils
+// Easy, ???, Hull
+// Medium, Extinguish Fire, Hull & Power
+// Extinguish Fire, Hull & Oxygen
+// Hard, ???, Hull & Power & Oxygen
+
+// Ship Repair, Hull Maintenance
+// Ship Repair, Hull Breach, Oxygen
+// Ship Repair, Core Containment, Power
+// Ship Repair, Structural Damage, Hull
+
+// Oxygen, Tend to Arboretum 
+// Oxygen, Broken CO2 Scrubbers, Oxygen
+// Oxygen, Pressure Equalization, Hull
+// Oxygen, Ventilation Maintenance, Power
+
+// Power, Solar Array Maintenance
+// Power, Life Support Short Circuit, Oxygen
+// Power, Power to the Shields, Hull
+// Power, Core Malfunction, Power

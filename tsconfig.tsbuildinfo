@@ -172,8 +172,8 @@
         "affectsGlobalScope": false
       },
       "./src/ts/gamestate.ts": {
-        "version": "b029ccbc122150f504919134986ffff4c95e44f9ea7b214362654b6067e88617",
-        "signature": "6515f61255c81dafb222807649e0c828541b1df3acce6d8eacade8040171ee2a",
+        "version": "37bbface8adee1039486789cd87bebc6fd2416e0a3226859be575ac56c083dae",
+        "signature": "f68a042c978140e54330b3041e74cf5d5fb5a4e21b4270b1818d89c425315614",
         "affectsGlobalScope": false
       },
       "./src/ts/util.ts": {
@@ -227,8 +227,8 @@
         "affectsGlobalScope": false
       },
       "./src/ts/node.ts": {
-        "version": "69fb6d590f237ecc8f1fc03939d68bbdae2f6c4fcd8e60f9b1ae5242ae45bdb3",
-        "signature": "f65df42b3d118f367979f6077166da26c1766e2095aa223ee9b5e7692c371aae",
+        "version": "4574988a3d758e5206b095fb01e8bb898dc4c9f6a4ab5896e01daca8f2b0d603",
+        "signature": "fada05079b28fadb38834ac0a7188539a07888857cd8892b58319a75a79c0d07",
         "affectsGlobalScope": false
       },
       "./src/ts/nodes/button.ts": {
@@ -237,12 +237,12 @@
         "affectsGlobalScope": false
       },
       "./src/ts/scenes/gamescreen.ts": {
-        "version": "cc1ecb95e0831e3783b66aa4671c588125005f695757671c5616b4c3806bab7d",
+        "version": "9afea9f1af4e98b6cb531cb942fde7d420c041e356636aefd60010a6509ba11c",
         "signature": "c939a0e49fa277a716674f6210ec7c756ace8115f14cf5c2f77b6788e6a0d7e6",
         "affectsGlobalScope": false
       },
       "./src/ts/scenes/mainmenu.ts": {
-        "version": "ad40c45239ddf9f57cc1b2fd31e8ef34e846a120a19daffe3326ea8985cb58b5",
+        "version": "627e958a492336c30dad4091e69f568a87c707d06c75bc0b838e94984a71342e",
         "signature": "efc7cc36a9d3f57f41235a11f61776d752ae7ac29a56056efd8f6aab955ebe09",
         "affectsGlobalScope": false
       },
@@ -257,8 +257,8 @@
         "affectsGlobalScope": false
       },
       "./src/ts/types.d.ts": {
-        "version": "69965908f2f3410e6da0a44e101346fe7650d399127d1038fd4aa7a25775ea05",
-        "signature": "69965908f2f3410e6da0a44e101346fe7650d399127d1038fd4aa7a25775ea05",
+        "version": "8d8c53612d50dd658d2b4024e5c945ebec30e9e142e3809b146025a2432b8066",
+        "signature": "8d8c53612d50dd658d2b4024e5c945ebec30e9e142e3809b146025a2432b8066",
         "affectsGlobalScope": true
       },
       "./node_modules/@types/color-name/index.d.ts": {
@@ -1301,9 +1301,11 @@
         "./src/ts/interpolate.ts",
         "./src/ts/node.ts",
         "./src/ts/nodes/button.ts",
+        "./src/ts/random.ts",
         "./src/ts/screen.ts",
         "./src/ts/util.ts",
-        "./src/ts/v2.ts"
+        "./src/ts/v2.ts",
+        "./src/ts/zzfx.ts"
       ],
       "./src/ts/scenes/mainmenu.ts": [
         "./node_modules/@types/node/fs.d.ts",

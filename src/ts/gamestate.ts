@@ -1,5 +1,5 @@
 import { v2 } from "./v2";
-import { rand } from "./random";
+import { rand, shuffle } from "./random";
 
 export const Input = {
   _enabled: true,
@@ -13,20 +13,54 @@ export const Input = {
 }
 
 export type Crew = {
+  _name: string,
   _level: number,
-  _dice: number[]
+  _exp: number
 }
 
 export type Quest = {
-  _name: string,
+  _tooltip: string[],
   _crew?: Crew,
+  _questType: QuestType,
+  _penaltyResource?: ResourceTypes,
   _dice: number[],
   _objective: number[],
   _reward: () => void,
   _penalty: () => void
 }
 
+export const enum ResourceTypes
+{
+  Hull,
+  Power,
+  Oxygen,
+  Signal
+};
+
+export const enum QuestDifficulty
+{
+  Easy,
+  Medium,
+  Hard
+}
+
+export const enum QuestType
+{
+  Hull,
+  Power,
+  Oxygen,
+  Peril,
+  Progress,
+  Victory
+}
 export const Dice: number[] = [1, 1, 1, 1, 1, 1];
+export const Resources: number[] = [3, 3, 3, 0];
+export const ResourceNames = ["Hull", "Power", "Oxygen", "Distress Signal"];
+
+export function modifyResource(resource: ResourceTypes, amount: number): void
+{
+  Resources[resource] = Math.max(Math.min(Resources[resource] + amount, 5), 0);
+}
 
 export const CrewMembers: Crew[] = [];
 export const Quests: Quest[] = [];
@@ -35,86 +69,215 @@ export function setCurrentQuest(index: number): void
 {
   CurrentQuestIndex = index;
 }
-export function isQuestComplete(quest: Quest): boolean
+export function isQuestComplete(questId: number): boolean
 {
+  const quest = Quests[questId];
   for (const [idx, objective] of quest._objective.entries())
   {
     if (objective !== quest._dice[idx]) { return false; }
   }
   return true;
 }
+export function isQuestFailed(questId: number): boolean
+{
+  const quest = Quests[questId];
+  return quest._crew && questId !== CurrentQuestIndex;
+}
+
+export function isQuestDone(questId: number): boolean
+{
+  return isQuestComplete(questId) || isQuestFailed(questId);
+}
 export function newQuests(): void
 {
-  Quests[0] = {
-    _name: "Test",
-    _dice: [],
-    _objective: [1, 1],
-    _reward: () =>
+  const questIdx = shuffle([0, 1, 2, 3]);
+  let questDifficulties: QuestDifficulty[] = [];
+  let combinedLevel = 0;
+  for (const crew of CrewMembers)
+  {
+    const random = rand(1, 100);
+    combinedLevel += crew._level;
+    switch (crew._level)
     {
-      console.log("Winner");
-    },
-    _penalty: () =>
-    {
-      console.log("Boooo");
+      case 1:
+        questDifficulties.push(QuestDifficulty.Easy);
+        break;
+      case 2:
+        questDifficulties.push(random < 50 ? QuestDifficulty.Easy : QuestDifficulty.Medium);
+        break;
+      case 3:
+        questDifficulties.push(random < 50 ? QuestDifficulty.Medium : QuestDifficulty.Hard);
+        break;
     }
   }
-  Quests[1] = {
-    _name: "Test",
-    _dice: [],
-    _objective: [1, 2],
-    _reward: () =>
+  questDifficulties = shuffle(questDifficulties);
+  let numberOfPerils = combinedLevel < 8 ? 1 : 2;
+  const allowResourcePerils = numberOfPerils === 2;
+
+  for (let r = 0; r < 4; r++)
+  {
+    let objective: number[] = [];
+    let questType: QuestType;
+    let reward: () => void = () => { };
+    let penalty: () => void = () => { };
+    let rewardDesc: string[] = [`None`];
+    let penaltyDesc: string[] = [`None`];
+    let penaltyResource = -1;
+    if (r === 3)
     {
-      console.log("Winner");
-    },
-    _penalty: () =>
-    {
-      console.log("Boooo");
+      // Non-resource specific tasks
+      if (Resources[ResourceTypes.Power] >= 4)
+      {
+        if (Resources[ResourceTypes.Signal] >= 3)
+        {
+          questType = QuestType.Victory;
+          rewardDesc = ["Get rescued!"];
+          reward = () =>
+          {
+            // Win the game!
+          };
+        }
+        else
+        {
+          questType = QuestType.Progress;
+          rewardDesc = [`-2 ${ ResourceNames[ResourceTypes.Power] }`, `+1 ${ ResourceNames[ResourceTypes.Signal] }`];
+          reward = () =>
+          {
+            modifyResource(ResourceTypes.Power, -2);
+            modifyResource(ResourceTypes.Signal, 1);
+          };
+        }
+      }
+      else 
+      {
+        if (numberOfPerils > 0)
+        {
+          questType = QuestType.Peril;
+          penaltyResource = ResourceTypes.Hull;
+          penaltyDesc = [`-1 ${ ResourceNames[penaltyResource] }`];
+          penalty = () =>
+          {
+            modifyResource(penaltyResource, -1);
+          }
+        }
+        else
+        {
+          // ????
+        }
+      }
     }
-  }
-  Quests[2] = {
-    _name: "Test",
-    _dice: [],
-    _objective: [1, 2],
-    _reward: () =>
+    else
     {
-      console.log("Winner");
-    },
-    _penalty: () =>
-    {
-      console.log("Boooo");
+      // Resource Based Task
+      questType = r;
+      const amount = questDifficulties[r] > QuestDifficulty.Easy ? 2
+        : Resources[r] <= 2 ? 2
+          : 1;
+      rewardDesc = [`+${ amount } ${ ResourceNames[r] }`];
+      reward = () =>
+      {
+        modifyResource(r, amount);
+      };
+
+      if (allowResourcePerils && numberOfPerils > 0 && rand(1, 100) > 50)
+      {
+        numberOfPerils--;
+        penaltyResource = rand(0, 2);
+        penaltyDesc = [`-1 ${ ResourceNames[penaltyResource] }`];
+        penalty = () =>
+        {
+          modifyResource(penaltyResource, -1);
+        }
+      }
     }
-  }
-  Quests[3] = {
-    _name: "Test",
-    _dice: [],
-    _objective: [1, 2],
-    _reward: () =>
+
+    for (let i = 0, len = 2 + questDifficulties[r]; i < len; i++)
     {
-      console.log("Winner");
-    },
-    _penalty: () =>
-    {
-      console.log("Boooo");
+      objective.push(rand(1, 6));
+    }
+
+    const tooltip = [
+      questName(questType, questDifficulties[r]),
+      "",
+      "Success",
+      ...rewardDesc,
+      "",
+      "Failure",
+      ...penaltyDesc];
+    console.log(tooltip);
+    Quests[questIdx[r]] = {
+      _tooltip: tooltip,
+      _dice: [],
+      _questType: questType,
+      _objective: objective,
+      _reward: reward,
+      _penalty: penalty,
+      _penaltyResource: penaltyResource
     }
   }
 }
 
+function questName(questType: QuestType, questDifficulty: QuestDifficulty): string
+{
+  if (questType === QuestType.Hull)
+  {
+    return "Hull";
+  }
+  else if (questType === QuestType.Power)
+  {
+    return "Power";
+  }
+  else if (questType === QuestType.Oxygen)
+  {
+    return "Oxygen";
+  }
+  else if (questType === QuestType.Peril)
+  {
+    return "Evasive Maneuvers";
+  }
+  else if (questType === QuestType.Progress)
+  {
+    return "Boost Distress Signal";
+  }
+  else
+  {
+    return "Contact Nearby Ship";
+  }
+}
+
+function nameGen(off: number = 0): string 
+{
+  let c = [];
+  // @ts-ignore
+  for (let b = 0; (+new Date + off) % 3 + 2 > b;)
+  {
+    c[++b] = String.fromCharCode(Math.random() * 25 | 0 + (b < 2 ? 65 : 97));
+  }
+  return c.join('');
+}
+
 export function newCrew(): void
 {
+  // @ts-ignore
+  const monitized = document.monetization && document.monetization.state === 'started';
   CrewMembers[0] = {
-    _level: 1,
-    _dice: [1, 1, 1]
+    _name: monitized ? "Captain Coil" : nameGen(),
+    _level: monitized ? 2 : 1,
+    _exp: 0
   };
   CrewMembers[1] = {
+    _name: nameGen(200),
     _level: 1,
-    _dice: [1, 1, 1]
+    _exp: 0
   };
   CrewMembers[2] = {
+    _name: nameGen(400),
     _level: 1,
-    _dice: [1, 1, 1]
+    _exp: 0
   };
   CrewMembers[3] = {
+    _name: nameGen(600),
     _level: 1,
-    _dice: [1, 1, 1]
+    _exp: 0
   };
 }
