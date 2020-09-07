@@ -177,7 +177,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/gamestate.ts": {
-        "version": "ad89971728eaf7a5297720f0bff035afcc37bc2d8c11ac6232b026b1ca37c26a",
+        "version": "08be220795c4c0b8c36ea5983e81821d54c920412e4036f3a75e027736359eb8",
         "signature": "d41058e8038133cca3d39d2bdbea1237066bbbb5377b9a11ff95039def52ad3f",
         "affectsGlobalScope": false
       },

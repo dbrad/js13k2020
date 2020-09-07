@@ -75,7 +75,7 @@ export function setCoil(val: boolean): void
   coilEnabled = val;
 }
 export const Dice: number[] = [1, 1, 1, 1, 1, 1];
-export const Resources: number[] = [3, 5, 3, 3];
+export const Resources: number[] = [3, 3, 3, 0];
 export const ResourceNames = ["Hull", "Power", "Oxygen", "Distress Signal"];
 
 export let GameOver = false;
