@@ -1,23 +1,60 @@
-// ZzFX - Zuper Zmall Zound Zynth - Micro Edition
-// MIT License - Copyright 2019 Frank Force
-// https://github.com/KilledByAPixel/ZzFX
-
-// This is a tiny build of zzfx with only a zzfx function to play sounds.
-// You can use zzfxV to set volume.
-// There is a small bit of optional code to improve compatibility.
-// Feel free to minify it further for your own needs!
-
 'use strict';
-let zzfxV = 0.3
-let zzfxX = new window.AudioContext;
+
+import { rand } from "./random";
+import { musicEnabled } from "./gamestate";
+
+// zzfx() - the universal entry point -- returns a AudioBufferSourceNode
+//@ts-ignore
+let zzfx = (...t) => zzfxP(zzfxG(...t))
+
+// zzfxP() - the sound player -- returns a AudioBufferSourceNode
+//@ts-ignore
+export const zzfxP = (...t) => { let e = zzfxX.createBufferSource(), f = zzfxX.createBuffer(t.length, t[0].length, zzfxR); t.map((d, i) => f.getChannelData(i).set(d)), e.buffer = f, e.connect(zzfxX.destination), e.start(); return e }
+
+// zzfxG() - the sound generator -- returns an array of sample data
+//@ts-ignore
+let zzfxG = (q = 1, k = .05, c = 220, e = 0, t = 0, u = .1, r = 0, F = 1, v = 0, z = 0, w = 0, A = 0, l = 0, B = 0, x = 0, G = 0, d = 0, y = 1, m = 0, C = 0) => { let b = 2 * Math.PI, H = v *= 500 * b / zzfxR ** 2, I = (0 < x ? 1 : -1) * b / 4, D = c *= (1 + 2 * k * Math.random() - k) * b / zzfxR, Z = [], g = 0, E = 0, a = 0, n = 1, J = 0, K = 0, f = 0, p, h; e = 99 + zzfxR * e; m *= zzfxR; t *= zzfxR; u *= zzfxR; d *= zzfxR; z *= 500 * b / zzfxR ** 3; x *= b / zzfxR; w *= b / zzfxR; A *= zzfxR; l = zzfxR * l | 0; for (h = e + m + t + u + d | 0; a < h; Z[a++] = f)++K % (100 * G | 0) || (f = r ? 1 < r ? 2 < r ? 3 < r ? Math.sin((g % b) ** 3) : Math.max(Math.min(Math.tan(g), 1), -1) : 1 - (2 * g / b % 2 + 2) % 2 : 1 - 4 * Math.abs(Math.round(g / b) - g / b) : Math.sin(g), f = (l ? 1 - C + C * Math.sin(2 * Math.PI * a / l) : 1) * (0 < f ? 1 : -1) * Math.abs(f) ** F * q * zzfxV * (a < e ? a / e : a < e + m ? 1 - (a - e) / m * (1 - y) : a < e + m + t ? y : a < h - d ? (h - a - d) / u * y : 0), f = d ? f / 2 + (d > a ? 0 : (a < h - d ? 1 : (h - a) / d) * Z[a - d | 0] / 2) : f), p = (c += v += z) * Math.sin(E * x - I), g += p - p * B * (1 - 1E9 * (Math.sin(a) + 1) % 2), E += p - p * B * (1 - 1E9 * (Math.sin(a) ** 2 + 1) % 2), n && ++n > A && (c += w, D += w, n = 0), !l || ++J % l || (c = D, v = H, n = n || 1); return Z }
+
+// zzfxV - global volume
+//@ts-ignore
+let zzfxV = .1
+
+// zzfxR - global sample rate
+//@ts-ignore
+let zzfxR = 44100
+
+// zzfxX - the common audio context
+//@ts-ignore
+let zzfxX = new (top.AudioContext || webkitAudioContext);
+
+//! ZzFXM (v2.0.3) | (C) Keith Clark | MIT | https://github.com/keithclark/ZzFXM
+//@ts-ignore
+let zzfxM = (n, f, t, e = 125) => { let l, o, z, r, g, h, x, a, u, c, d, i, m, p, G, M = 0, R = [], b = [], j = [], k = 0, q = 0, s = 1, v = {}, w = zzfxR / e * 60 >> 2; for (; s; k++)R = [s = a = d = m = 0], t.map((e, d) => { for (x = f[e][k] || [0, 0, 0], s |= !!f[e][k], G = m + (f[e][0].length - 2 - !a) * w, p = d == t.length - 1, o = 2, r = m; o < x.length + p; a = ++o) { for (g = x[o], u = o == x.length + p - 1 && p || c != (x[0] || 0) | g | 0, z = 0; z < w && a; z++ > w - 99 && u ? i += (i < 1) / 99 : 0)h = (1 - i) * R[M++] / 2 || 0, b[r] = (b[r] || 0) - h * q + h, j[r] = (j[r++] || 0) + h * q + h; g && (i = g % 1, q = x[1] || 0, (g |= 0) && (R = v[[c = x[M = 0] || 0, g]] = v[[c, g]] || (l = [...n[c]], l[2] *= 2 ** ((g - 12) / 12), g > 0 ? zzfxG(...l) : []))) } m = G }); return [b, j] }
+
+let song = [[[.3, 0, 260, , 1, 1.5, , , , , , , , , , , , , .2], [.4, 0, 4e3, , , .03, 2, 1.25, , , , , .02, 6.8, -.3, , .5]], [[[, , 1, , , , , , , , , , , , , , , , 1, , , , , , , , , , , , , , , , 1, , , , , , , , , , , , , , , , 8, , , , , , , , , , , , , , , ,], [, , 8, , , , , , , , , , , , , , , , 8, , , , , , , , , , , , , , , , 8, , , , , , , , , , , , , , , , 15, , , , , , , , , , , , , , , ,], [, , 17, , , , , , , , , , , , , , , , 15, , , , , , , , , , , , , , , , 25, , , , , , , , , , , , , , , , 20, , , , , , , , , , , , , , , ,], [1, 1, .25, , , , 13, , , , 13, , , , , , , , , , , , 1, , , , 1, , , , , , , , , , , , 1, , , , 1, , , , , , , , , , , , 1, , , , 1, , , , , , , ,]], [[, , 1, , , , , , , , , , , , , , , , 1, , , , , , , , , , , , , , , , 1, , , , , , , , , , , , , , , , 8, , , , , , , , , , , , , , , ,], [, , 8, , , , , , , , , , , , , , , , 8, , , , , , , , , , , , , , , , 8, , , , , , , , , , , , , , , , 15, , , , , , , , , , , , , , , ,], [, , 17, , , , , , , , , , , , , , , , 15, , , , , , , , , , , , , , , , 25, , , , , , , , , , , , , , , , 20, , , , , , , , , , , , , , , ,]], [[, , 1, , , , , , , , , , , , , , , , 1, , , , , , , , , , , , , , , , 1, , , , , , , , , , , , , , , , 8, , , , , , , , , , , , , , , ,], [, , 8, , , , , , , , , , , , , , , , 8, , , , , , , , , , , , , , , , 8, , , , , , , , , , , , , , , , 15, , , , , , , , , , , , , , , ,], [, , 17, , , , , , , , , , , , , , , , 15, , , , , , , , , , , , , , , , 25, , , , , , , , , , , , , , , , 20, , , , , , , , , , , , , , , ,], [, , , , , , 1, , 32, , , , , , , , , , , , , , 1, , 27, , , , , , , , , , , , , , 1, , 20, , , , , , , , , , , , , , 1, , 17, , , , , , , , , ,]]], [1, 2, 2, 0], 80, { "title": "Space", "instruments": ["P", "H"], "patterns": ["0", "1", "3"] }];
+
+
+export const buttonHover = zzfxG(1, .75, 220, 0, 0, .1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0);
+
+export const explosionSound = zzfxG(0.25, .05, 821, 0, .4, 1.99, 3, 3.35, .2, 0, 0, 0, 0, .6, -1, .7, 0, .95, .07, 0);
 
 //@ts-ignore
-const zzfx = (t = 1, a = .05, n = 220, e = 0, f = 0, h = .1, M = 0, r = 1, z = 0, o = 0, i = 0, s = 0, u = 0, x = 0, c = 0, d = 0, X = 0, b = 1, m = 0, l = 44100, B = 99 + e * l, C = f * l, P = h * l, g = m * l, w = X * l, A = 2 * Math.PI, D = (t => 0 < t ? 1 : -1), I = B + g + C + P + w, S = (z *= 500 * A / l ** 2), V = (n *= (1 + 2 * a * Math.random() - a) * A / l), j = D(c) * A / 4, k = 0, p = 0, q = 0, v = 0, y = 0, E = 0, F = 1, G = [], H = zzfxX.createBufferSource(), J = zzfxX.createBuffer(1, I, l)) => 
+export const musicData = zzfxM(...song);
+export let music: AudioBufferSourceNode;
+export function startMusic(): void
 {
-  for (H.connect(zzfxX.destination); q < I; G[q++] = E)++y > 100 * d && (y = 0, E = k * n * Math.sin(p * c * A / l - j), E = D(E = M ? 1 < M ? 2 < M ? 3 < M ? Math.sin((E % A) ** 3) : Math.max(Math.min(Math.tan(E), 1), -1) : 1 - (2 * E / A % 2 + 2) % 2 : 1 - 4 * Math.abs(Math.round(E / A) - E / A) : Math.sin(E)) * Math.abs(E) ** r * t * zzfxV * (q < B ? q / B : q < B + g ? 1 - (q - B) / g * (1 - b) : q < B + g + C ? b : q < I - w ? (I - q - w) / P * b : 0), E = w ? E / 2 + (w > q ? 0 : (q < I - w ? 1 : (q - I) / w) * G[q - w | 0] / 2) : E), k += 1 - x + 1e9 * (Math.sin(q) + 1) % 2 * x, p += 1 - x + 1e9 * (Math.sin(q) ** 2 + 1) % 2 * x, n += z += 500 * o * A / l ** 3, F && ++F > s * l && (n += i * A / l, V += i * A / l, F = 0), u && ++v > u * l && (n = V, z = S, v = 1, F = F || 1); return J.getChannelData(0).set(G), H.buffer = J, H.start(), H;
-};
+  music = zzfxP(...musicData);
+  music.onended = repeat;
+}
 
-
-//@ts-ignore
-export const buttonHover = () => { zzfx(1, .55, 221, .01, .02, .1, 0, 1, 0, 0, 100, 0, 0, 0, 0, -0.1, 0, 1.2, 0); }
-export const buttonClick = () => { zzfx(1, .15, 120, .01, .02, .1, 0, 1, 0, 0, 100, 0, 0, 0, 0, -0.1, 0, 1.2, 0); }
+function repeat()
+{
+  if (musicEnabled)
+  {
+    setTimeout(() =>
+    {
+      startMusic();
+      music.playbackRate.value = rand(3, 5) / 4;
+    }, 250);
+  }
+}

@@ -1,14 +1,9 @@
-Signal strength mechanic art
-0 power, -1 oxygen
-0 oxygen, -1 crew
-0 hull, lose
-3 signal +  final task = win
-
 Faint tip text (Crew, Discard 1 die and reroll, etc)
-
-Level up indicator
 End of Turn indicators? + sounds
+Task Names
+Disable Coil Option
 
+Test repeat games
 
 
 rules for tasks generated....

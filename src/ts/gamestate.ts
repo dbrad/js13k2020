@@ -1,5 +1,6 @@
 import { v2 } from "./v2";
 import { rand, shuffle } from "./random";
+import { music, startMusic } from "./zzfx";
 
 export const Input = {
   _enabled: true,
@@ -9,6 +10,7 @@ export const Input = {
   _mouseDown: false,
   _lastHot: 0,
   _hot: 0,
+  _released: 0,
   _active: 0
 }
 
@@ -53,13 +55,48 @@ export const enum QuestType
   Progress,
   Victory
 }
+
+export let musicEnabled = true;
+export function setMusic(val: boolean): void
+{
+  musicEnabled = val;
+  if (!musicEnabled)
+  {
+    music.stop();
+  }
+  else
+  {
+    startMusic();
+  }
+}
+export let coilEnabled = false;
+export function setCoil(val: boolean): void
+{
+  coilEnabled = val;
+}
 export const Dice: number[] = [1, 1, 1, 1, 1, 1];
-export const Resources: number[] = [3, 3, 3, 0];
+export const Resources: number[] = [3, 5, 3, 3];
 export const ResourceNames = ["Hull", "Power", "Oxygen", "Distress Signal"];
+
+export let GameOver = false;
+export const enum GameOverReasons
+{
+  None,
+  Win,
+  NoCrew,
+  ShipDestroyed
+}
+export let GameOverReason: GameOverReasons = GameOverReasons.None;
+export function setGameOver(gameOver: boolean = false, reason: GameOverReasons = GameOverReasons.None): void
+{
+  GameOver = gameOver;
+  GameOverReason = reason;
+}
 
 export function modifyResource(resource: ResourceTypes, amount: number): void
 {
-  Resources[resource] = Math.max(Math.min(Resources[resource] + amount, 5), 0);
+  const cap = resource === ResourceTypes.Signal ? 3 : 5;
+  Resources[resource] = Math.max(Math.min(Resources[resource] + amount, cap), 0);
 }
 
 export const CrewMembers: Crew[] = [];
@@ -114,7 +151,7 @@ export function newQuests(): void
   let numberOfPerils = combinedLevel < 8 ? 1 : 2;
   const allowResourcePerils = numberOfPerils === 2;
 
-  for (let r = 0; r < 4; r++)
+  for (let r = 0; r < CrewMembers.length; r++)
   {
     let objective: number[] = [];
     let questType: QuestType;
@@ -123,9 +160,9 @@ export function newQuests(): void
     let rewardDesc: string[] = [`None`];
     let penaltyDesc: string[] = [`None`];
     let penaltyResource = -1;
-    if (r === 3)
+
+    if (r === 3) // Non-resource specific tasks
     {
-      // Non-resource specific tasks
       if (Resources[ResourceTypes.Power] >= 4)
       {
         if (Resources[ResourceTypes.Signal] >= 3)
@@ -134,7 +171,7 @@ export function newQuests(): void
           rewardDesc = ["Get rescued!"];
           reward = () =>
           {
-            // Win the game!
+            setGameOver(true, GameOverReasons.Win);
           };
         }
         else
@@ -162,13 +199,18 @@ export function newQuests(): void
         }
         else
         {
-          // ????
+          questType = QuestType.Power;
+          rewardDesc = [`+1 ${ ResourceNames[ResourceTypes.Power] }`];
+          reward = () =>
+          {
+            modifyResource(ResourceTypes.Power, 1);
+          };
         }
       }
     }
-    else
+    else // Resource Based Task
     {
-      // Resource Based Task
+
       questType = r;
       const amount = questDifficulties[r] > QuestDifficulty.Easy ? 2
         : Resources[r] <= 2 ? 2
@@ -204,7 +246,7 @@ export function newQuests(): void
       "",
       "Failure",
       ...penaltyDesc];
-    console.log(tooltip);
+
     Quests[questIdx[r]] = {
       _tooltip: tooltip,
       _dice: [],

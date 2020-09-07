@@ -6,13 +6,14 @@ import { loadAsset } from "./asset";
 import { CurrentScene, getSceneRoot, Scenes } from "./scene";
 import { setupMainMenu, mainMenu } from "./scenes/mainmenu";
 import { screenWidth, screenHeight, screenCenterX, screenCenterY } from "./screen";
-import { Input } from "./gamestate";
-import { nodeInput as nodeInput, node_movement, moveNode } from "./node";
+import { Input, setMusic, musicEnabled } from "./gamestate";
+import { nodeInput as nodeInput, node_movement, moveNode, TAG, node_tags } from "./node";
 import { interp } from "./interpolate";
 import { v2 } from "./v2";
 import { gameScreen, setupGameScreen } from "./scenes/gamescreen";
 import { pushSpriteAndSave } from "./draw";
 import { colourToHex } from "./util";
+import { gameOverScreen, setupGameOver } from "./scenes/gameover";
 
 let canvas: HTMLCanvasElement;
 export function requestFullscreen(): void
@@ -54,6 +55,7 @@ window.addEventListener("load", async () =>
   initGL(canvas);
   setupMainMenu();
   setupGameScreen();
+  setupGameOver();
 
   function isTouch(e: Event | PointerEvent | TouchEvent): e is TouchEvent
   {
@@ -175,9 +177,18 @@ window.addEventListener("load", async () =>
       case Scenes.Game:
         gameScreen(now, delta);
         break;
+      case Scenes.GameOver:
+        gameOverScreen(now, delta);
+        break;
       case Scenes.MainMenu:
       default:
         mainMenu(now, delta);
+    }
+
+    if (Input._released > 0
+      && node_tags[Input._released] === TAG.MUSIC)
+    {
+      setMusic(!musicEnabled);
     }
 
     // Check for Mouse Up to Reset Input States
@@ -185,6 +196,7 @@ window.addEventListener("load", async () =>
     if (!Input._mouseDown)
     {
       Input._active = 0;
+      Input._released = 0;
       Input._dragOffset[0] = 0;
       Input._dragOffset[1] = 0;
       Input._dragParent = 0;

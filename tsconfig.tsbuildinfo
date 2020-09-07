@@ -171,9 +171,14 @@
         "signature": "5a696af1267db7d945519feadab43338f39b8f62fd15430b51f0533a10c77572",
         "affectsGlobalScope": false
       },
+      "./src/ts/zzfx.ts": {
+        "version": "d4a816bb0c6d1913cd089c083c3e7b8311416b7f68998ea17f58f43125025688",
+        "signature": "9978926e85517e879875f6d0847e269972904c2413ad095f0f3e318fc263d4b2",
+        "affectsGlobalScope": false
+      },
       "./src/ts/gamestate.ts": {
-        "version": "37bbface8adee1039486789cd87bebc6fd2416e0a3226859be575ac56c083dae",
-        "signature": "f68a042c978140e54330b3041e74cf5d5fb5a4e21b4270b1818d89c425315614",
+        "version": "ad89971728eaf7a5297720f0bff035afcc37bc2d8c11ac6232b026b1ca37c26a",
+        "signature": "d41058e8038133cca3d39d2bdbea1237066bbbb5377b9a11ff95039def52ad3f",
         "affectsGlobalScope": false
       },
       "./src/ts/util.ts": {
@@ -221,14 +226,9 @@
         "signature": "091cb86e35e9d17903de53896eb514c3beabb8c637c4f49f8c71154af2e4e146",
         "affectsGlobalScope": false
       },
-      "./src/ts/zzfx.ts": {
-        "version": "27c58beb5d212ff2e3d50248810e6f56a26882ca7578ddd7ad176ac3aaa4952a",
-        "signature": "b10ca1dc0282719eaebc728fade33dc7d8658539fcd582d61dd221fa5c0502a2",
-        "affectsGlobalScope": false
-      },
       "./src/ts/node.ts": {
-        "version": "4574988a3d758e5206b095fb01e8bb898dc4c9f6a4ab5896e01daca8f2b0d603",
-        "signature": "fada05079b28fadb38834ac0a7188539a07888857cd8892b58319a75a79c0d07",
+        "version": "b75051fcd4d91a50e75b00c4947014ea5c22144e3f11b1285e0b5f7b97a5f3c9",
+        "signature": "0a295c65a7199d20423d3093b51fdf24b023805a2737c38e25221b721e20cde6",
         "affectsGlobalScope": false
       },
       "./src/ts/nodes/button.ts": {
@@ -236,23 +236,33 @@
         "signature": "af0934dfb6b0d7287a6ebe5ecf1465088410c9935fad8c81a6ac1b80f8a3112f",
         "affectsGlobalScope": false
       },
+      "./src/ts/scenes/gameover.ts": {
+        "version": "fdea744576849faea1cd62ec0d1ba8339b30da9ea49f92750b56031e1d33b1b8",
+        "signature": "b495dae90467413020f5526e6c88d91dd87d1102f62dbba0542c20dcec4721ee",
+        "affectsGlobalScope": false
+      },
+      "./src/ts/nodes/musicbutton.ts": {
+        "version": "dbbbb4037e0a06f5829facc85dfff13e021adc52e9d4212396a69f936b6f7ce7",
+        "signature": "adbbab8a321bcb9782cfbd200c8ee27c299bcd1000b490e84cd8754f5e6157a6",
+        "affectsGlobalScope": false
+      },
       "./src/ts/scenes/gamescreen.ts": {
-        "version": "9afea9f1af4e98b6cb531cb942fde7d420c041e356636aefd60010a6509ba11c",
+        "version": "7a1167abea32063b5a747fcd0e47219d890165789b0922736e0d8ac718fa7b02",
         "signature": "c939a0e49fa277a716674f6210ec7c756ace8115f14cf5c2f77b6788e6a0d7e6",
         "affectsGlobalScope": false
       },
       "./src/ts/scenes/mainmenu.ts": {
-        "version": "627e958a492336c30dad4091e69f568a87c707d06c75bc0b838e94984a71342e",
+        "version": "58fe5aee1d3bae94513158a53436d30ba9901f640df554d8b413ef591224f6f5",
         "signature": "efc7cc36a9d3f57f41235a11f61776d752ae7ac29a56056efd8f6aab955ebe09",
         "affectsGlobalScope": false
       },
       "./src/ts/scene.ts": {
-        "version": "f3c7fc0e92bd279e0ec6857783ce50c726f72ee0bb8d80fc2dfb924c19ad3019",
-        "signature": "be9f819865153bbc7ef61979fdbaa569d173a05251be9e189f99d3f8d538ae5e",
+        "version": "596447c2ddaa9c652353e9b3730eff43311701959d73b7793d7e10e853f00a74",
+        "signature": "2b1ca452a9f2f7aea053e53808fed60ff40048b5eea6d9338ad9f00b67a85a7f",
         "affectsGlobalScope": false
       },
       "./src/ts/game.ts": {
-        "version": "f6d296534bf48b20805ba339cb9c8751b7c642091d58d5e5ba7823900cfa1549",
+        "version": "6d47558d5e96cf7feaf416c0d5f20121ccd7f7c3703061e4618b73544639700e",
         "signature": "2fc3a17e0b7cb714ddf74ecb59d49071234ff3a251f39003c5702174a6dd3128",
         "affectsGlobalScope": false
       },
@@ -1226,6 +1236,7 @@
         "./src/ts/interpolate.ts",
         "./src/ts/node.ts",
         "./src/ts/scene.ts",
+        "./src/ts/scenes/gameover.ts",
         "./src/ts/scenes/gamescreen.ts",
         "./src/ts/scenes/mainmenu.ts",
         "./src/ts/screen.ts",
@@ -1239,7 +1250,8 @@
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./src/ts/random.ts",
-        "./src/ts/v2.ts"
+        "./src/ts/v2.ts",
+        "./src/ts/zzfx.ts"
       ],
       "./src/ts/gl.ts": [
         "./node_modules/@types/node/fs.d.ts",
@@ -1276,6 +1288,14 @@
         "./src/ts/node.ts",
         "./src/ts/v2.ts"
       ],
+      "./src/ts/nodes/musicbutton.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./src/ts/node.ts",
+        "./src/ts/v2.ts"
+      ],
       "./src/ts/random.ts": [
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
@@ -1287,8 +1307,18 @@
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts",
+        "./src/ts/scenes/gameover.ts",
         "./src/ts/scenes/gamescreen.ts",
         "./src/ts/scenes/mainmenu.ts"
+      ],
+      "./src/ts/scenes/gameover.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./src/ts/draw.ts",
+        "./src/ts/node.ts",
+        "./src/ts/screen.ts"
       ],
       "./src/ts/scenes/gamescreen.ts": [
         "./node_modules/@types/node/fs.d.ts",
@@ -1301,7 +1331,10 @@
         "./src/ts/interpolate.ts",
         "./src/ts/node.ts",
         "./src/ts/nodes/button.ts",
+        "./src/ts/nodes/musicbutton.ts",
         "./src/ts/random.ts",
+        "./src/ts/scene.ts",
+        "./src/ts/scenes/gameover.ts",
         "./src/ts/screen.ts",
         "./src/ts/util.ts",
         "./src/ts/v2.ts",
@@ -1313,13 +1346,14 @@
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./src/ts/draw.ts",
-        "./src/ts/game.ts",
         "./src/ts/gamestate.ts",
+        "./src/ts/interpolate.ts",
         "./src/ts/node.ts",
         "./src/ts/nodes/button.ts",
         "./src/ts/scene.ts",
         "./src/ts/scenes/gamescreen.ts",
-        "./src/ts/screen.ts"
+        "./src/ts/screen.ts",
+        "./src/ts/zzfx.ts"
       ],
       "./src/ts/screen.ts": [
         "./node_modules/@types/node/fs.d.ts",
@@ -1365,7 +1399,9 @@
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
-        "./node_modules/@types/node/util.d.ts"
+        "./node_modules/@types/node/util.d.ts",
+        "./src/ts/gamestate.ts",
+        "./src/ts/random.ts"
       ]
     },
     "exportedModulesMap": {
@@ -2008,6 +2044,9 @@
       "./src/ts/nodes/button.ts": [
         "./src/ts/v2.ts"
       ],
+      "./src/ts/nodes/musicbutton.ts": [
+        "./src/ts/v2.ts"
+      ],
       "./src/ts/types.d.ts": [
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2113,8 +2152,10 @@
       "./src/ts/interpolate.ts",
       "./src/ts/node.ts",
       "./src/ts/nodes/button.ts",
+      "./src/ts/nodes/musicbutton.ts",
       "./src/ts/random.ts",
       "./src/ts/scene.ts",
+      "./src/ts/scenes/gameover.ts",
       "./src/ts/scenes/gamescreen.ts",
       "./src/ts/scenes/mainmenu.ts",
       "./src/ts/screen.ts",

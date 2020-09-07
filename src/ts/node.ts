@@ -2,11 +2,11 @@ import { assert, DEBUG } from "./debug";
 
 import * as gl from "./gl.js";
 import { v2, subV2 } from "./v2";
-import { Input, Quests, Dice, QuestType, CrewMembers } from "./gamestate";
+import { Input, Quests, QuestType, CrewMembers, musicEnabled } from "./gamestate";
 import { pushQuad, parseText, Align, pushText, pushSprite, pushSpriteAndSave } from "./draw";
 import { mouseInside, white } from "./util.js";
 import { Easing, InterpolationData, createInterpolationData } from "./interpolate";
-import { buttonClick, buttonHover } from "./zzfx";
+import { buttonHover, zzfxP } from "./zzfx";
 
 export const enum TAG
 {
@@ -18,7 +18,8 @@ export const enum TAG
   QUEST_AREA,
   QUEST_SLOT,
   CREW_CARD,
-  CREW_SLOT
+  CREW_SLOT,
+  MUSIC
 }
 
 export const node_position: v2[] = [];
@@ -203,6 +204,14 @@ export function nodeInput(nodeId: number, rootId: number = nodeId): void
       Input._hot = nodeId;
     }
 
+    if (Input._lastHot !== Input._hot
+      && Input._hot > 0)
+    {
+      if (node_tags[Input._hot] !== TAG.QUEST_AREA)
+        zzfxP(buttonHover);
+    }
+
+
     // Mouse Down
     if (node_clickable.get(nodeId)
       && Input._active === 0
@@ -233,6 +242,7 @@ export function nodeInput(nodeId: number, rootId: number = nodeId): void
     // Mouse Up
     if (Input._active === nodeId && !Input._mouseDown)
     {
+      Input._released = Input._active;
       // If this node is draggable
       if (node_draggable.get(nodeId))
       {
@@ -296,6 +306,15 @@ export function renderNode(nodeId: number): void
     {
       switch (node_tags[nodeId])
       {
+        case TAG.MUSIC:
+          gl.translate(pos[0], pos[1]);
+          pushSprite("music", 0, 0, white, scale, scale);
+          if (!musicEnabled)
+          {
+            pushSprite("na", 0, 0, white, scale, scale);
+
+          }
+          break
         case TAG.CREW_CARD:
           const crew = CrewMembers[node_ref_index.get(nodeId)];
           let crewColour = crew._level === 3 ? 0xFF32bfbf
@@ -346,16 +365,11 @@ export function renderNode(nodeId: number): void
           if (Input._active === nodeId)
           {
             pushQuad(pos[0], pos[1], size[0], size[1], 0xFF111111);
-            buttonClick();
 
           }
           else if (Input._hot === nodeId)
           {
             pushQuad(pos[0], pos[1], size[0], size[1], white);
-            if (Input._lastHot !== nodeId)
-            {
-              buttonHover();
-            }
           }
           else
           {

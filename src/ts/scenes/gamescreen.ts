@@ -1,14 +1,17 @@
-import { createNode, node_visible, node_size, renderNode, node_scale, moveNode, addChildNode, setNodeDroppable, setNodeDraggable, node_tags, TAG, node_droppable, node_children, node_ref_index, nodeAbsolutePosition, node_home, returnNodeHome, node_parent, node_enabled, setNodeClickable, node_dice_value, node_button_text, nodeSize, node_draggable, setNodeHoverable, node_hoverable } from "../node";
+import { createNode, node_visible, node_size, renderNode, node_scale, moveNode, addChildNode, setNodeDroppable, setNodeDraggable, node_tags, TAG, node_droppable, node_children, node_ref_index, nodeAbsolutePosition, node_home, returnNodeHome, node_parent, node_enabled, setNodeClickable, node_dice_value, node_button_text, nodeSize, node_draggable, setNodeHoverable, node_hoverable, node_movement } from "../node";
 import { screenWidth, screenHeight, screenCenterX, screenCenterY } from "../screen";
 import { v2, subV2 } from "../v2";
-import { Quests, CrewMembers, newQuests, newCrew, CurrentQuestIndex, setCurrentQuest, Dice, isQuestComplete, Input, isQuestFailed, Resources, modifyResource, isQuestDone, ResourceNames } from "../gamestate";
+import { Quests, CrewMembers, newQuests, newCrew, CurrentQuestIndex, setCurrentQuest, Dice, isQuestComplete, Input, isQuestFailed, Resources, modifyResource, isQuestDone, ResourceNames, ResourceTypes, setGameOver, GameOverReasons, GameOver, setMusic } from "../gamestate";
 import { Easing } from "../interpolate";
 import { pushText, pushQuad, Align, textWidth } from "../draw";
 import { createButton } from "../nodes/button";
 import { white, mouseInside } from "../util";
-import { rand } from "../random";
-import { buttonHover } from "../zzfx";
+import { rand, shuffle } from "../random";
+import { buttonHover, zzfxP } from "../zzfx";
 import * as gl from "../gl.js";
+import { pushScene, Scenes } from "../scene";
+import { gameOverRootId } from "./gameover";
+import { createMusicButton } from "../nodes/musicButton";
 
 export let gameScreenRootId = -1;
 let crewCardIds: number[] = [];
@@ -28,6 +31,9 @@ export function setupGameScreen(): void
   node_visible[gameScreenRootId] = false;
   node_size[gameScreenRootId][0] = screenWidth;
   node_size[gameScreenRootId][1] = screenHeight;
+
+  const musicButton = createMusicButton([screenWidth - 16, 0]);
+  addChildNode(gameScreenRootId, musicButton);
 
   //#region QUESTS
   for (let questContainerIdx = 0; questContainerIdx < 4; questContainerIdx++)
@@ -152,16 +158,51 @@ export function setupGameScreen(): void
 
 export function initializeGame(): void
 {
+  setGameOver();
   newCrew();
   newQuests();
+  moveNode(gameScreenRootId, [screenWidth, 0]);
+  moveNode(gameScreenRootId, [0, 0], Easing.EaseOutQuad, 500).then(() =>
+  {
+    setTimeout(() => { setMusic(true) }, 1000);
+    Input._enabled = true
+  });
+
 }
 
 export function gameScreen(now: number, delta: number): void
 {
+  const RootX = nodeAbsolutePosition(gameScreenRootId)[0];
+  const RootY = nodeAbsolutePosition(gameScreenRootId)[1];
+  if (GameOver)
+  {
+    if (!node_movement.get(gameScreenRootId))
+    {
+      Input._enabled = false;
+      turnOverStarted = true;
+      moveNode(gameScreenRootId, [-screenWidth, 0], Easing.EaseInOutBack, 1000)
+        .then(() =>
+        {
+          moveNode(gameOverRootId, [screenWidth, 0]);
+          moveNode(gameOverRootId, [0, 0], Easing.EaseInBack, 500);
+          pushScene(Scenes.GameOver);
+          Input._enabled = true;
+        });
+    }
+  }
   let diceRemaining = 0;
   for (const diceId of diceIds)
   {
     diceRemaining += (node_enabled[diceId] ? 1 : 0);
+  }
+
+  let crewRemaining = 0;
+  for (const crewId of crewCardIds)
+  {
+    if (node_enabled[crewId])
+    {
+      crewRemaining++;
+    }
   }
 
   for (let i = 0, t = 0; i < 4; i++)
@@ -170,7 +211,7 @@ export function gameScreen(now: number, delta: number): void
     {
       t++;
     }
-    if (t === 4) { turnOver = true; }
+    if (t >= crewRemaining) { turnOver = true; }
   }
 
   for (let [idx, timer] of timers.entries())
@@ -230,7 +271,7 @@ export function gameScreen(now: number, delta: number): void
         node_button_text.set(rollButtonId, "Roll Dice");
         setNodeClickable(rollButtonId);
         rolling = false;
-        buttonHover();
+        zzfxP(buttonHover);
       }, 500);
     }
     else
@@ -261,12 +302,6 @@ export function gameScreen(now: number, delta: number): void
             && node_tags[node_home.get(childId)] !== TAG.HOLD_SLOT)
           {
             const holdSlotId = node_children[parentId][0];
-            const holdDie = node_children[holdSlotId][0];
-            if (node_enabled[holdDie])
-            {
-              returnNodeHome(childId);
-              break;
-            }
             const hiddenDieId = node_children[holdSlotId][0];
             moveNode(hiddenDieId, subV2(childPosition, nodeAbsolutePosition(holdSlotId)));
             moveNode(hiddenDieId, [0, 0], Easing.EaseOutQuad, 250);
@@ -408,24 +443,47 @@ export function gameScreen(now: number, delta: number): void
   }
 
   //#region RESOURCES
-  for (let r = 0; r < 3; r++)
+  for (let r = 0; r < 4; r++)
   {
     let off = 20 * r;
-    pushText(ResourceNames[r], 416, 16 + off);
-    pushQuad(416, 25 + off, 80, 8, white);
-    pushQuad(417, 26 + off, 78, 6, 0xFF333333);
-    pushQuad(418, 27 + off, 76, 4, 0xFF101010);
-    pushQuad(418, 27 + off, (Resources[r] === 0 ? 0 : (Resources[r] * 16 - 2) - (Resources[r] === 5 ? 2 : 0)), 4, 0xFF4040FF);
-    for (let l = 0; l < 4; l++)
+    if (r === 3)
     {
-      pushQuad(432 + l * 16, 27 + off, 1, 4, 0xFF333333);
+      off += 8;
+    }
+    pushText(ResourceNames[r], RootX + 416, RootY + 16 + off, { _wrap: 80 }); // Label
+    if (r === 3)
+    {
+      off += 10;
+    }
+    pushQuad(RootX + 416, RootY + 25 + off, 80, 8, white);
+    pushQuad(RootX + 417, RootY + 26 + off, 78, 6, 0xFF333333);
+    pushQuad(RootX + 418, RootY + 27 + off, 76, 4, 0xFF101010);
+    if (r === 3)
+    {
+      pushQuad(
+        RootX + 418,
+        RootY + 27 + off,
+        (Resources[r] === 0 ? 0 : (Resources[r] * 26 - 2) - (Resources[r] === 5 ? 2 : 0)),
+        4, 0xFFFF4040);
+      for (let l = 0; l < 2; l++)
+      {
+        pushQuad(RootX + 442 + l * 26, RootY + 27 + off, 1, 4, 0xFF333333);
+      }
+    }
+    else
+    {
+      pushQuad(RootX + 418, RootY + 27 + off, (Resources[r] === 0 ? 0 : (Resources[r] * 16 - 2) - (Resources[r] === 5 ? 2 : 0)), 4, 0xFF4040FF);
+      for (let l = 0; l < 4; l++)
+      {
+        pushQuad(RootX + 432 + l * 16, RootY + 27 + off, 1, 4, 0xFF333333);
+      }
     }
   }
   //#endregion RESOURCES
 
-  pushQuad(416, 112, 80, 64, white);
-  pushQuad(417, 113, 78, 62, 0xFF101010);
-  pushText(`Hold Die`, 456, 160, { _textAlign: Align.Center });
+  pushQuad(RootX + 416, RootY + 112, 80, 64, white);
+  pushQuad(RootX + 417, RootY + 113, 78, 62, 0xFF101010);
+  pushText(`Hold Die`, RootX + 456, RootY + 160, { _textAlign: Align.Center });
 
   renderNode(gameScreenRootId);
 
@@ -478,19 +536,28 @@ export function gameScreen(now: number, delta: number): void
     let pos = containerPositions[i];
     if (isQuestComplete(i))
     {
-      pushQuad(pos[0], pos[1], containerSize[0], containerSize[1], 0x99000000);
-      pushText("COMPLETE", pos[0] + containerSize[0] / 2, 4 + pos[1] + containerSize[1] / 2, { _colour: 0XFF32bf32, _textAlign: Align.Center });
+      pushQuad(RootX + pos[0], RootY + pos[1], containerSize[0], containerSize[1], 0x99000000);
+      pushText("COMPLETE",
+        RootX + pos[0] + containerSize[0] / 2,
+        RootY + 4 + pos[1] + containerSize[1] / 2,
+        { _colour: 0XFF32bf32, _textAlign: Align.Center });
     }
     else if (isQuestFailed(i))
     {
-      pushQuad(pos[0], pos[1], containerSize[0], containerSize[1], 0x99000000);
-      pushText("FAILED", pos[0] + containerSize[0] / 2, 4 + pos[1] + containerSize[1] / 2, { _colour: 0XFF3232BF, _textAlign: Align.Center });
+      pushQuad(RootX + pos[0], RootY + pos[1], containerSize[0], containerSize[1], 0x99000000);
+      pushText("FAILED",
+        RootX + pos[0] + containerSize[0] / 2,
+        RootY + 4 + pos[1] + containerSize[1] / 2,
+        { _colour: 0XFF3232BF, _textAlign: Align.Center });
     }
     else if (lockedIntoQuest)
     {
       if (i == CurrentQuestIndex) continue;
-      pushQuad(pos[0], pos[1], containerSize[0], containerSize[1], 0x99000000);
-      pushText("TASK IN PROGRESS", pos[0] + containerSize[0] / 2, 4 + pos[1] + containerSize[1] / 2, { _colour: 0XFF3232BF, _textAlign: Align.Center })
+      pushQuad(RootX + pos[0], RootY + pos[1], containerSize[0], containerSize[1], 0x99000000);
+      pushText("TASK IN PROGRESS",
+        RootX + pos[0] + containerSize[0] / 2,
+        RootY + 4 + pos[1] + containerSize[1] / 2,
+        { _colour: 0XFF3232BF, _textAlign: Align.Center })
     }
   }
 
@@ -523,11 +590,13 @@ export function gameScreen(now: number, delta: number): void
 
     for (let r = 1; r < 3; r++)
     {
+      // Take resource costs
       queueTimer(() => { modifyResource(r, -1); }, 2000 + (500 * (r + 1)));
     }
 
     queueTimer(() =>
     {
+      // Reset dice values
       for (const [nodeId, value] of node_dice_value.entries())
       {
         if (value >= 0)
@@ -536,12 +605,47 @@ export function gameScreen(now: number, delta: number): void
           node_enabled[nodeId] = false;
         }
       }
-      newQuests();
+
+      // Reset crew cards
       for (let c = 0; c < 4; c++)
       {
         returnNodeHome(crewCardIds[c]);
         setNodeDraggable(crewCardIds[c]);
       }
+
+      if (Resources[ResourceTypes.Power] === 0)
+      {
+        modifyResource(ResourceTypes.Oxygen, -1);
+      }
+
+      if (Resources[ResourceTypes.Oxygen] === 0)
+      {
+        let foundCrew = false;
+        const randomCrews = shuffle([...crewCardIds]);
+        for (const crewId of randomCrews)
+        {
+          if (node_enabled[crewId])
+          {
+            node_enabled[crewId] = false;
+            foundCrew = true;
+            break;
+          }
+        }
+        if (!foundCrew)
+        {
+          setGameOver(true, GameOverReasons.NoCrew);
+        }
+      }
+
+      if (Resources[ResourceTypes.Hull] === 0)
+      {
+        setGameOver(true, GameOverReasons.ShipDestroyed);
+      }
+      else
+      {
+        newQuests();
+      }
+
       turnOverStarted = false;
       turnOver = false;
     }, 4500);
