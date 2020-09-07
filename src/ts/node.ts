@@ -318,7 +318,7 @@ export function renderNode(nodeId: number): void
           break
         case TAG.FULLSCREEN:
           pushSpriteAndSave("fs", pos[0], pos[1], white, scale, scale);
-          break:
+          break;
         case TAG.CREW_CARD:
           const crew = CrewMembers[node_ref_index.get(nodeId)];
           let crewColour = crew._level === 3 ? 0xFF32bfbf

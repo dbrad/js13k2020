@@ -227,7 +227,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/node.ts": {
-        "version": "aa4823f6f437eefa4da83430152b2432c7dfa555b416067369ce172adf033a8d",
+        "version": "394cd7858dc383b364f21b068f20c1b27aae312b6893c01ff5d850e20bfd58ad",
         "signature": "4e7bead64669fdf2cb20a89ef02c55489eafdc8fcc8176a45334ba6037665c5c",
         "affectsGlobalScope": false
       },
@@ -2164,15 +2164,19 @@
       "./src/ts/asset.ts",
       "./src/ts/debug.ts",
       "./src/ts/draw.ts",
+      "./src/ts/game.ts",
       "./src/ts/gamestate.ts",
       "./src/ts/gl.ts",
       "./src/ts/interpolate.ts",
+      "./src/ts/node.ts",
       "./src/ts/nodes/button.ts",
       "./src/ts/nodes/fullscreenbutton.ts",
       "./src/ts/nodes/musicbutton.ts",
       "./src/ts/random.ts",
       "./src/ts/scene.ts",
       "./src/ts/scenes/gameover.ts",
+      "./src/ts/scenes/gamescreen.ts",
+      "./src/ts/scenes/mainmenu.ts",
       "./src/ts/screen.ts",
       "./src/ts/stats.ts",
       "./src/ts/texture.ts",
