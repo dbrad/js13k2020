@@ -7,6 +7,7 @@ import { pushScene, Scenes } from "../scene";
 import { initializeGame } from "./gamescreen";
 import { Easing } from "../interpolate";
 import { explosionSound, zzfxP } from "../zzfx";
+import { createFullscreenButton } from "../nodes/fullscreenButton";
 
 export let mainMenuRootId = -1;
 let playGameButtonId = -1;
@@ -16,6 +17,9 @@ export function setupMainMenu(): void
   node_visible[mainMenuRootId] = false;
   node_size[mainMenuRootId][0] = screenWidth;
   node_size[mainMenuRootId][1] = screenHeight;
+
+  const fullscreenButton = createFullscreenButton([screenWidth - 32, 0]);
+  addChildNode(mainMenuRootId, fullscreenButton);
 
   playGameButtonId = createButton("Launch Shuttle", [104, 40], [screenCenterX - 52, screenCenterY]);
   addChildNode(mainMenuRootId, playGameButtonId);

@@ -19,7 +19,8 @@ export const enum TAG
   QUEST_SLOT,
   CREW_CARD,
   CREW_SLOT,
-  MUSIC
+  MUSIC,
+  FULLSCREEN
 }
 
 export const node_position: v2[] = [];
@@ -315,6 +316,9 @@ export function renderNode(nodeId: number): void
 
           }
           break
+        case TAG.FULLSCREEN:
+          pushSpriteAndSave("fs", pos[0], pos[1], white, scale, scale);
+          break:
         case TAG.CREW_CARD:
           const crew = CrewMembers[node_ref_index.get(nodeId)];
           let crewColour = crew._level === 3 ? 0xFF32bfbf
@@ -342,9 +346,11 @@ export function renderNode(nodeId: number): void
           if (quest._penaltyResource >= 0) taskColour = 0xff3232bf;
           pushSpriteAndSave(art, size[0] / 4, size[0] / 4, white, scale, scale);
           pushSprite("card", 0, 0, taskColour, scale, scale);
+          const lines = parseText(quest._tooltip[0], { _wrap: 88 });
+          pushText(quest._tooltip[0], 128, 32 - Math.floor(lines * 9 / 2), { _colour: 0xFFDDDDDD, _wrap: 88, _textAlign: Align.Center });
           break;
         case TAG.CREW_SLOT:
-          pushSprite(`cs`, pos[0], pos[1], white, scale, scale);
+          pushSprite(`cs`, pos[0], pos[1], 0xFFDDDDDD, scale, scale);
           break;
         case TAG.DICE_SLOT:
           {
@@ -353,7 +359,7 @@ export function renderNode(nodeId: number): void
             const dieVal = quest._objective[node_ref_index.get(nodeId)];
             if (!dieVal) break;
             pushSpriteAndSave(`d${ dieVal }`, 0, 0, 0x33DDDDDD, scale, scale);
-            pushSprite(`ds`, 0, 0, white, scale, scale);
+            pushSprite(`ds`, 0, 0, 0xFFDDDDDD, scale, scale);
             break;
           }
         case TAG.HOLD_SLOT:

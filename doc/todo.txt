@@ -1,7 +1,7 @@
-Faint tip text (Crew, Discard 1 die and reroll, etc)
 End of Turn indicators? + sounds
-Task Names
 Disable Coil Option
+Fullscreen toggle
+More Sounds?
 
 Test repeat games
 
@@ -41,8 +41,8 @@ resource tasks wont have penalities if combined crew level is less than....7?
 // Ship Repair, Core Containment, Power
 // Ship Repair, Structural Damage, Hull
 
-// Oxygen, Tend to Arboretum 
-// Oxygen, Broken CO2 Scrubbers, Oxygen
+// Oxygen, Tend Arboretum 
+// Oxygen, Fix CO2 Scrubbers, Oxygen
 // Oxygen, Pressure Equalization, Hull
 // Oxygen, Ventilation Maintenance, Power
 
@@ -50,3 +50,20 @@ resource tasks wont have penalities if combined crew level is less than....7?
 // Power, Life Support Short Circuit, Oxygen
 // Power, Power to the Shields, Hull
 // Power, Core Malfunction, Power
+
+
+
+Hull Maintenance
+Hull Breach
+Core Containment
+Structural Damage
+
+Tend to the Arboretum 
+Repair CO2 Scrubbers
+Pressure Equalization
+Ventilation Upkeep
+
+Solar Cell Maintenance
+Life Support Failure
+Power to the Shields
+Core Malfunction

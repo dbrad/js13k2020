@@ -163,29 +163,30 @@ export function newQuests(): void
 
     if (r === 3) // Non-resource specific tasks
     {
-      if (Resources[ResourceTypes.Power] >= 4)
+
+      if (Resources[ResourceTypes.Signal] >= 3)
       {
-        if (Resources[ResourceTypes.Signal] >= 3)
+        questType = QuestType.Victory;
+        rewardDesc = ["Get rescued!"];
+        reward = () =>
         {
-          questType = QuestType.Victory;
-          rewardDesc = ["Get rescued!"];
-          reward = () =>
-          {
-            setGameOver(true, GameOverReasons.Win);
-          };
-        }
-        else
-        {
-          questType = QuestType.Progress;
-          rewardDesc = [`-2 ${ ResourceNames[ResourceTypes.Power] }`, `+1 ${ ResourceNames[ResourceTypes.Signal] }`];
-          reward = () =>
-          {
-            modifyResource(ResourceTypes.Power, -2);
-            modifyResource(ResourceTypes.Signal, 1);
-          };
-        }
+          setGameOver(true, GameOverReasons.Win);
+        };
       }
-      else 
+      else if ((Resources[ResourceTypes.Power] >= 3
+        && rand(1, 100) > 50)
+        || Resources[ResourceTypes.Power] >= 4)
+      {
+        questType = QuestType.Progress;
+        rewardDesc = [`-2 ${ ResourceNames[ResourceTypes.Power] }`, `+1 ${ ResourceNames[ResourceTypes.Signal] }`];
+        reward = () =>
+        {
+          modifyResource(ResourceTypes.Power, -2);
+          modifyResource(ResourceTypes.Signal, 1);
+        };
+
+      }
+      else
       {
         if (numberOfPerils > 0)
         {
@@ -239,7 +240,7 @@ export function newQuests(): void
     }
 
     const tooltip = [
-      questName(questType, questDifficulties[r]),
+      questName(questType, penaltyResource),
       "",
       "Success",
       ...rewardDesc,
@@ -259,19 +260,28 @@ export function newQuests(): void
   }
 }
 
-function questName(questType: QuestType, questDifficulty: QuestDifficulty): string
+function questName(questType: QuestType, penaltyResource: ResourceTypes): string
 {
   if (questType === QuestType.Hull)
   {
-    return "Hull";
+    if (penaltyResource === ResourceTypes.Hull) return "Structural Damage";
+    else if (penaltyResource === ResourceTypes.Power) return "Core Containment";
+    else if (penaltyResource === ResourceTypes.Oxygen) return "Hull Breach";
+    return "Hull Maintenance";
   }
   else if (questType === QuestType.Power)
   {
-    return "Power";
+    if (penaltyResource === ResourceTypes.Hull) return "Power to the Shields!";
+    else if (penaltyResource === ResourceTypes.Power) return "Life Support Failure";
+    else if (penaltyResource === ResourceTypes.Oxygen) return "Core Malfunction";
+    return "Solar Cell Maintenance";
   }
   else if (questType === QuestType.Oxygen)
   {
-    return "Oxygen";
+    if (penaltyResource === ResourceTypes.Hull) return "Pressure Equalization";
+    else if (penaltyResource === ResourceTypes.Power) return "Ventilation Upkeep";
+    else if (penaltyResource === ResourceTypes.Oxygen) return "Repair CO2 Scrubbers";
+    return "Tend to the Arboretum";
   }
   else if (questType === QuestType.Peril)
   {
@@ -281,10 +291,8 @@ function questName(questType: QuestType, questDifficulty: QuestDifficulty): stri
   {
     return "Boost Distress Signal";
   }
-  else
-  {
-    return "Contact Nearby Ship";
-  }
+  return "Contact Nearby Ship";
+
 }
 
 function nameGen(off: number = 0): string 

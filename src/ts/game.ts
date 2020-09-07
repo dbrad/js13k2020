@@ -30,6 +30,10 @@ export function requestFullscreen(): void
         window.screen.orientation.lock("landscape-primary").catch(_ => _);
       }).catch(_ => _);
     }
+    else
+    {
+      document.exitFullscreen();
+    }
   }
 }
 
@@ -82,7 +86,6 @@ window.addEventListener("load", async () =>
   {
     if (isTouch(e))
     {
-      requestFullscreen();
       const canvasBounds = canvas.getBoundingClientRect();
       const touchEvent = e as TouchEvent;
       touchEvent.preventDefault();
@@ -189,6 +192,12 @@ window.addEventListener("load", async () =>
       && node_tags[Input._released] === TAG.MUSIC)
     {
       setMusic(!musicEnabled);
+    }
+
+    if (Input._released > 0
+      && node_tags[Input._released] === TAG.FULLSCREEN)
+    {
+      requestFullscreen();
     }
 
     // Check for Mouse Up to Reset Input States

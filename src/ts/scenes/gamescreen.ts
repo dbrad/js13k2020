@@ -12,6 +12,7 @@ import * as gl from "../gl.js";
 import { pushScene, Scenes } from "../scene";
 import { gameOverRootId } from "./gameover";
 import { createMusicButton } from "../nodes/musicButton";
+import { createFullscreenButton } from "../nodes/fullscreenButton";
 
 export let gameScreenRootId = -1;
 let crewCardIds: number[] = [];
@@ -32,8 +33,11 @@ export function setupGameScreen(): void
   node_size[gameScreenRootId][0] = screenWidth;
   node_size[gameScreenRootId][1] = screenHeight;
 
-  const musicButton = createMusicButton([screenWidth - 16, 0]);
+  const musicButton = createMusicButton([screenWidth - 64, 0]);
   addChildNode(gameScreenRootId, musicButton);
+
+  const fullscreenButton = createFullscreenButton([screenWidth - 32, 0]);
+  addChildNode(gameScreenRootId, fullscreenButton);
 
   //#region QUESTS
   for (let questContainerIdx = 0; questContainerIdx < 4; questContainerIdx++)
@@ -60,7 +64,7 @@ export function setupGameScreen(): void
     node_scale[crewSlotId] = 2;
     node_tags[crewSlotId] = TAG.CREW_SLOT;
     addChildNode(questContainerId, crewSlotId);
-    moveNode(crewSlotId, [64, 16]);
+    moveNode(crewSlotId, [48, 16]);
 
     for (let diceIdx = 0; diceIdx < 4; diceIdx++)
     {
@@ -227,8 +231,10 @@ export function gameScreen(now: number, delta: number): void
     }
   }
 
+  node_button_text.set(rollButtonId, "Discard & Re-roll");
   if (rolling)
   {
+    node_button_text.set(rollButtonId, "Rolling..");
     for (let i = 0; i < diceIds.length; i++)
     {
       if (node_enabled[diceIds[i]])
@@ -265,10 +271,8 @@ export function gameScreen(now: number, delta: number): void
         }
       }
       rolling = true;
-      node_button_text.set(rollButtonId, "Rolling..");
       queueTimer(() =>
       {
-        node_button_text.set(rollButtonId, "Roll Dice");
         setNodeClickable(rollButtonId);
         rolling = false;
         zzfxP(buttonHover);
@@ -537,7 +541,7 @@ export function gameScreen(now: number, delta: number): void
     if (isQuestComplete(i))
     {
       pushQuad(RootX + pos[0], RootY + pos[1], containerSize[0], containerSize[1], 0x99000000);
-      pushText("COMPLETE",
+      pushText("TASK COMPLETE",
         RootX + pos[0] + containerSize[0] / 2,
         RootY + 4 + pos[1] + containerSize[1] / 2,
         { _colour: 0XFF32bf32, _textAlign: Align.Center });
@@ -545,7 +549,7 @@ export function gameScreen(now: number, delta: number): void
     else if (isQuestFailed(i))
     {
       pushQuad(RootX + pos[0], RootY + pos[1], containerSize[0], containerSize[1], 0x99000000);
-      pushText("FAILED",
+      pushText("TASK FAILED",
         RootX + pos[0] + containerSize[0] / 2,
         RootY + 4 + pos[1] + containerSize[1] / 2,
         { _colour: 0XFF3232BF, _textAlign: Align.Center });
@@ -588,11 +592,11 @@ export function gameScreen(now: number, delta: number): void
       }, 500 * (q + 1));
     }
 
-    for (let r = 1; r < 3; r++)
-    {
-      // Take resource costs
-      queueTimer(() => { modifyResource(r, -1); }, 2000 + (500 * (r + 1)));
-    }
+    // for (let r = 1; r < 3; r++)
+    // {
+    // Take resource costs
+    queueTimer(() => { modifyResource(ResourceTypes.Oxygen, -1); }, 2000);
+    // }
 
     queueTimer(() =>
     {

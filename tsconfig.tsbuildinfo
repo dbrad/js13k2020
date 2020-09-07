@@ -172,12 +172,12 @@
         "affectsGlobalScope": false
       },
       "./src/ts/zzfx.ts": {
-        "version": "d4a816bb0c6d1913cd089c083c3e7b8311416b7f68998ea17f58f43125025688",
+        "version": "af8ce574d4074d8922b9f907f60bb5c34405074c4c889b726cfdb21ef7588e37",
         "signature": "9978926e85517e879875f6d0847e269972904c2413ad095f0f3e318fc263d4b2",
         "affectsGlobalScope": false
       },
       "./src/ts/gamestate.ts": {
-        "version": "08be220795c4c0b8c36ea5983e81821d54c920412e4036f3a75e027736359eb8",
+        "version": "b8461f855a2a6053cbeb03fe1bb080f362e711232fa5657b1a5bc802aeca788a",
         "signature": "d41058e8038133cca3d39d2bdbea1237066bbbb5377b9a11ff95039def52ad3f",
         "affectsGlobalScope": false
       },
@@ -227,8 +227,8 @@
         "affectsGlobalScope": false
       },
       "./src/ts/node.ts": {
-        "version": "b75051fcd4d91a50e75b00c4947014ea5c22144e3f11b1285e0b5f7b97a5f3c9",
-        "signature": "0a295c65a7199d20423d3093b51fdf24b023805a2737c38e25221b721e20cde6",
+        "version": "aa4823f6f437eefa4da83430152b2432c7dfa555b416067369ce172adf033a8d",
+        "signature": "4e7bead64669fdf2cb20a89ef02c55489eafdc8fcc8176a45334ba6037665c5c",
         "affectsGlobalScope": false
       },
       "./src/ts/nodes/button.ts": {
@@ -246,13 +246,18 @@
         "signature": "adbbab8a321bcb9782cfbd200c8ee27c299bcd1000b490e84cd8754f5e6157a6",
         "affectsGlobalScope": false
       },
+      "./src/ts/nodes/fullscreenbutton.ts": {
+        "version": "aacf7a94928082cbabc5964c196b6c35f05c13d980affa17e3d4d17ac7a2fe4b",
+        "signature": "138bcec8d8e6d1f1699162a11426b36dc7faa28fe42011b5760a8e8e46ce39dd",
+        "affectsGlobalScope": false
+      },
       "./src/ts/scenes/gamescreen.ts": {
-        "version": "7a1167abea32063b5a747fcd0e47219d890165789b0922736e0d8ac718fa7b02",
+        "version": "7be093bd68a0ab6e50c679fd8ae5cc6e397ed6615c3fa682534aea05b61c1270",
         "signature": "c939a0e49fa277a716674f6210ec7c756ace8115f14cf5c2f77b6788e6a0d7e6",
         "affectsGlobalScope": false
       },
       "./src/ts/scenes/mainmenu.ts": {
-        "version": "58fe5aee1d3bae94513158a53436d30ba9901f640df554d8b413ef591224f6f5",
+        "version": "d29e05c493a9a9fd622aa01302c29669227282f2513f16ef824288645f73f21b",
         "signature": "efc7cc36a9d3f57f41235a11f61776d752ae7ac29a56056efd8f6aab955ebe09",
         "affectsGlobalScope": false
       },
@@ -262,7 +267,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/game.ts": {
-        "version": "6d47558d5e96cf7feaf416c0d5f20121ccd7f7c3703061e4618b73544639700e",
+        "version": "b88a6565feea2d1ec11da5d903ad81b2b50e126ad7213cf75cff9b94e00e00fd",
         "signature": "2fc3a17e0b7cb714ddf74ecb59d49071234ff3a251f39003c5702174a6dd3128",
         "affectsGlobalScope": false
       },
@@ -1288,6 +1293,14 @@
         "./src/ts/node.ts",
         "./src/ts/v2.ts"
       ],
+      "./src/ts/nodes/fullscreenbutton.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./src/ts/node.ts",
+        "./src/ts/v2.ts"
+      ],
       "./src/ts/nodes/musicbutton.ts": [
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
@@ -1331,6 +1344,7 @@
         "./src/ts/interpolate.ts",
         "./src/ts/node.ts",
         "./src/ts/nodes/button.ts",
+        "./src/ts/nodes/fullscreenbutton.ts",
         "./src/ts/nodes/musicbutton.ts",
         "./src/ts/random.ts",
         "./src/ts/scene.ts",
@@ -1350,6 +1364,7 @@
         "./src/ts/interpolate.ts",
         "./src/ts/node.ts",
         "./src/ts/nodes/button.ts",
+        "./src/ts/nodes/fullscreenbutton.ts",
         "./src/ts/scene.ts",
         "./src/ts/scenes/gamescreen.ts",
         "./src/ts/screen.ts",
@@ -2044,6 +2059,9 @@
       "./src/ts/nodes/button.ts": [
         "./src/ts/v2.ts"
       ],
+      "./src/ts/nodes/fullscreenbutton.ts": [
+        "./src/ts/v2.ts"
+      ],
       "./src/ts/nodes/musicbutton.ts": [
         "./src/ts/v2.ts"
       ],
@@ -2146,18 +2164,15 @@
       "./src/ts/asset.ts",
       "./src/ts/debug.ts",
       "./src/ts/draw.ts",
-      "./src/ts/game.ts",
       "./src/ts/gamestate.ts",
       "./src/ts/gl.ts",
       "./src/ts/interpolate.ts",
-      "./src/ts/node.ts",
       "./src/ts/nodes/button.ts",
+      "./src/ts/nodes/fullscreenbutton.ts",
       "./src/ts/nodes/musicbutton.ts",
       "./src/ts/random.ts",
       "./src/ts/scene.ts",
       "./src/ts/scenes/gameover.ts",
-      "./src/ts/scenes/gamescreen.ts",
-      "./src/ts/scenes/mainmenu.ts",
       "./src/ts/screen.ts",
       "./src/ts/stats.ts",
       "./src/ts/texture.ts",
