@@ -74,9 +74,18 @@ export function setCoil(val: boolean): void
 {
   coilEnabled = val;
 }
-export const Dice: number[] = [1, 1, 1, 1, 1, 1];
-export const Resources: number[] = [3, 3, 3, 0];
+export let Dice: number[] = [1, 1, 1, 1, 1, 1];
+export let Resources: number[] = [3, 3, 3, 0];
 export const ResourceNames = ["Hull", "Power", "Oxygen", "Distress Signal"];
+
+export function resetGameState(): void
+{
+  Dice = [1, 1, 1, 1, 1, 1];
+  Resources = [3, 3, 3, 0];
+  GameOver = false;
+  GameOverReason = GameOverReasons.None;
+  CurrentQuestIndex = -1;
+}
 
 export let GameOver = false;
 export const enum GameOverReasons
@@ -309,7 +318,7 @@ function nameGen(off: number = 0): string
 export function newCrew(): void
 {
   // @ts-ignore
-  const monitized = document.monetization && document.monetization.state === 'started';
+  const monitized = coilEnabled;
   CrewMembers[0] = {
     _name: monitized ? "Captain Coil" : nameGen(),
     _level: monitized ? 2 : 1,

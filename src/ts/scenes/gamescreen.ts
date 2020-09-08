@@ -184,7 +184,7 @@ export function gameScreen(now: number, delta: number): void
     {
       Input._enabled = false;
       turnOverStarted = true;
-      moveNode(gameScreenRootId, [-screenWidth, 0], Easing.EaseInOutBack, 1000)
+      moveNode(gameScreenRootId, [-screenWidth, 0], Easing.EaseInOutBack, 750)
         .then(() =>
         {
           moveNode(gameOverRootId, [screenWidth, 0]);
@@ -491,6 +491,16 @@ export function gameScreen(now: number, delta: number): void
 
   renderNode(gameScreenRootId);
 
+  pushText(`Unassigned Crew`,
+    RootX + 104,
+    RootY + screenHeight - 56,
+    { _colour: 0xDDCCCCCC, _textAlign: Align.Center, _wrap: screenWidth - 16 });
+
+  pushText(`Power the shuttle, boost the distress signal, and survive...`,
+    RootX + screenCenterX,
+    RootY + screenHeight - 12,
+    { _colour: 0xDDCCCCCC, _textAlign: Align.Center, _wrap: screenWidth - 16 });
+
   //#region Hover Task Areas Highlight
   if (Input._hot && node_hoverable.get(Input._hot) && node_tags[Input._hot] === TAG.QUEST_AREA)
   {
@@ -615,11 +625,6 @@ export function gameScreen(now: number, delta: number): void
       {
         returnNodeHome(crewCardIds[c]);
         setNodeDraggable(crewCardIds[c]);
-      }
-
-      if (Resources[ResourceTypes.Power] === 0)
-      {
-        modifyResource(ResourceTypes.Oxygen, -1);
       }
 
       if (Resources[ResourceTypes.Oxygen] === 0)

@@ -350,7 +350,7 @@ export function renderNode(nodeId: number): void
           pushText(quest._tooltip[0], 128, 32 - Math.floor(lines * 9 / 2), { _colour: 0xFFDDDDDD, _wrap: 88, _textAlign: Align.Center });
           break;
         case TAG.CREW_SLOT:
-          pushSprite(`cs`, pos[0], pos[1], 0xFFDDDDDD, scale, scale);
+          pushSprite(`cs`, pos[0], pos[1], 0xDDCCCCCC, scale, scale);
           break;
         case TAG.DICE_SLOT:
           {
@@ -358,8 +358,8 @@ export function renderNode(nodeId: number): void
             const quest = Quests[node_ref_index.get(node_parent[nodeId])];
             const dieVal = quest._objective[node_ref_index.get(nodeId)];
             if (!dieVal) break;
-            pushSpriteAndSave(`d${ dieVal }`, 0, 0, 0x33DDDDDD, scale, scale);
-            pushSprite(`ds`, 0, 0, 0xFFDDDDDD, scale, scale);
+            pushSpriteAndSave(`d${ dieVal }`, 0, 0, 0xCC888888, scale, scale);
+            pushSprite(`ds`, 0, 0, 0xDDCCCCCC, scale, scale);
             break;
           }
         case TAG.HOLD_SLOT:

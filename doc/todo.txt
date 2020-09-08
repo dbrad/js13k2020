@@ -1,7 +1,4 @@
 End of Turn indicators? + sounds
-Disable Coil Option
-Fullscreen toggle
-More Sounds?
 
 Test repeat games
 
