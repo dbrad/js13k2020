@@ -38,6 +38,10 @@ export const buttonHover = zzfxG(1, 0, 220, 0, 0, .1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
 
 export const explosionSound = zzfxG(0.25, .05, 821, 0, .4, 1.99, 3, 3.35, .2, 0, 0, 0, 0, .6, -1, .7, 0, .95, .07, 0);
 
+export const resourceUp = zzfxG(1, .05, 500, 0, .11, .19, 0, 1.96, 1, -2.6, 203, .02, .11, 0, -1.1, 0, 0, .61, .03, 0);
+
+export const resourceDown = zzfxG(1, .05, 1, 0, .02, .01, 1, 2.7, 0, 0, 88, .01, 0, 0, 0, .2, 0, .49, .19, 0);
+
 //@ts-ignore
 export const musicData = zzfxM(...song);
 export let music: AudioBufferSourceNode;

@@ -172,8 +172,8 @@
         "affectsGlobalScope": false
       },
       "./src/ts/zzfx.ts": {
-        "version": "af8ce574d4074d8922b9f907f60bb5c34405074c4c889b726cfdb21ef7588e37",
-        "signature": "9978926e85517e879875f6d0847e269972904c2413ad095f0f3e318fc263d4b2",
+        "version": "57d2ef51463c391ebc37bd334bce0531db5d810d9eec8552992c01ac58fbdafd",
+        "signature": "871f97ca69f134247e4258f487a2e09ee1ae75bd8de2f5644abca3909ce648db",
         "affectsGlobalScope": false
       },
       "./src/ts/gamestate.ts": {
@@ -227,7 +227,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/node.ts": {
-        "version": "b2baec87f71561e03acbbcef11d69d8ddb0d252323a576a7810da102d6e3908a",
+        "version": "4dab40d1377a97033466b187ddea72c7d3245da5059ba77c91e1c7bf446c6bf6",
         "signature": "4e7bead64669fdf2cb20a89ef02c55489eafdc8fcc8176a45334ba6037665c5c",
         "affectsGlobalScope": false
       },
@@ -252,12 +252,12 @@
         "affectsGlobalScope": false
       },
       "./src/ts/scenes/gamescreen.ts": {
-        "version": "bef966f52f51bce96d79f6975d6371fc7611b0583d746213a8afbdbea3bf0d90",
+        "version": "ad1249b30e6b5e87aaf3ed2e42d25dbf681dd7fbbef6c90436700a306fa2342e",
         "signature": "c939a0e49fa277a716674f6210ec7c756ace8115f14cf5c2f77b6788e6a0d7e6",
         "affectsGlobalScope": false
       },
       "./src/ts/scenes/mainmenu.ts": {
-        "version": "8752ffcf8d95db75c22a32b7afadfe54b91050ead97b87d24eb7ea56ed6e9715",
+        "version": "ac54a220c1cc0f166e7c3789c7b6d6da6b48ff2610af366e0959ed69794ac9a5",
         "signature": "efc7cc36a9d3f57f41235a11f61776d752ae7ac29a56056efd8f6aab955ebe09",
         "affectsGlobalScope": false
       },
@@ -267,7 +267,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/game.ts": {
-        "version": "b88a6565feea2d1ec11da5d903ad81b2b50e126ad7213cf75cff9b94e00e00fd",
+        "version": "c92be7e17f02130fddeba3a2a1df04a7714d5b236cd81a069234162b5aeb677e",
         "signature": "2fc3a17e0b7cb714ddf74ecb59d49071234ff3a251f39003c5702174a6dd3128",
         "affectsGlobalScope": false
       },
@@ -1240,6 +1240,7 @@
         "./src/ts/gl.ts",
         "./src/ts/interpolate.ts",
         "./src/ts/node.ts",
+        "./src/ts/random.ts",
         "./src/ts/scene.ts",
         "./src/ts/scenes/gameover.ts",
         "./src/ts/scenes/gamescreen.ts",

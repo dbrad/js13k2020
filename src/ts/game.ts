@@ -14,6 +14,7 @@ import { gameScreen, setupGameScreen } from "./scenes/gamescreen";
 import { pushSpriteAndSave } from "./draw";
 import { colourToHex } from "./util";
 import { gameOverScreen, setupGameOver } from "./scenes/gameover";
+import { rand } from "./random";
 
 let canvas: HTMLCanvasElement;
 export function requestFullscreen(): void
@@ -125,6 +126,8 @@ window.addEventListener("load", async () =>
     if (stars.length < 300 && Math.random() < .5)
     {
       let star: star = { _position: [0, 0], velocity: [-0.5 + Math.random() * 1, -0.5 + Math.random() * 1] };
+      if (star.velocity[0] === 0) { star.velocity[0] = 0.1 * rand(1, 100) > 50 ? -1 : 1; }
+      if (star.velocity[1] === 0) { star.velocity[1] = 0.1 * rand(1, 100) > 50 ? -1 : 1; }
       stars.push(star);
     }
 

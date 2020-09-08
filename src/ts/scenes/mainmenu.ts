@@ -88,6 +88,12 @@ export function mainMenu(now: number, delta: number): void
       coilLoaded = true;
     }
   }
+  else
+  {
+    node_enabled[coilButtonId] = false;
+    setCoil(false);
+  }
+
   node_button_text.set(coilButtonId, coilEnabled ? "Disable Coil Bonus" : "Enable Coil Bonus");
 
   renderNode(mainMenuRootId);

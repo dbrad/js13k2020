@@ -1,13 +1,13 @@
 import { createNode, node_visible, node_size, renderNode, node_scale, moveNode, addChildNode, setNodeDroppable, setNodeDraggable, node_tags, TAG, node_droppable, node_children, node_ref_index, nodeAbsolutePosition, node_home, returnNodeHome, node_parent, node_enabled, setNodeClickable, node_dice_value, node_button_text, nodeSize, node_draggable, setNodeHoverable, node_hoverable, node_movement } from "../node";
 import { screenWidth, screenHeight, screenCenterX, screenCenterY } from "../screen";
 import { v2, subV2 } from "../v2";
-import { Quests, CrewMembers, newQuests, newCrew, CurrentQuestIndex, setCurrentQuest, Dice, isQuestComplete, Input, isQuestFailed, Resources, modifyResource, isQuestDone, ResourceNames, ResourceTypes, setGameOver, GameOverReasons, GameOver, setMusic } from "../gamestate";
+import { Quests, CrewMembers, newQuests, newCrew, CurrentQuestIndex, setCurrentQuest, Dice, isQuestComplete, Input, isQuestFailed, Resources, modifyResource, isQuestDone, ResourceNames, ResourceTypes, setGameOver, GameOverReasons, GameOver, setMusic, resetGameState } from "../gamestate";
 import { Easing } from "../interpolate";
 import { pushText, pushQuad, Align, textWidth } from "../draw";
 import { createButton } from "../nodes/button";
 import { white, mouseInside } from "../util";
 import { rand, shuffle } from "../random";
-import { buttonHover, zzfxP } from "../zzfx";
+import { buttonHover, zzfxP, resourceUp, resourceDown } from "../zzfx";
 import * as gl from "../gl.js";
 import { pushScene, Scenes } from "../scene";
 import { gameOverRootId } from "./gameover";
@@ -15,6 +15,7 @@ import { createMusicButton } from "../nodes/musicButton";
 import { createFullscreenButton } from "../nodes/fullscreenButton";
 
 export let gameScreenRootId = -1;
+let questContainerIds: number[] = []
 let crewCardIds: number[] = [];
 let diceIds: number[] = [];
 let lockedIntoQuest: boolean = false;
@@ -51,6 +52,7 @@ export function setupGameScreen(): void
     setNodeHoverable(questContainerId);
     addChildNode(gameScreenRootId, questContainerId);
     moveNode(questContainerId, containerPositions[questContainerIdx]);
+    questContainerIds.push(questContainerId);
 
     const questSlotId = createNode();
     node_size[questSlotId] = [16, 16];
@@ -162,6 +164,7 @@ export function setupGameScreen(): void
 
 export function initializeGame(): void
 {
+  resetGameState();
   setGameOver();
   newCrew();
   newQuests();
@@ -351,6 +354,10 @@ export function gameScreen(now: number, delta: number): void
               setCurrentQuest(questIndex);
 
               lockedIntoQuest = true;
+              for (let i = 0; i < 6; i++)
+              {
+                node_dice_value[diceIds[i]] = 0;
+              }
               for (let i = 0; i < 3 + crew._level; i++)
               {
                 node_dice_value[diceIds[i]] = 1;
@@ -584,6 +591,9 @@ export function gameScreen(now: number, delta: number): void
     {
       queueTimer(() =>
       {
+        let currentNodeId = questContainerIds[q];
+        node_visible[currentNodeId] = true;
+        queueTimer(() => { node_visible[currentNodeId] = false; }, 450);
         const quest = Quests[q];
         if (isQuestComplete(q))
         {
@@ -593,20 +603,19 @@ export function gameScreen(now: number, delta: number): void
             quest._crew._level = Math.min(quest._crew._level + 1, 3);
             quest._crew._exp = 0;
           }
+          zzfxP(resourceUp);
           quest._reward();
         }
         else
         {
+          zzfxP(resourceDown);
           quest._penalty();
         }
       }, 500 * (q + 1));
     }
 
-    // for (let r = 1; r < 3; r++)
-    // {
     // Take resource costs
     queueTimer(() => { modifyResource(ResourceTypes.Oxygen, -1); }, 2000);
-    // }
 
     queueTimer(() =>
     {

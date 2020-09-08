@@ -2,7 +2,7 @@ import { assert, DEBUG } from "./debug";
 
 import * as gl from "./gl.js";
 import { v2, subV2 } from "./v2";
-import { Input, Quests, QuestType, CrewMembers, musicEnabled } from "./gamestate";
+import { Input, Quests, QuestType, CrewMembers, musicEnabled, isQuestComplete } from "./gamestate";
 import { pushQuad, parseText, Align, pushText, pushSprite, pushSpriteAndSave } from "./draw";
 import { mouseInside, white } from "./util.js";
 import { Easing, InterpolationData, createInterpolationData } from "./interpolate";
@@ -330,6 +330,11 @@ export function renderNode(nodeId: number): void
           break;
         case TAG.DICE:
           pushSprite(`d${ node_dice_value[nodeId] }`, pos[0], pos[1], white, scale, scale);
+          break;
+        case TAG.QUEST_AREA:
+          gl.translate(pos[0], pos[1]);
+          pushQuad(0, 0, size[0], size[1],
+            isQuestComplete(node_ref_index.get(nodeId)) ? 0x4434bf34 : 0x333434bf);
           break;
         case TAG.QUEST_SLOT:
           gl.translate(pos[0], pos[1]);
