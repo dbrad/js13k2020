@@ -1,7 +1,7 @@
 import { createNode, node_visible, node_size, renderNode, node_scale, moveNode, addChildNode, setNodeDroppable, setNodeDraggable, node_tags, TAG, node_droppable, node_children, node_ref_index, nodeAbsolutePosition, node_home, returnNodeHome, node_parent, node_enabled, setNodeClickable, node_dice_value, node_button_text, nodeSize, node_draggable, setNodeHoverable, node_hoverable, node_movement } from "../node";
 import { screenWidth, screenHeight, screenCenterX, screenCenterY } from "../screen";
 import { v2, subV2 } from "../v2";
-import { Quests, CrewMembers, newQuests, newCrew, CurrentQuestIndex, setCurrentQuest, Dice, isQuestComplete, Input, isQuestFailed, Resources, modifyResource, isQuestDone, ResourceNames, ResourceTypes, setGameOver, GameOverReasons, GameOver, setMusic, resetGameState } from "../gamestate";
+import { Quests, CrewMembers, newQuests, newCrew, CurrentQuestIndex, setCurrentQuest, Dice, isQuestComplete, Input, isQuestFailed, Resources, modifyResource, isQuestDone, ResourceNames, ResourceTypes, setGameOver, GameOverReasons, GameOver, setMusic, resetGameState, QuestType } from "../gamestate";
 import { Easing } from "../interpolate";
 import { pushText, pushQuad, Align, textWidth } from "../draw";
 import { createButton } from "../nodes/button";
@@ -164,17 +164,33 @@ export function setupGameScreen(): void
 
 export function initializeGame(): void
 {
+  timers.length = 0;
   resetGameState();
   setGameOver();
   newCrew();
   newQuests();
+
+  for (const [nodeId, value] of node_dice_value.entries())
+  {
+    if (value >= 0)
+    {
+      node_dice_value[nodeId] = 0
+      node_enabled[nodeId] = false;
+    }
+  }
+
+  for (let c = 0; c < 4; c++)
+  {
+    returnNodeHome(crewCardIds[c]);
+    setNodeDraggable(crewCardIds[c]);
+  }
+
   moveNode(gameScreenRootId, [screenWidth, 0]);
   moveNode(gameScreenRootId, [0, 0], Easing.EaseOutQuad, 500).then(() =>
   {
     setTimeout(() => { setMusic(true) }, 1000);
     Input._enabled = true
   });
-
 }
 
 export function gameScreen(now: number, delta: number): void
@@ -440,10 +456,18 @@ export function gameScreen(now: number, delta: number): void
   if (CurrentQuestIndex >= 0 && isQuestComplete(CurrentQuestIndex)
     || diceRemaining === 0)
   {
+    // if the player gets rescued, we done!
+    if (CurrentQuestIndex >= 0 && isQuestComplete(CurrentQuestIndex)
+      && Quests[CurrentQuestIndex]._questType === QuestType.Victory)
+    {
+      Quests[CurrentQuestIndex]._reward();
+    }
+
     for (const diceId of diceIds)
     {
       node_enabled[diceId] = false;
     }
+
     lockedIntoQuest = false;
     for (const crewCard of crewCardIds)
     {
@@ -583,7 +607,7 @@ export function gameScreen(now: number, delta: number): void
   }
 
   //#region END OF TURN
-  if (turnOver && !turnOverStarted)
+  if (!GameOver && turnOver && !turnOverStarted)
   {
     turnOverStarted = true;
     setCurrentQuest(-1);

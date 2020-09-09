@@ -281,8 +281,8 @@ function questName(questType: QuestType, penaltyResource: ResourceTypes): string
   else if (questType === QuestType.Power)
   {
     if (penaltyResource === ResourceTypes.Hull) return "Power to the Shields!";
-    else if (penaltyResource === ResourceTypes.Power) return "Life Support Failure";
-    else if (penaltyResource === ResourceTypes.Oxygen) return "Core Malfunction";
+    else if (penaltyResource === ResourceTypes.Power) return "Core Malfunction";
+    else if (penaltyResource === ResourceTypes.Oxygen) return "Life Support Failure";
     return "Solar Cell Maintenance";
   }
   else if (questType === QuestType.Oxygen)

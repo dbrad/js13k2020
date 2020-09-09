@@ -1,7 +1,7 @@
 import { createNode, node_visible, node_size, nodeAbsolutePosition, renderNode, addChildNode, moveNode } from "../node";
 import { screenWidth, screenHeight, screenCenterX, screenCenterY } from "../screen";
 import { pushText, Align } from "../draw";
-import { GameOverReason, GameOverReasons, Input } from "../gamestate";
+import { GameOverReason, GameOverReasons, Input, setMusic } from "../gamestate";
 import { createButton } from "../nodes/button";
 import { pushScene, Scenes } from "../scene";
 import { Easing } from "../interpolate";
@@ -60,6 +60,7 @@ export function gameOverScreen(now: number, delta: number): void
   {
     moveNode(gameOverRootId, [screenWidth, 0], Easing.EaseInOutBack, 750).then(() =>
     {
+      setMusic(false);
       pushScene(Scenes.MainMenu);
       moveNode(mainMenuRootId, [0, 0], Easing.EaseOutQuad, 500);
     });
