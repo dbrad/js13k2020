@@ -172,7 +172,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/zzfx.ts": {
-        "version": "57d2ef51463c391ebc37bd334bce0531db5d810d9eec8552992c01ac58fbdafd",
+        "version": "24c538eed1f25a3b1c5b2da415f26c12b81d82b5f3c65a3999aab8581f5fb7eb",
         "signature": "871f97ca69f134247e4258f487a2e09ee1ae75bd8de2f5644abca3909ce648db",
         "affectsGlobalScope": false
       },
