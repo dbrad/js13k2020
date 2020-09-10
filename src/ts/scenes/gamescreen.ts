@@ -165,6 +165,10 @@ export function setupGameScreen(): void
 export function initializeGame(): void
 {
   timers.length = 0;
+  turnOver = false;
+  turnOverStarted = false;
+  rolling = false;
+  lockedIntoQuest = false;
   resetGameState();
   setGameOver();
   newCrew();
@@ -181,6 +185,7 @@ export function initializeGame(): void
 
   for (let c = 0; c < 4; c++)
   {
+    node_enabled[crewCardIds[c]] = true;
     returnNodeHome(crewCardIds[c]);
     setNodeDraggable(crewCardIds[c]);
   }

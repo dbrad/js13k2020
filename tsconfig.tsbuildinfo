@@ -252,7 +252,7 @@
         "affectsGlobalScope": false
       },
       "./src/ts/scenes/gamescreen.ts": {
-        "version": "af3499e59a774c0727252a09ef90548745ffd330a8c197b9e0ee5b6b2ec4f34f",
+        "version": "8cb9451b5944d3d38ce51a67b133efa0bd8c5183a00bf1803c6b5c83d7175bc7",
         "signature": "c939a0e49fa277a716674f6210ec7c756ace8115f14cf5c2f77b6788e6a0d7e6",
         "affectsGlobalScope": false
       },

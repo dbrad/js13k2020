@@ -11,5 +11,6 @@
   "typescript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": true,
   "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,
   "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
-  "sort-imports.on-save": false
+  "sort-imports.on-save": false,
+  "editor.maxTokenizationLineLength": 30000
 }
